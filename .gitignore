@@ -16,6 +16,9 @@ target/
 # Compiled class file
 *.class
 
+# Output files
+Samples/samples/output/*
+
 # Log file
 *.log
 
