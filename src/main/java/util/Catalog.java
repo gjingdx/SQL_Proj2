@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Singleton class to track and record states. For the operators to get info like schemas, files etc.
+ * Created by Yufu Mo
+ */
 public class Catalog {
     private static Catalog instance = null;
     // store file location for different tables

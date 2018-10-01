@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * SortOperator
- * created by Yufu Mo ym445
+ * created by Yufu Mo
  */
 public class SortOperator extends Operator{
 

@@ -9,6 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Abstract class for operator
+ * Created by Yufu Mo
+ */
 public abstract class Operator {
 
     /**

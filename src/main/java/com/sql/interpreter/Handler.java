@@ -3,7 +3,6 @@ package com.sql.interpreter;
 import operator.*;
 
 import net.sf.jsqlparser.parser.CCJSqlParser;
-import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
@@ -11,13 +10,20 @@ import util.Catalog;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
 
+/**
+ * Handler class to parse sql, construct query plan and handle initialization
+ * Created by Yufu Mo
+ */
 public class Handler {
 
     public static void init() {
         String outputPath = Catalog.getInstance().getOutputPath();
         new File(outputPath).mkdirs();
+        final File[] files = new File(outputPath).listFiles();
+        for(File f : files){
+            f.delete();
+        }
     }
 
     public static void parseSql() {
@@ -26,7 +32,7 @@ public class Handler {
             String inputPath = Catalog.getInstance().getSqlQueriesPath();
             CCJSqlParser parser = new CCJSqlParser(new FileReader(inputPath));
             Statement statement;
-            int ind = 0;
+            int ind = 1;
             while ((statement = parser.Statement()) != null) {
                 System.out.println(ind);
                 System.out.println("Read statement: " + statement);
@@ -43,11 +49,26 @@ public class Handler {
         }
     }
 
-     /**
-     * consturct a left deep join query plan
-     * @param plainSelect
-     * @return
-     */
+    /**
+    * consturct a left deep join query plan
+    *
+    *           distinct
+    *              |
+    *             sort
+    *              |
+    *            select
+    *              |
+    *             join
+    *           /      \
+    *        select   scan
+    *          |  
+    *         join
+    *        /    \
+    *      scan  scan
+
+    * @param plainSelect
+    * @return
+    */
     public static Operator constructQueryPlan(PlainSelect plainSelect){
         int tableCount;
         Operator opLeft;
@@ -58,21 +79,11 @@ public class Handler {
             tableCount = 1 + plainSelect.getJoins().size();
         }
         opLeft = new ScanOperator(plainSelect, 0);
-        System.out.println(opLeft.getSchema());
-//        System.out.println("opLeft:");
-//        opLeft.dump(1);
         for(int i = 1; i < tableCount; ++i){
             Operator opRight = new ScanOperator(plainSelect, i);
-//            System.out.println("opRight:");
-//            opRight.dump(1);
             opLeft = new JoinOperator(opLeft, opRight, plainSelect);
-            System.out.println(opLeft.getSchema());
-//            System.out.println("opLeft after join:");
-//            opLeft.dump(1);
             if(plainSelect.getWhere() != null){
                 opLeft = new SelectOperator(opLeft, plainSelect);
-                System.out.println("opLeft after select:");
-//                opLeft.dump(1);
             }
         }
         if(tableCount == 1 && plainSelect.getWhere() != null){

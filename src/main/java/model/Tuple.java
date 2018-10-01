@@ -2,6 +2,10 @@ package model;
 
 import java.util.Arrays;
 
+/**
+ * Tuple class
+ * Created by Yufu Mo
+ */
 public class Tuple {
     private long[] data; // string array to store data
 
@@ -24,7 +28,6 @@ public class Tuple {
     public Tuple(int length) {
         data = new long[length];
     }
-
 
     /**
      * Overload constructor with data input
@@ -63,7 +66,7 @@ public class Tuple {
 
         return Arrays.equals(data, tuple.data);
     }
-
+  
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder(Arrays.toString(data));

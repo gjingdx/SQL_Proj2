@@ -50,7 +50,7 @@ public class JoinExpressionVisitor implements ExpressionVisitor {
 	 */
 	@Override
 	public void visit(LongValue node) {
-		// TODO Auto-generated method stub
+		
 		expressionStack.push(node);
 	}
 
@@ -249,54 +249,54 @@ public class JoinExpressionVisitor implements ExpressionVisitor {
 	
 	@Override
 	public void visit(Parenthesis node) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void visit(NullValue node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Function node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(InverseExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(JdbcParameter node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(DoubleValue node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(DateValue node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(TimeValue node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(TimestampValue node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -304,121 +304,121 @@ public class JoinExpressionVisitor implements ExpressionVisitor {
 
 	@Override
 	public void visit(StringValue node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Addition node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Division node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Multiplication node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Subtraction node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Between node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(InExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(IsNullExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(LikeExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(SubSelect node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(CaseExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(WhenClause node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(ExistsExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(AllComparisonExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(AnyComparisonExpression node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Concat node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(Matches node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(BitwiseAnd node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(BitwiseOr node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void visit(BitwiseXor node) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

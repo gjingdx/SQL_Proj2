@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Distinct operator
- * Created by Yufu Mo  ym445
+ * Created by Yufu Mo
  */
 public class DuplicateEliminationOperator extends Operator{
 
