@@ -33,6 +33,8 @@ public class Catalog {
         try {
             inputPath = Constants.SQLQURIES_PATH;
             outputPath = Constants.OUTPUT_PATH;
+            System.out.println("Catalog initialize");
+            System.out.println(Constants.SCHEMA_PATH);
             FileReader file = new FileReader(Constants.SCHEMA_PATH);
             BufferedReader br = new BufferedReader(file);
             String s = br.readLine();

@@ -14,7 +14,7 @@ import util.Catalog;
 public class AppTest {
     @Test
     public void sqlResultMatch() throws Exception{
-        Handler.init();
+        Handler.init(new String[0]);
         Handler.parseSql();
         for(int index = 1; index<=8; ++index){
             File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));

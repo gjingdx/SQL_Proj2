@@ -7,6 +7,7 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
+import util.Constants;
 
 import java.io.File;
 import java.io.FileReader;
@@ -17,13 +18,31 @@ import java.io.FileReader;
  */
 public class Handler {
 
-    public static void init() {
-        String outputPath = Catalog.getInstance().getOutputPath();
+    public static void init(String[] args) {
+        String outputPath = Constants.OUTPUT_PATH;
+        if (args != null && args.length == 2) {
+            if (args[0].charAt(args[0].length() - 1)== '/') {
+                args[0] = args[0].substring(0, args[0].length() - 1);
+            }
+            if (args[1].charAt(args[1].length() - 1) != '/') {
+                args[1] = args[1] + "/";
+            }
+            outputPath = args[1];
+            Constants.inputPath = args[0];
+            Constants.DATA_PATH = Constants.inputPath + "/db/data/";
+            Constants.SCHEMA_PATH = Constants.inputPath + "/db/schema.txt";
+            Constants.OUTPUT_PATH = args[1];
+            Constants.SQLQURIES_PATH = Constants.inputPath + "/queries.sql";
+            System.out.println("Constants.inputPath init");
+            System.out.println(Constants.inputPath);
+        }
         new File(outputPath).mkdirs();
         final File[] files = new File(outputPath).listFiles();
         for(File f : files){
             f.delete();
         }
+        outputPath += "query";
+        Catalog.getInstance().setOutputPath(outputPath);
     }
 
     public static void parseSql() {
