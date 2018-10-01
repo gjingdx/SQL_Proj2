@@ -63,17 +63,12 @@ public class Tuple {
 
         return Arrays.equals(data, tuple.data);
     }
-//
-//    @Override
-//    public int hashCode() {
-//        return Arrays.hashCode(data);
-//    }
-
 
     @Override
     public String toString() {
-        return "Tuple{" +
-                "data=" + Arrays.toString(data) +
-                '}';
+        StringBuilder res = new StringBuilder(Arrays.toString(data));
+        return res.toString().replaceAll("\\[", "")
+                .replaceAll("\\]","")
+                .replaceAll("\\s+", "");
     }
 }
