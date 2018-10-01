@@ -53,34 +53,6 @@ public class ScanOperator extends Operator{
 
     }
 
-    public ScanOperator(Operator op, PlainSelect plainSelect, int tableIndex){
-        this.op = op;
-        String item;
-        if(tableIndex == 0){
-            item = plainSelect.getFromItem().toString();
-        }
-        else{
-            item = plainSelect.getJoins().get(tableIndex-1).toString();
-        }
-
-        String[] strs = item.split("\\s+");
-        if(strs.length < 0){
-            this.file = null;
-            return;
-        }
-        String tableName = strs[0];
-        String aliasName = strs[strs.length - 1];
-        this.file = new File(Catalog.getInstance().getDataPath(tableName));
-        initReaderPointer();
-
-        String fromItem = plainSelect.getFromItem().toString();
-        Catalog.getInstance().setAliases(fromItem);
-        Catalog.getInstance().updateCurrentSchema(aliasName);
-
-        this.schema = Catalog.getInstance().getCurrentSchema();
-
-    }
-
     /**
      * get the next tuple of the operator.
      */

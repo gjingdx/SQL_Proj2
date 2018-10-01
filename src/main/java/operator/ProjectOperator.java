@@ -16,7 +16,6 @@ public class ProjectOperator extends Operator {
     public ProjectOperator (Operator operator, PlainSelect plainSelect) {
         prevOp = operator;
         selectItems = plainSelect.getSelectItems();
-        System.out.println(selectItems);
         // yet did not handle cases: select A,D from S, B
         if (selectItems.get(0).toString() == "*") {
             currentSchema = operator.getSchema();

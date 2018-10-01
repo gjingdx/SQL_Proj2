@@ -8,9 +8,7 @@ import operator.ScanOperator;
 import model.Tuple;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.StringReader;
-
 import static org.junit.Assert.*;
 
 public class SelectExpressionVisitorTest {
@@ -69,10 +67,6 @@ public class SelectExpressionVisitorTest {
      */
     @Test
     public void visit1() {
-        String tableName = "Sailors";
-        String tableFolder = "Samples/samples/input/db/data/";
-        File file = new File(tableFolder + tableName);
-
         String statement = "SELECT * FROM Sailors S WHERE S.A != 3;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{

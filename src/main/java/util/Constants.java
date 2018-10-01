@@ -1,8 +1,13 @@
 package util;
 
+/**
+ * Store constants
+ * Created by Yufu Mo
+ */
 public class Constants {
-    public static final String DATA_PATH = "Samples/samples/input/db/data/";
-    public static final String SCHEMA_PATH = "Samples/samples/input/db/schema.txt";
-    public static final String OUTPUT_PATH = "Samples/samples/output/";
-    public static final String SQLQURIES_PATH = "Samples/samples/input/queries.sql";
+    public static String inputPath = "Samples/samples/input";
+    public static String DATA_PATH = inputPath + "/db/data/";
+    public static String SCHEMA_PATH = inputPath + "/db/schema.txt";
+    public static String OUTPUT_PATH = "Samples/samples/output/";
+    public static String SQLQURIES_PATH = inputPath + "/queries.sql";
 }

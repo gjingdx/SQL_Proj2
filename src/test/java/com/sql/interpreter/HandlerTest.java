@@ -18,12 +18,11 @@ public class HandlerTest {
 
     @Test
     public void constructQueryPlan() throws Exception{
-        Handler handler = new Handler();
         String statement = "SELECT S.A, S.B, Reserves.G, Boats.D FROM Sailors AS S, Reserves, Boats WHERE Reserves.H = Boats.D And S.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
-        Operator op = handler.constructQueryPlan(plainSelect);
+        Operator op = Handler.constructQueryPlan(plainSelect);
         op.dump(1);
     }
 }

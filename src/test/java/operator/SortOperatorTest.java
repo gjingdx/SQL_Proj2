@@ -25,7 +25,6 @@ public class SortOperatorTest {
             assertEquals(true, last <= cur);
             tuple = sortOp.getNextTuple();
         }
-
     }
 
     @Test
