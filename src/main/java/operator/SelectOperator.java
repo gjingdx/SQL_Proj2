@@ -15,14 +15,13 @@ public class SelectOperator extends Operator{
     private Map<String, Integer> currentSchema;
 
     public SelectOperator(Operator operator, PlainSelect plainSelect) {
-        prevOp = operator;
-        expression = plainSelect.getWhere();
-        if(this.prevOp instanceof JoinOperator){
-            JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(operator.getSchema());
-            expression.accept(joinExpress);
-            expression = joinExpress.getExpression();
-        }
-        currentSchema = operator.getSchema();
+        this.prevOp = operator;
+        this.currentSchema = operator.getSchema();
+        this.expression = plainSelect.getWhere();
+        
+        JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
+        expression.accept(joinExpress);
+        expression = joinExpress.getExpression();
     }
 
     /**

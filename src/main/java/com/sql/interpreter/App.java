@@ -8,8 +8,8 @@ import util.Constants;
  * Run line by line and output the results into seperated files
  */
 public class App {
-	public static void main(String[] args) {
-        Handler.init(args);
-        Handler.parseSql();
+        public static void main(String[] args) {
+                Handler.init(args);
+                Handler.parseSql();
 	}
 }

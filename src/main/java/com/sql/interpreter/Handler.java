@@ -71,20 +71,18 @@ public class Handler {
     /**
     * consturct a left deep join query plan
     *
-    *           distinct
+    *           distinct  
     *              |
     *             sort
     *              |
-    *            select
-    *              |
     *             join
-    *           /      \
-    *        select   scan
-    *          |  
-    *         join
+    *           /      \ 
+    *         join    scan
     *        /    \
-    *      scan  scan
-
+    *   select   select
+    *      |       |
+    *    scan     scan
+    *
     * @param plainSelect
     * @return
     */
@@ -98,12 +96,13 @@ public class Handler {
             tableCount = 1 + plainSelect.getJoins().size();
         }
         opLeft = new ScanOperator(plainSelect, 0);
+        if(plainSelect.getWhere() != null)
+            opLeft = new SelectOperator(opLeft, plainSelect);
         for(int i = 1; i < tableCount; ++i){
             Operator opRight = new ScanOperator(plainSelect, i);
-            opLeft = new JoinOperator(opLeft, opRight, plainSelect);
-            if(plainSelect.getWhere() != null){
+            if(plainSelect.getWhere() != null)
                 opLeft = new SelectOperator(opLeft, plainSelect);
-            }
+            opLeft = new JoinOperator(opLeft, opRight, plainSelect);
         }
         if(tableCount == 1 && plainSelect.getWhere() != null){
             opLeft = new SelectOperator(opLeft, plainSelect);
