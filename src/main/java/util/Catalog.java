@@ -21,9 +21,9 @@ public class Catalog {
     // store all the table-schema pairs
     private Map<String, Map<String, Integer>> schemas = new HashMap<>();
     // input path
-    private String inputPath = Constants.SQLQURIES_PATH;
+    private String inputPath;
     // output path
-    private String outputPath = Constants.OUTPUT_PATH;
+    private String outputPath;
 
 
     /**
@@ -31,6 +31,8 @@ public class Catalog {
      */
     private Catalog() {
         try {
+            inputPath = Constants.SQLQURIES_PATH;
+            outputPath = Constants.OUTPUT_PATH;
             FileReader file = new FileReader(Constants.SCHEMA_PATH);
             BufferedReader br = new BufferedReader(file);
             String s = br.readLine();
@@ -57,7 +59,6 @@ public class Catalog {
         }
 
     }
-
 
     /**
      * @return singleton instance
