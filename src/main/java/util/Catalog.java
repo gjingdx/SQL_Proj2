@@ -88,7 +88,7 @@ public class Catalog {
         Map<String, Integer> tempSchema = schemas.get(aliases.get(alias));
         currentSchema = new HashMap<>();
         for (Map.Entry<String, Integer> entry : tempSchema.entrySet()) {
-            String newKey = alias + "." + entry.getKey().split("325rt5q12324")[1];
+            String newKey = alias + "." + entry.getKey().split("\\.")[1];
             currentSchema.put(newKey, entry.getValue());
         }
     }
