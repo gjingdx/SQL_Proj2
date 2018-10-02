@@ -20,7 +20,9 @@ import java.util.Map;
  * Created by Yufu Mo
  */
 public class Handler {
-
+    /**
+     * initialize the file paths and directories
+     */
     public static void init(String[] args) {
         String outputPath = Constants.OUTPUT_PATH;
         if (args != null && args.length == 2) {
@@ -48,6 +50,11 @@ public class Handler {
         Catalog.getInstance().setOutputPath(outputPath);
     }
 
+
+    /**
+     * called in main function, parse all the queries one by one
+     * in the input queries file
+     */
     public static void parseSql() {
         try {
             // try

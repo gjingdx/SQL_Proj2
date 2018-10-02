@@ -19,7 +19,7 @@ public class DuplicateEliminationOperator extends Operator{
 
     /**
      * Constructor to initiate the operator using the sorted list in sort operator.
-     * Eliminate duplicates with
+     * Eliminate duplicates with a sorted list.
      * @param operator assuming it's sort operator
      */
     public DuplicateEliminationOperator(Operator operator) {
