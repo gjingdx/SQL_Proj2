@@ -118,7 +118,8 @@ public class Handler {
             opLeft = new DuplicateEliminationOperator(opLeft);
         }
         else {
-            opLeft = new SortOperator(opLeft, plainSelect);
+            if(plainSelect.getOrderByElements() != null)
+                opLeft = new SortOperator(opLeft, plainSelect);
         }
         return opLeft;
     }
