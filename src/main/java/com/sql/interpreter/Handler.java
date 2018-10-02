@@ -2,7 +2,6 @@ package com.sql.interpreter;
 
 import operator.*;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -118,8 +117,10 @@ public class Handler {
             }
             opLeft = new JoinOperator(opLeft, opRight, plainSelect);
         }
-
-        opLeft = new ProjectOperator(opLeft, plainSelect);
+        if(plainSelect.getSelectItems() != null 
+        		&& plainSelect.getSelectItems().size() > 0 
+        		&& plainSelect.getSelectItems().get(0) != "*")
+        	opLeft = new ProjectOperator(opLeft, plainSelect);
         if(plainSelect.getDistinct() != null){
             opLeft = new SortOperator(opLeft, plainSelect);
             opLeft = new DuplicateEliminationOperator(opLeft);

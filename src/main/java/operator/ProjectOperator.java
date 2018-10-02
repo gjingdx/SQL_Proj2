@@ -18,7 +18,8 @@ public class ProjectOperator extends Operator {
      * @param operator previous (child) operator
      * @param plainSelect plain sql sentence
      */
-    public ProjectOperator (Operator operator, PlainSelect plainSelect) {
+    @SuppressWarnings("unchecked")
+	public ProjectOperator (Operator operator, PlainSelect plainSelect) {
         prevOp = operator;
         selectItems = plainSelect.getSelectItems();
         // yet did not handle cases: select A,D from S, B

@@ -8,8 +8,6 @@ import org.junit.Test;
 
 import java.io.StringReader;
 
-import static org.junit.Assert.*;
-
 public class HandlerTest {
 
     @Test

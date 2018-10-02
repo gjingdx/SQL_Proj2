@@ -3,7 +3,6 @@ package operator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import util.Catalog;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -89,7 +88,8 @@ public class SortOperator extends Operator{
      */
     class TupleComparator implements Comparator<Tuple> {
 
-        List<OrderByElement> order = plainSelect.getOrderByElements();
+        @SuppressWarnings("unchecked")
+		List<OrderByElement> order = plainSelect.getOrderByElements();
 
         @Override
         public int compare(Tuple t1, Tuple t2) {

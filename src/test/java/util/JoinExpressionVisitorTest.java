@@ -1,17 +1,10 @@
 package util;
 
-import operator.ScanOperator;
-import operator.SelectOperator;
-import operator.JoinOperator;
-import operator.Operator;
-import model.Tuple;
-
 import org.junit.Assert;
 import org.junit.Test;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
-import static org.junit.Assert.*;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
