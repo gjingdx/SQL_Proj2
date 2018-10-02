@@ -1,6 +1,7 @@
 package com.sql.interpreter;
 
 import util.Catalog;
+import util.Constants;
 
 /**
  * Read a local sql file which contains several queries
@@ -9,8 +10,10 @@ import util.Catalog;
 public class App {
 	public static void main(String[] args) {
         if (args != null && args.length == 2) {
-            Catalog.getInstance().setInputPath(args[0]);
+            Constants.inputPath = args[0];
+//            Catalog.getInstance().setInputPath(args[0]);
             Catalog.getInstance().setOutputPath(args[1]);
+
         }
         Handler.init();
         Handler.parseSql();
