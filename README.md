@@ -92,25 +92,23 @@ Since results can be int type or boolean type, we have two kind of stacks:
 the first which is int type stores results in data form and the second 
 stores results in boolean form. 
 
-- **Implementation** 
-This is implemented by a Deque<Long> and a Deque<Boolean> in Java.
-
-Using the visitor pattern, 9 visitor methods are overridden which have parameter 
+- **Implementation**  
+This is implemented by a Deque<Long> and a Deque<Boolean> in Java.  
+  
+  Using the visitor pattern, 9 visitor methods are overridden which have parameter 
 in AndExpression, Column, LongValue, EqualsTo, NotEqualsTo, GreaterThan, GreaterThanEquals, 
 MinorThan, MinorThanEquals respectively.
+  1. Implementation of visit method for Column Expression:  
+get the data in the current tuple of the certain column and push it to data stack.
+  2. Implementation of visit method for Long Expression:  
+just push the long value of the expression to the data stack.
 
-Implementation of visit method for Column Expression:
-    get the data in the current tuple of the certain column and push it to data stack.
-   
-Implementation of visit method for Long Expression:
-    just push the long value of the expression to the data stack.
-
-Implementation of Each visit method except for Column and Long expression:
-    1. the left side of the expression accepts the visitor
-    2. the right side of expression accepts the visitor
-    3. get the right result by pop the stack
-    4. get the left result by pop the stack
-    5. push the evaluation of the expression using results of both sides into stack.
+  3. Implementation of Each visit method except for Column and Long expression:  
+  1 the left side of the expression accepts the visitor  
+  2 the right side of expression accepts the visitor  
+  3 get the right result by pop the stack  
+  4 get the left result by pop the stack  
+  5 push the evaluation of the expression using results of both sides into stack.
 
 - **Java doc**  
 __*SelectExpressionVisitor*__ lays in ```src/main/java/util/```.
