@@ -1,7 +1,8 @@
 package util;
 
 /**
- * Store constants
+ * Store constants and paths
+ * due to refactoring, path variables are not final
  * Created by Yufu Mo
  */
 public class Constants {

@@ -28,6 +28,8 @@ public class Catalog {
 
     /**
      * private constructor for singleton class
+     * initialize the input and output path
+     * read in the schemas
      */
     private Catalog() {
         try {
@@ -174,14 +176,20 @@ public class Catalog {
     }
 
     /**
-     *
+     * get schema for a certain table
      * @param table
-     * @return
+     * @return Map with schema
      */
     public Map<String, Integer> getTableSchema(String table) {
         return schemas.get(table);
     }
 
+
+    /**
+     * get index of column
+     * @param column
+     * @return
+     */
     public int getIndexOfColumn(String column) {
         return currentSchema.get(column);
     }

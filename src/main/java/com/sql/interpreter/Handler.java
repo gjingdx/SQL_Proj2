@@ -1,23 +1,28 @@
 package com.sql.interpreter;
 
 import operator.*;
-
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
 import util.Constants;
+import util.JoinExpressionVisitor;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Map;
 
 /**
  * Handler class to parse sql, construct query plan and handle initialization
  * Created by Yufu Mo
  */
 public class Handler {
-
+    /**
+     * initialize the file paths and directories
+     */
     public static void init(String[] args) {
         String outputPath = Constants.OUTPUT_PATH;
         if (args != null && args.length == 2) {
@@ -45,6 +50,11 @@ public class Handler {
         Catalog.getInstance().setOutputPath(outputPath);
     }
 
+
+    /**
+     * called in main function, parse all the queries one by one
+     * in the input queries file
+     */
     public static void parseSql() {
         try {
             // try
@@ -71,20 +81,18 @@ public class Handler {
     /**
     * consturct a left deep join query plan
     *
-    *           distinct
+    *           distinct  
     *              |
     *             sort
     *              |
-    *            select
-    *              |
     *             join
-    *           /      \
-    *        select   scan
-    *          |  
-    *         join
+    *           /      \ 
+    *         join    scan
     *        /    \
-    *      scan  scan
-
+    *   select   select
+    *      |       |
+    *    scan     scan
+    *
     * @param plainSelect
     * @return
     */
@@ -97,25 +105,39 @@ public class Handler {
         else{
             tableCount = 1 + plainSelect.getJoins().size();
         }
+
         opLeft = new ScanOperator(plainSelect, 0);
-        for(int i = 1; i < tableCount; ++i){
-            Operator opRight = new ScanOperator(plainSelect, i);
-            opLeft = new JoinOperator(opLeft, opRight, plainSelect);
-            if(plainSelect.getWhere() != null){
-                opLeft = new SelectOperator(opLeft, plainSelect);
-            }
-        }
-        if(tableCount == 1 && plainSelect.getWhere() != null){
+        if(hasRelatedExpression(opLeft.getSchema(), plainSelect)){
             opLeft = new SelectOperator(opLeft, plainSelect);
         }
+
+        for(int i = 1; i < tableCount; ++i){
+            Operator opRight = new ScanOperator(plainSelect, i);
+            if(hasRelatedExpression(opRight.getSchema(), plainSelect)){
+                opRight = new SelectOperator(opRight, plainSelect);
+            }
+            opLeft = new JoinOperator(opLeft, opRight, plainSelect);
+        }
+
         opLeft = new ProjectOperator(opLeft, plainSelect);
         if(plainSelect.getDistinct() != null){
             opLeft = new SortOperator(opLeft, plainSelect);
             opLeft = new DuplicateEliminationOperator(opLeft);
         }
         else {
-            opLeft = new SortOperator(opLeft, plainSelect);
+            if(plainSelect.getOrderByElements() != null)
+                opLeft = new SortOperator(opLeft, plainSelect);
         }
         return opLeft;
+    }
+
+    private static boolean hasRelatedExpression(Map<String, Integer> schemaMap, PlainSelect plainSelect){
+        Expression originExpression = plainSelect.getWhere();
+        if(originExpression == null){
+            return false;
+        }
+        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(schemaMap);
+        originExpression.accept(joinExpressionVisitor);
+        return joinExpressionVisitor.getExpression() != null;
     }
 }

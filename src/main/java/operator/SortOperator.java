@@ -22,6 +22,12 @@ public class SortOperator extends Operator{
     private int currentIndex;
     private Map<String, Integer> schema;
 
+    /**
+     * Constructor
+     * read all tuples, store them in a list and sort them
+     * @param operator
+     * @param plainSelect
+     */
     public SortOperator(Operator operator, PlainSelect plainSelect) {
         tupleList = new ArrayList<>();
         this.plainSelect = plainSelect;
