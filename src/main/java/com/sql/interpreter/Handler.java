@@ -17,6 +17,9 @@ import java.io.FileReader;
  */
 public class Handler {
 
+    /**
+     * initialize the file paths and directories
+     */
     public static void init() {
         String outputPath = Catalog.getInstance().getOutputPath();
         new File(outputPath).mkdirs();
@@ -26,6 +29,11 @@ public class Handler {
         }
     }
 
+
+    /**
+     * called in main function, parse all the queries one by one
+     * in the input queries file
+     */
     public static void parseSql() {
         try {
             // try
