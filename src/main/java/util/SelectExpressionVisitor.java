@@ -18,6 +18,11 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
     private Deque<Boolean> values;
     private Tuple currentTuple;
 
+    /**
+     * Constructor of SelectExpressionVisitor
+     * @param tuple
+     * @param schema
+     */
     public SelectExpressionVisitor(Tuple tuple, Map<String, Integer> schema) {
         currentSchema = schema;
         data = new LinkedList<>();
@@ -35,6 +40,13 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         return values.peekFirst();
     }
 
+    /**
+     * visit method for AndExpression expression
+     * 1. left and right sides accepts the visitor
+     * 2. get the right and left results accordingly (because of stack sequence)
+     * 3. push the evaluation of the expression using the results of the two sides
+     * @param andExpression
+     */
     @Override
     public void visit(AndExpression andExpression) {
         // Todo
@@ -45,6 +57,12 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         values.addFirst(leftValue && rightValue);
     }
 
+    /**
+     * visit method for Column expression
+     * by getting the data in the current tuple of the certain column
+     * and pushing it to data stack.
+     * @param column
+     */
     @Override
     public void visit(Column column) {
         // Todo
@@ -54,12 +72,21 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         data.push(currentTuple.getDataAt(ind));
     }
 
+    /**
+     * visit method for LongValue expression
+     * by pushing the long value of the expression to the data stack
+     * @param longValue
+     */
     @Override
     public void visit(LongValue longValue) {
         // Todo
         data.push(longValue.getValue());
     }
 
+    /**
+     * visit method for EqualsTo expression
+     * @param equalsTo
+     */
     @Override
     public void visit(EqualsTo equalsTo) {
         // Todo
@@ -70,6 +97,10 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         values.addFirst(leftValue == rightValue);
     }
 
+    /**
+     * visit method for NotEqualsTo expression
+     * @param notEqualsTo
+     */
     @Override
     public void visit(NotEqualsTo notEqualsTo) {
         // Todo
@@ -80,6 +111,10 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         values.addFirst(leftValue != rightValue);
     }
 
+    /**
+     * visit method for GreaterThan expression
+     * @param greaterThan
+     */
     @Override
     public void visit(GreaterThan greaterThan) {
         // Todo
@@ -90,6 +125,10 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         values.addFirst(leftValue > rightValue);
     }
 
+    /**
+     * visit method for GreaterThanEquals expression
+     * @param greaterThanEquals
+     */
     @Override
     public void visit(GreaterThanEquals greaterThanEquals) {
         // todo
@@ -101,6 +140,10 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     }
 
+    /**
+     * visit method for MinorThan expression
+     * @param minorThan
+     */
     @Override
     public void visit(MinorThan minorThan) {
         // Todo
@@ -111,6 +154,10 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         values.addFirst(leftValue < rightValue);
     }
 
+    /**
+     * visit method for MinorThanEquals expression
+     * @param minorThanEquals
+     */
     @Override
     public void visit(MinorThanEquals minorThanEquals) {
         // Todo

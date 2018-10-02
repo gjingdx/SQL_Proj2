@@ -54,7 +54,7 @@
 
 **2. Join Expression Visitor**
 - **How to evaluate a Join condition**
-    1. Extract the related expression (Join condition), accroding to the current schema. We will demostrate how to do this and some examples as below.
+    1. Extract the related expression (Join condition), according to the current schema. We will demonstrate how to do this and some examples as below.
     2. Use the refined expression to accept the SelectExpressionVisitor to make the evaluation.
    
    Thus, the Join Expression Visitor only targets to realize step 1.
@@ -80,3 +80,39 @@
 - **Java doc**  
 __*JoinExpressionVisitor*__ lays in ```src/main/java/util/```, so does __*SelectExpressionVisitor*__.  
 The related comments are added on the related functions.
+
+**3. Select Expression Visitor**
+- **Principles** 
+If we see select expressions as a tree, then they need to be evaluated 
+from the bottom layer up to top, which means previous result would be used 
+in later expressions. Thus, we use stacks to store the results. 
+Since each expression has two sides, left and right. We need to 
+store both left and right results accordingly into the stack. 
+Since results can be int type or boolean type, we have two kind of stacks:
+the first which is int type stores results in data form and the second 
+stores results in boolean form. 
+
+- **Implementation** 
+This is implemented by a Deque<Long> and a Deque<Boolean> in Java.
+
+Using the visitor pattern, 9 visitor methods are overridden which have parameter 
+in AndExpression, Column, LongValue, EqualsTo, NotEqualsTo, GreaterThan, GreaterThanEquals, 
+MinorThan, MinorThanEquals respectively.
+
+Implementation of visit method for Column Expression:
+    get the data in the current tuple of the certain column and push it to data stack.
+   
+Implementation of visit method for Long Expression:
+    just push the long value of the expression to the data stack.
+
+Implementation of Each visit method except for Column and Long expression:
+    1. the left side of the expression accepts the visitor
+    2. the right side of expression accepts the visitor
+    3. get the right result by pop the stack
+    4. get the left result by pop the stack
+    5. push the evaluation of the expression using results of both sides into stack.
+
+- **Java doc**  
+__*SelectExpressionVisitor*__ lays in ```src/main/java/util/```.
+The related Java docs are added on the related functions.
+
