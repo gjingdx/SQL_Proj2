@@ -1,16 +1,19 @@
 package com.sql.interpreter;
 
 import operator.*;
-
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import util.Catalog;
 import util.Constants;
+import util.JoinExpressionVisitor;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Map;
 
 /**
  * Handler class to parse sql, construct query plan and handle initialization
@@ -95,18 +98,20 @@ public class Handler {
         else{
             tableCount = 1 + plainSelect.getJoins().size();
         }
+
         opLeft = new ScanOperator(plainSelect, 0);
-        if(plainSelect.getWhere() != null)
+        if(hasRelatedExpression(opLeft.getSchema(), plainSelect)){
             opLeft = new SelectOperator(opLeft, plainSelect);
+        }
+
         for(int i = 1; i < tableCount; ++i){
             Operator opRight = new ScanOperator(plainSelect, i);
-            if(plainSelect.getWhere() != null)
-                opLeft = new SelectOperator(opLeft, plainSelect);
+            if(hasRelatedExpression(opRight.getSchema(), plainSelect)){
+                opRight = new SelectOperator(opRight, plainSelect);
+            }
             opLeft = new JoinOperator(opLeft, opRight, plainSelect);
         }
-        if(tableCount == 1 && plainSelect.getWhere() != null){
-            opLeft = new SelectOperator(opLeft, plainSelect);
-        }
+
         opLeft = new ProjectOperator(opLeft, plainSelect);
         if(plainSelect.getDistinct() != null){
             opLeft = new SortOperator(opLeft, plainSelect);
@@ -116,5 +121,15 @@ public class Handler {
             opLeft = new SortOperator(opLeft, plainSelect);
         }
         return opLeft;
+    }
+
+    private static boolean hasRelatedExpression(Map<String, Integer> schemaMap, PlainSelect plainSelect){
+        Expression originExpression = plainSelect.getWhere();
+        if(originExpression == null){
+            return false;
+        }
+        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(schemaMap);
+        originExpression.accept(joinExpressionVisitor);
+        return joinExpressionVisitor.getExpression() != null;
     }
 }
