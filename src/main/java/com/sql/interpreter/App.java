@@ -8,20 +8,12 @@ import util.Constants;
  * Run line by line and output the results into seperated files
  */
 public class App {
-
-
     /**
      * Entrance of the project
      * @param args
      */
     public static void main(String[] args) {
-        if (args != null && args.length == 2) {
-            Constants.inputPath = args[0];
-//            Catalog.getInstance().setInputPath(args[0]);
-            Catalog.getInstance().setOutputPath(args[1]);
-
-        }
-        Handler.init();
+        Handler.init(args);
         Handler.parseSql();
-	}
+	  }
 }

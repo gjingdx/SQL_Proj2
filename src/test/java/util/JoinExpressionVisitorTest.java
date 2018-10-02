@@ -36,8 +36,6 @@ public class JoinExpressionVisitorTest{
         Catalog.getInstance().setAliases("Boats");
         Catalog.getInstance().setAliases("Reserves");
 
-        //String whereClause = "Sailors.A = Boats.D And Sailors.A = Reserves.G";
-
         String statement =  "SELECT * FROM Sailors, Reserves, Boats WHERE Sailors.A = Boats.D And Sailors.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
@@ -47,38 +45,7 @@ public class JoinExpressionVisitorTest{
         expr.accept(joinExpress);
         Expression output = joinExpress.getExpression();
         String expectedExpressioin = "Sailors.A = Reserves.G";
-        Assert.assertEquals(output.toString(), expectedExpressioin);
+        Assert.assertEquals(expectedExpressioin, output.toString());
     }
 
-    @Test
-    /*
-    *          select
-    *            |
-    *           join
-    *        /       \
-    *      select    scan
-    *        |  
-    *       join
-    *      /    \
-    *    scan  scan
-    */
-    public void testWhereAndJoin() throws Exception{
-        String statement =  "SELECT * FROM Sailors, Reserves, Boats WHERE Reserves.H = Boats.D And Sailors.A = Reserves.G;";
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-
-        Operator op1 = new ScanOperator(plainSelect, 0);
-        Operator op2 = new ScanOperator(plainSelect, 1);
-        Operator op3 = new JoinOperator(op1, op2, plainSelect);
-        Operator op4 = new SelectOperator(op3, plainSelect);
-
-        Operator op5 = new ScanOperator(plainSelect, 2);
-        Operator op6 = new JoinOperator(op4, op5, plainSelect);
-        Operator op7 = new SelectOperator(op6, plainSelect);
-
-        Tuple tuple = op7.getNextTuple();
-        while(tuple!=null){
-            tuple = op7.getNextTuple();
-        }
-    }
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 import java.io.IOException;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import model.Tuple;
@@ -47,34 +48,6 @@ public class ScanOperator extends Operator{
         initReaderPointer();
 
         Catalog.getInstance().setAliases(item);
-        Catalog.getInstance().updateCurrentSchema(aliasName);
-
-        this.schema = Catalog.getInstance().getCurrentSchema();
-
-    }
-
-    public ScanOperator(Operator op, PlainSelect plainSelect, int tableIndex){
-        this.op = op;
-        String item;
-        if(tableIndex == 0){
-            item = plainSelect.getFromItem().toString();
-        }
-        else{
-            item = plainSelect.getJoins().get(tableIndex-1).toString();
-        }
-
-        String[] strs = item.split("\\s+");
-        if(strs.length < 0){
-            this.file = null;
-            return;
-        }
-        String tableName = strs[0];
-        String aliasName = strs[strs.length - 1];
-        this.file = new File(Catalog.getInstance().getDataPath(tableName));
-        initReaderPointer();
-
-        String fromItem = plainSelect.getFromItem().toString();
-        Catalog.getInstance().setAliases(fromItem);
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
