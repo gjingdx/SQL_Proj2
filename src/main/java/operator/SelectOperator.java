@@ -14,6 +14,11 @@ public class SelectOperator extends Operator{
     private Expression expression;
     private Map<String, Integer> currentSchema;
 
+    /**
+     * Constructor of SelectOperator
+     * @param operator previous (child) operator
+     * @param plainSelect plain sql sentence
+     */
     public SelectOperator(Operator operator, PlainSelect plainSelect) {
         this.prevOp = operator;
         this.currentSchema = operator.getSchema();

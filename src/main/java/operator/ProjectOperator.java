@@ -13,6 +13,11 @@ public class ProjectOperator extends Operator {
     List<SelectItem> selectItems;
     Map<String, Integer> currentSchema;
 
+    /**
+     * Constructor of ProjectOperator
+     * @param operator previous (child) operator
+     * @param plainSelect plain sql sentence
+     */
     public ProjectOperator (Operator operator, PlainSelect plainSelect) {
         prevOp = operator;
         selectItems = plainSelect.getSelectItems();
