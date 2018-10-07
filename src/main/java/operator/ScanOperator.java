@@ -4,11 +4,14 @@ import java.util.Map;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.io.IOException;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import model.Tuple;
 import util.Catalog;
+import util.Constants;
 
 /**
  * ScanOperator
@@ -19,6 +22,10 @@ public class ScanOperator extends Operator{
     private File file;
     private RandomAccessFile readerPointer;
     private Map<String, Integer> schema;
+    private ByteBuffer buffer;
+    private int tupleSize;
+    private int tupleCount;
+    private int tuplePointer;
 
     /**
      * 
@@ -43,14 +50,19 @@ public class ScanOperator extends Operator{
         }
         String tableName = strs[0];
         String aliasName = strs[strs.length - 1];
-        this.file = new File(Catalog.getInstance().getDataPath(tableName));
-        initReaderPointer();
 
         Catalog.getInstance().setAliases(item);
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
 
+        this.file = new File(Catalog.getInstance().getDataPath(tableName));
+        try{
+            this.readerPointer = new RandomAccessFile(this.file, "r");
+        }catch(FileNotFoundException e){
+            System.out.printf("Cannot find file %s!\n", this.file.getName());
+        }
+        readPage();
     }
 
     /**
@@ -62,13 +74,23 @@ public class ScanOperator extends Operator{
         if(this.op != null){
             tuple = this.op.getNextTuple();
         }
-        try{
-            String s = readerPointer.readLine();
-            if(s == null) return tuple;
-            tuple = new Tuple(s);
-        }catch(IOException e){
-            System.out.print("Met error when read line");
+        int [] tupleData = new int[tupleSize];
+        if(tuplePointer >= (2+tupleCount*tupleSize) * Constants.INT_SIZE){
+            readPage();
+            if(buffer == null){
+                try{
+                    readerPointer.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
         }
+        for(int i =0 ; i < tupleSize; ++i){
+            tupleData[i] = buffer.getInt(tuplePointer);
+            tuplePointer += Constants.INT_SIZE;
+        }
+        tuple = new Tuple(tupleData);
         return tuple;
     }
 
@@ -92,11 +114,21 @@ public class ScanOperator extends Operator{
         return this.schema;
     }
 
-    private void initReaderPointer(){
+    private void readPage(){
         try{
-            this.readerPointer = new RandomAccessFile(this.file, "r");
-        }catch(FileNotFoundException e){
-            System.out.printf("Cannot find file %s!\n", this.file.getName());
+            this.buffer = ByteBuffer.allocate(Constants.PAGE_SIZE);
+            FileChannel inChannel = readerPointer.getChannel();
+            int byteRead = inChannel.read(buffer);
+            if(byteRead == -1){
+                this.buffer = null;
+            }
+            if(buffer != null){
+                tupleSize = buffer.getInt(0);
+                tupleCount = buffer.getInt(Constants.INT_SIZE);
+                tuplePointer = 2 * Constants.INT_SIZE;
+            }
+        }catch(IOException e){
+            System.out.printf("Unexpected table file format\n");
         }
     }
 }

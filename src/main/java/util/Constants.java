@@ -11,4 +11,6 @@ public class Constants {
     public static String SCHEMA_PATH = inputPath + "/db/schema.txt";
     public static String OUTPUT_PATH = "Samples/samples/output/";
     public static String SQLQURIES_PATH = inputPath + "/queries.sql";
+    public static final int PAGE_SIZE = 4096;
+    public static final int INT_SIZE = 4;
 }
