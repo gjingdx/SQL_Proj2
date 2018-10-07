@@ -100,7 +100,8 @@ public class ScanOperator extends Operator{
     @Override
     public void reset(){
         try{
-			readerPointer.seek(0);
+            readerPointer.seek(0);
+            readPage();
 		}catch(IOException e){
 			System.out.println("Files not found.");
 		}
