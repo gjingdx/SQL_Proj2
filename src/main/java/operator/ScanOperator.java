@@ -80,7 +80,7 @@ public class ScanOperator extends Operator implements TupleReader{
     @Override
     public void reset(){
         try{
-            readerPointer.seek(0);
+            readerPointer = new RandomAccessFile(this.file, "r");
             readPage();
 		}catch(IOException e){
 			System.out.println("Files not found.");
