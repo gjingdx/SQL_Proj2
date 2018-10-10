@@ -1,4 +1,4 @@
-package operator;
+package logical.operator;
 
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
@@ -19,6 +19,7 @@ public class JoinOperator extends Operator{
     private Map<String, Integer> schema;
     Tuple outerTuple;
     Tuple innerTuple;
+    Expression joinCondition;
 
     /**
      * Init the schema of JoinOperator
@@ -39,6 +40,19 @@ public class JoinOperator extends Operator{
 
         outerTuple = null;
         innerTuple = null;
+
+        Expression expr = plainSelect.getWhere();
+
+        // return cross product if there's no selection
+        if(expr == null){
+            this.joinCondition = null;
+        }
+        // join by join condition
+        else{
+            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
+            expr.accept(joinExpressionVisitor);
+            this.joinCondition = joinExpressionVisitor.getExpression();
+        }
     }
 
     /**
@@ -47,16 +61,6 @@ public class JoinOperator extends Operator{
     @Override
     public Tuple getNextTuple(){
         Tuple next = crossProduction();
-        Expression expr = plainSelect.getWhere();
-
-        // return cross product if there's no selection
-        if(expr == null){
-            return next;
-        }
-        // join by join condition
-        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
-        expr.accept(joinExpressionVisitor);
-        Expression joinCondition = joinExpressionVisitor.getExpression();
         
         while(next != null){
             SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
@@ -118,6 +122,19 @@ public class JoinOperator extends Operator{
         }
         Tuple tuple = new Tuple(newTupleData);
         return tuple;
+    }
+
+    /**
+     * method to get children
+     */
+    @Override
+    public Operator[] getChildren(){
+        if(this.opRight == null || opLeft == null){
+            return null;
+        }
+        else{
+            return new Operator[] {this.opLeft, this.opRight};
+        }
     }
 
 }

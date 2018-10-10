@@ -1,4 +1,4 @@
-package operator;
+package logical.operator;
 
 import java.util.Map;
 import java.io.File;
@@ -137,5 +137,18 @@ public class ScanOperator extends Operator implements TupleReader{
         }
         tuple = new Tuple(tupleData);
         return tuple;
+    }
+
+    /**
+     * method to get children
+     */
+    @Override
+    public Operator[] getChildren(){
+        if(this.op == null){
+            return null;
+        }
+        else{
+            return new Operator[] {this.op};
+        }
     }
 }

@@ -1,4 +1,4 @@
-package operator;
+package logical.operator;
 
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
