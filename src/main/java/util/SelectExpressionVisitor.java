@@ -69,7 +69,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
         String columnName = column.getWholeColumnName();
         // int ind = catalog.getIndexOfColumn(columnName);
         int ind = currentSchema.get(columnName);
-        data.push(currentTuple.getDataAt(ind));
+        data.push(Long.valueOf(currentTuple.getDataAt(ind)));
     }
 
     /**

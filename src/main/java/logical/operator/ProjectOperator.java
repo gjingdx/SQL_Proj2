@@ -1,4 +1,4 @@
-package operator;
+package logical.operator;
 
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -66,5 +66,18 @@ public class ProjectOperator extends Operator {
     @Override
     public Map<String, Integer> getSchema() {
         return currentSchema;
+    }
+
+    /**
+     * method to get children
+     */
+    @Override
+    public Operator[] getChildren(){
+        if(this.prevOp == null){
+            return null;
+        }
+        else{
+            return new Operator[] {this.prevOp};
+        }
     }
 }

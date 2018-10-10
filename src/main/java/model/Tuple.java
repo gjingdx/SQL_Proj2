@@ -40,9 +40,9 @@ public class Tuple {
     /**
      * Get data by index
      * @param index
-     * @return long
+     * @return int
      */
-    public long getDataAt(int index){
+    public int getDataAt(int index){
         return data[index];
     }
 
