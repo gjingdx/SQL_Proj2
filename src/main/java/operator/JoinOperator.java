@@ -13,8 +13,8 @@ import java.util.Map;
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class JoinOperator extends Operator{
-    private Operator opLeft, opRight;
+public class JoinOperator extends PhysicalOperator {
+    private PhysicalOperator opLeft, opRight;
     private PlainSelect plainSelect;
     private Map<String, Integer> schema;
     Tuple outerTuple;
@@ -26,7 +26,7 @@ public class JoinOperator extends Operator{
      * @param opRight last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public JoinOperator(Operator opLeft, Operator opRight, PlainSelect plainSelect){
+    public JoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect){
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.plainSelect = plainSelect;

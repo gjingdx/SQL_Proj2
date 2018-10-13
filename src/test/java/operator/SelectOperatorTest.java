@@ -15,9 +15,9 @@ public class SelectOperatorTest {
         String statement = "SELECT * FROM Boats AS BT WHERE BT.E = 2;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator scanOp = new ScanOperator(plainSelect, 0);
+        PhysicalOperator scanOp = new ScanOperator(plainSelect, 0);
 
-        Operator selectOp = new SelectOperator(scanOp, plainSelect);
+        PhysicalOperator selectOp = new SelectOperator(scanOp, plainSelect);
 
         Tuple tuple = selectOp.getNextTuple();
         while(tuple != null){

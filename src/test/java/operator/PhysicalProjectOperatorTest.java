@@ -9,7 +9,7 @@ import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
-public class ProjectOperatorTest {
+public class PhysicalProjectOperatorTest {
 
     @Test
     public void getNextTuple() throws Exception {
@@ -17,9 +17,9 @@ public class ProjectOperatorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
-        Operator scanOp = new ScanOperator(plainSelect, 0);
-        Operator selectOp = new SelectOperator(scanOp, plainSelect);
-        Operator projectOp = new ProjectOperator(selectOp, plainSelect);
+        PhysicalOperator scanOp = new ScanOperator(plainSelect, 0);
+        PhysicalOperator selectOp = new SelectOperator(scanOp, plainSelect);
+        PhysicalOperator projectOp = new PhysicalProjectOperator(selectOp, plainSelect);
         Tuple tuple = projectOp.getNextTuple();
         while(tuple != null){
             assertEquals(9, tuple.getDataAt(1));
@@ -41,9 +41,9 @@ public class ProjectOperatorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
-        Operator scanOp = new ScanOperator(plainSelect, 0);
-        Operator selectOp = new SelectOperator(scanOp, plainSelect);
-        Operator projectOp = new ProjectOperator(selectOp, plainSelect);
+        PhysicalOperator scanOp = new ScanOperator(plainSelect, 0);
+        PhysicalOperator selectOp = new SelectOperator(scanOp, plainSelect);
+        PhysicalOperator projectOp = new PhysicalProjectOperator(selectOp, plainSelect);
         System.out.println(projectOp.getSchema());
     }
 }

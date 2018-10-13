@@ -10,7 +10,7 @@ import java.util.Map;
  * Distinct operator
  * Created by Yufu Mo
  */
-public class DuplicateEliminationOperator extends Operator{
+public class DuplicateEliminationOperator extends PhysicalOperator {
 
     // stores tuples
     private List<Tuple> tupleList;
@@ -22,7 +22,7 @@ public class DuplicateEliminationOperator extends Operator{
      * Eliminate duplicates with a sorted list.
      * @param operator assuming it's sort operator
      */
-    public DuplicateEliminationOperator(Operator operator) {
+    public DuplicateEliminationOperator(PhysicalOperator operator) {
         currentIndex = 0;
         this.schema = operator.getSchema();
         this.tupleList = new ArrayList<>();

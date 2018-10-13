@@ -1,5 +1,6 @@
 package logical.operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
@@ -9,17 +10,17 @@ import java.util.Map;
 
 public class ProjectOperator extends Operator {
 
-    Operator prevOp;
-    List<SelectItem> selectItems;
-    Map<String, Integer> currentSchema;
+    private Operator prevOp;
+    private List<SelectItem> selectItems;
+    private Map<String, Integer> currentSchema;
 
     /**
-     * Constructor of ProjectOperator
+     * Constructor of PhysicalProjectOperator
      * @param operator previous (child) operator
      * @param plainSelect plain sql sentence
      */
     @SuppressWarnings("unchecked")
-	public ProjectOperator (Operator operator, PlainSelect plainSelect) {
+	public ProjectOperator(Operator operator, PlainSelect plainSelect) {
         prevOp = operator;
         selectItems = plainSelect.getSelectItems();
         // yet did not handle cases: select A,D from S, B
@@ -79,5 +80,15 @@ public class ProjectOperator extends Operator {
         else{
             return new Operator[] {this.prevOp};
         }
+    }
+
+
+    /**
+     *
+     * @param visitor PhysicalPlanBuilder visitor to be accepted.
+     */
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,5 +1,6 @@
 package logical.operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.Tuple;
 
 import java.util.ArrayList;
@@ -86,5 +87,10 @@ public class DuplicateEliminationOperator extends Operator{
         else{
             return new Operator[] {this.op};
         }
+    }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+
     }
 }

@@ -15,9 +15,9 @@ public class SortOperatorTest {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator op = new ScanOperator(plainSelect, 0);
+        PhysicalOperator op = new ScanOperator(plainSelect, 0);
 
-        Operator sortOp = new SortOperator(op, plainSelect);
+        PhysicalOperator sortOp = new SortOperator(op, plainSelect);
         Tuple tuple = sortOp.getNextTuple();
         long last = Long.MIN_VALUE;
         while(tuple != null){
@@ -32,8 +32,8 @@ public class SortOperatorTest {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator op = new ScanOperator(plainSelect, 0);
-        Operator sortOp = new SortOperator(op, plainSelect);
+        PhysicalOperator op = new ScanOperator(plainSelect, 0);
+        PhysicalOperator sortOp = new SortOperator(op, plainSelect);
         sortOp.dump(0);
     }
 }

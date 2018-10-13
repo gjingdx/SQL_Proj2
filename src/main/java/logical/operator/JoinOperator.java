@@ -1,5 +1,6 @@
 package logical.operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -135,6 +136,11 @@ public class JoinOperator extends Operator{
         else{
             return new Operator[] {this.opLeft, this.opRight};
         }
+    }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+
     }
 
 }

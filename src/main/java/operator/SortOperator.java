@@ -13,7 +13,7 @@ import java.util.Map;
  * SortOperator
  * created by Yufu Mo
  */
-public class SortOperator extends Operator{
+public class SortOperator extends PhysicalOperator {
 
     // stores tuples
     private List<Tuple> tupleList;
@@ -27,7 +27,7 @@ public class SortOperator extends Operator{
      * @param operator
      * @param plainSelect
      */
-    public SortOperator(Operator operator, PlainSelect plainSelect) {
+    public SortOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         tupleList = new ArrayList<>();
         this.plainSelect = plainSelect;
         this.schema = operator.getSchema();

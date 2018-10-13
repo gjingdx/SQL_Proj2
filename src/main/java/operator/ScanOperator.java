@@ -18,8 +18,8 @@ import util.Constants;
  * ScanOperator
  * Read the table from disk and fetch a tuple
  */
-public class ScanOperator extends Operator implements TupleReader{
-    private Operator op;
+public class ScanOperator extends PhysicalOperator implements TupleReader{
+    private PhysicalOperator op;
     private File file;
     private RandomAccessFile readerPointer;
     private Map<String, Integer> schema;

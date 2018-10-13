@@ -8,9 +8,9 @@ import util.JoinExpressionVisitor;
 
 import java.util.Map;
 
-public class SelectOperator extends Operator{
+public class SelectOperator extends PhysicalOperator {
 
-    private Operator prevOp;
+    private PhysicalOperator prevOp;
     private Expression expression;
     private Map<String, Integer> currentSchema;
 
@@ -19,7 +19,7 @@ public class SelectOperator extends Operator{
      * @param operator previous (child) operator
      * @param plainSelect plain sql sentence
      */
-    public SelectOperator(Operator operator, PlainSelect plainSelect) {
+    public SelectOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         this.prevOp = operator;
         this.currentSchema = operator.getSchema();
         this.expression = plainSelect.getWhere();
@@ -30,7 +30,7 @@ public class SelectOperator extends Operator{
     }
 
     /**
-     * @return the next tuple filtered by the Select Operator
+     * @return the next tuple filtered by the Select PhysicalOperator
      */
     @Override
     public Tuple getNextTuple() {

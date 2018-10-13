@@ -19,9 +19,9 @@ public class JoinOperatorTest{
         String statement = "SELECT * FROM Sailors, Reserves, Boats Where Boats.D = Reserves.H and Sailors.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator op1 = new ScanOperator(plainSelect, 0);
-        Operator op2 = new ScanOperator(plainSelect, 1);
-        Operator opJoin = new JoinOperator(op1, op2, plainSelect);
+        PhysicalOperator op1 = new ScanOperator(plainSelect, 0);
+        PhysicalOperator op2 = new ScanOperator(plainSelect, 1);
+        PhysicalOperator opJoin = new JoinOperator(op1, op2, plainSelect);
         Tuple tuple;
         ArrayList<String> expectedResult = new ArrayList<>(Arrays.asList(
             "1,200,50,1,101",

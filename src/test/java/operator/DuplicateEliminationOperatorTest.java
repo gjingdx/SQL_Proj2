@@ -16,10 +16,10 @@ public class DuplicateEliminationOperatorTest {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator op = new ScanOperator(plainSelect, 0);
+        PhysicalOperator op = new ScanOperator(plainSelect, 0);
 
-        Operator sortOp = new SortOperator(op, plainSelect);
-        Operator dupOp = new DuplicateEliminationOperator(sortOp);
+        PhysicalOperator sortOp = new SortOperator(op, plainSelect);
+        PhysicalOperator dupOp = new DuplicateEliminationOperator(sortOp);
 
         Tuple tuple = dupOp.getNextTuple();
         Tuple last = new Tuple(new int[0]);

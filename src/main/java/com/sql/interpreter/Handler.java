@@ -67,7 +67,7 @@ public class Handler {
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 System.out.println("Select body is " + select.getSelectBody());
-                Operator operator = constructQueryPlan(plainSelect);
+                PhysicalOperator operator = constructQueryPlan(plainSelect);
                 operator.dump(ind);
                 ind++;
             }
@@ -95,9 +95,9 @@ public class Handler {
     * @param plainSelect
     * @return
     */
-    public static Operator constructQueryPlan(PlainSelect plainSelect){
+    public static PhysicalOperator constructQueryPlan(PlainSelect plainSelect){
         int tableCount;
-        Operator opLeft;
+        PhysicalOperator opLeft;
         if(plainSelect.getJoins() == null){
             tableCount = 1;
         }
@@ -111,7 +111,7 @@ public class Handler {
         }
 
         for(int i = 1; i < tableCount; ++i){
-            Operator opRight = new ScanOperator(plainSelect, i);
+            PhysicalOperator opRight = new ScanOperator(plainSelect, i);
             if(hasRelatedExpression(opRight.getSchema(), plainSelect)){
                 opRight = new SelectOperator(opRight, plainSelect);
             }
@@ -120,7 +120,7 @@ public class Handler {
         if(plainSelect.getSelectItems() != null 
         		&& plainSelect.getSelectItems().size() > 0 
         		&& plainSelect.getSelectItems().get(0) != "*")
-        	opLeft = new ProjectOperator(opLeft, plainSelect);
+        	opLeft = new PhysicalProjectOperator(opLeft, plainSelect);
         if(plainSelect.getDistinct() != null){
             opLeft = new SortOperator(opLeft, plainSelect);
             opLeft = new DuplicateEliminationOperator(opLeft);

@@ -7,19 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProjectOperator extends Operator {
+public class PhysicalProjectOperator extends PhysicalOperator {
 
-    Operator prevOp;
+    PhysicalOperator prevOp;
     List<SelectItem> selectItems;
     Map<String, Integer> currentSchema;
 
     /**
-     * Constructor of ProjectOperator
+     * Constructor of PhysicalProjectOperator
      * @param operator previous (child) operator
      * @param plainSelect plain sql sentence
      */
     @SuppressWarnings("unchecked")
-	public ProjectOperator (Operator operator, PlainSelect plainSelect) {
+	public PhysicalProjectOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         prevOp = operator;
         selectItems = plainSelect.getSelectItems();
         // yet did not handle cases: select A,D from S, B

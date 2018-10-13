@@ -1,5 +1,6 @@
 package operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.Tuple;
 import util.Catalog;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  * Abstract class for operator
  * Created by Yufu Mo
  */
-public abstract class Operator {
+public abstract class PhysicalOperator {
 
     /**
      * get the next tuple of the operator's output
@@ -58,5 +59,13 @@ public abstract class Operator {
      * @return the current schema of the operator
      */
     public abstract Map<String, Integer> getSchema();
+
+
+    /**
+     * Abstract method for accepting PhysicalPlanBuilder visitor,
+     * in which the visitor would visit the operator
+     * @param visitor PhysicalPlanBuilder visitor to be accepted.
+     */
+    public abstract void accept(PhysicalPlanBuilder visitor);
 
 }

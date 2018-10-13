@@ -20,7 +20,7 @@ public class ScanOperatorTest{
         String statement = "SELECT * FROM Sailors, Reserves WHERE Sailors.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator op = new ScanOperator(plainSelect, 0);
+        PhysicalOperator op = new ScanOperator(plainSelect, 0);
         // read expected result from disk
         ArrayList<String> expectedResult = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(Constants.DATA_PATH + "Sailors_humanreadable"));
