@@ -1,5 +1,7 @@
 package model;
 
+import java.nio.ByteBuffer;
+
 public interface TupleWriter{
-    Tuple readNextTuple();
+    boolean writeNextTuple(BufferStateWrapper bufferStateWrapper);
 }
