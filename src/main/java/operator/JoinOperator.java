@@ -14,9 +14,9 @@ import java.util.Map;
  * then execute cross production of the two tuples
  */
 public class JoinOperator extends Operator{
-    private Operator opLeft, opRight;
-    private PlainSelect plainSelect;
-    private Map<String, Integer> schema;
+    protected Operator opLeft, opRight;
+    protected PlainSelect plainSelect;
+    protected Map<String, Integer> schema;
     Tuple outerTuple;
     Tuple innerTuple;
 
@@ -90,7 +90,7 @@ public class JoinOperator extends Operator{
      * implement cross production
      * @return result tuple
      */
-    private Tuple crossProduction(){
+    protected Tuple crossProduction(){
         // update outer tuple and inner tuple
         if(outerTuple == null && innerTuple == null){
             outerTuple = opLeft.getNextTuple();

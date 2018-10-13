@@ -1,11 +1,11 @@
-package logical.operator;
+package operator;
 
 import model.Tuple;
+import model.Block;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,46 +13,17 @@ import java.util.Map;
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class JoinOperator extends Operator{
-    private Operator opLeft, opRight;
-    private PlainSelect plainSelect;
-    private Map<String, Integer> schema;
-    Tuple outerTuple;
-    Tuple innerTuple;
-    Expression joinCondition;
-
+public class BlockJoinOperator extends JoinOperator{
+    Block block;
     /**
      * Init the schema of JoinOperator
      * @param opLeft last operator of outer tuple
      * @param opRight last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public JoinOperator(Operator opLeft, Operator opRight, PlainSelect plainSelect){
-        this.opLeft = opLeft;
-        this.opRight = opRight;
-        this.plainSelect = plainSelect;
-        this.schema = new HashMap<>();
-        schema.putAll(opLeft.getSchema());
-        for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
-            schema.put(entry.getKey(), entry.getValue() + opLeft.getSchema().size());
-        }
-        Catalog.getInstance().setCurrentSchema(schema);
-
-        outerTuple = null;
-        innerTuple = null;
-
-        Expression expr = this.plainSelect.getWhere();
-
-        // return cross product if there's no selection
-        if(expr == null){
-            this.joinCondition = null;
-        }
-        // join by join condition
-        else{
-            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
-            expr.accept(joinExpressionVisitor);
-            this.joinCondition = joinExpressionVisitor.getExpression();
-        }
+    public BlockJoinOperator(Operator opLeft, Operator opRight, PlainSelect plainSelect, int blockSize){
+        super(opLeft, opRight, plainSelect);
+        this.block = new Block(blockSize, opLeft.getSchema().size());
     }
 
     /**
@@ -61,6 +32,16 @@ public class JoinOperator extends Operator{
     @Override
     public Tuple getNextTuple(){
         Tuple next = crossProduction();
+        Expression expr = plainSelect.getWhere();
+
+        // return cross product if there's no selection
+        if(expr == null){
+            return next;
+        }
+        // join by join condition
+        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
+        expr.accept(joinExpressionVisitor);
+        Expression joinCondition = joinExpressionVisitor.getExpression();
         
         while(next != null){
             SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
@@ -94,21 +75,38 @@ public class JoinOperator extends Operator{
      * implement cross production
      * @return result tuple
      */
-    private Tuple crossProduction(){
-        // update outer tuple and inner tuple
+    @Override
+    protected Tuple crossProduction(){
+        // import outer pages into the block
+        if(block.isAllNull()){
+            loadOuterTupleIntoBlock();
+            // all outer pages are read
+            if(block.isAllNull()){
+                return null;
+            }
+        }
+
         if(outerTuple == null && innerTuple == null){
-            outerTuple = opLeft.getNextTuple();
+            outerTuple = block.readNextTuple();
             innerTuple = opRight.getNextTuple();
         }
         else{
             innerTuple = opRight.getNextTuple();
             if(innerTuple == null){
                 opRight.reset();
-                outerTuple = opLeft.getNextTuple();
+                outerTuple = block.readNextTuple();
                 innerTuple = opRight.getNextTuple();
             }
         }
-        if(innerTuple == null || outerTuple == null){
+        if(outerTuple == null){
+            block.clearData();
+            loadOuterTupleIntoBlock();
+            if(block.isAllNull()){
+                return null;
+            }
+            outerTuple = block.readNextTuple();
+        }
+        if(outerTuple == null || innerTuple == null){
             return null;
         }
 
@@ -124,16 +122,12 @@ public class JoinOperator extends Operator{
         return tuple;
     }
 
-    /**
-     * method to get children
-     */
-    @Override
-    public Operator[] getChildren(){
-        if(this.opRight == null || opLeft == null){
-            return null;
-        }
-        else{
-            return new Operator[] {this.opLeft, this.opRight};
+    private void loadOuterTupleIntoBlock(){
+        Tuple leftTuple;
+        while((leftTuple = opLeft.getNextTuple()) != null){
+            if(!block.setNextTuple(leftTuple)){
+                break;
+            }
         }
     }
 
