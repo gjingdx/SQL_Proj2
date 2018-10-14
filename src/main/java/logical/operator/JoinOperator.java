@@ -42,7 +42,7 @@ public class JoinOperator extends Operator{
         outerTuple = null;
         innerTuple = null;
 
-        Expression expr = plainSelect.getWhere();
+        Expression expr = this.plainSelect.getWhere();
 
         // return cross product if there's no selection
         if(expr == null){

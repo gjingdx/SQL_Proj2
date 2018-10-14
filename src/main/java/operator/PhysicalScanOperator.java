@@ -116,6 +116,8 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
             FileChannel inChannel = readerPointer.getChannel();
             int byteRead = inChannel.read(bufferPage);
             if(byteRead == -1){
+                this.tupleCount = 0;
+                this.tupleSize = 0;
                 this.bufferPage = null;
             }
             if(bufferPage != null){
@@ -133,6 +135,9 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
         Tuple tuple = null;
         if(this.op != null){
             tuple = this.op.getNextTuple();
+        }
+        if(this.tupleCount <= 0){
+            return null;
         }
         int [] tupleData = new int[tupleSize];
         if(tuplePointer >= (2+tupleCount*tupleSize) * Constants.INT_SIZE){

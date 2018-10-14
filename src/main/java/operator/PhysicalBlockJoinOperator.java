@@ -1,64 +1,29 @@
 package operator;
 
-import logical.operator.JoinOperator;
 import model.Tuple;
+import model.Block;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.*;
 
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * PhysicalJoinOperator
+ * JoinOperator
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class PhysicalJoinOperator extends PhysicalOperator {
-    protected PhysicalOperator opLeft, opRight;
-
-    //private Deque<PhysicalOperator> physOpChildren;
-    protected PlainSelect plainSelect;
-    protected Map<String, Integer> schema;
-    protected Tuple outerTuple;
-    protected Tuple innerTuple;
-
+public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
+    Block block;
     /**
-     * Init the schema of PhysicalJoinOperator
+     * Init the schema of JoinOperator
      * @param opLeft last operator of outer tuple
      * @param opRight last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect){
-        this.opLeft = opLeft;
-        this.opRight = opRight;
-        this.plainSelect = plainSelect;
-        this.schema = new HashMap<>();
-        schema.putAll(opLeft.getSchema());
-        for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
-            schema.put(entry.getKey(), entry.getValue() + opLeft.getSchema().size());
-        }
-        Catalog.getInstance().setCurrentSchema(schema);
-
-        outerTuple = null;
-        innerTuple = null;
-    }
-
-    public PhysicalJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren) {
-        //this.physOpChildren = physOpChildren;
-        this.opRight = physOpChildren.pop();
-        this.opLeft = physOpChildren.pop();
-        this.plainSelect = logicalJoinOp.getPlainSelect();
-        this.schema = new HashMap<>();
-        schema.putAll(opLeft.getSchema());
-        for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
-            schema.put(entry.getKey(), entry.getValue() + opLeft.getSchema().size());
-        }
-        Catalog.getInstance().setCurrentSchema(schema);
-
-        outerTuple = null;
-        innerTuple = null;
+    public PhysicalBlockJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect, int blockSize){
+        super(opLeft, opRight, plainSelect);
+        this.block = new Block(blockSize, opLeft.getSchema().size());
     }
 
     /**
@@ -110,21 +75,38 @@ public class PhysicalJoinOperator extends PhysicalOperator {
      * implement cross production
      * @return result tuple
      */
+    @Override
     protected Tuple crossProduction(){
-        // update outer tuple and inner tuple
+        // import outer pages into the block
+        if(block.isAllNull()){
+            loadOuterTupleIntoBlock();
+            // all outer pages are read
+            if(block.isAllNull()){
+                return null;
+            }
+        }
+
         if(outerTuple == null && innerTuple == null){
-            outerTuple = opLeft.getNextTuple();
+            outerTuple = block.readNextTuple();
             innerTuple = opRight.getNextTuple();
         }
         else{
             innerTuple = opRight.getNextTuple();
             if(innerTuple == null){
                 opRight.reset();
-                outerTuple = opLeft.getNextTuple();
+                outerTuple = block.readNextTuple();
                 innerTuple = opRight.getNextTuple();
             }
         }
-        if(innerTuple == null || outerTuple == null){
+        if(outerTuple == null){
+            block.clearData();
+            loadOuterTupleIntoBlock();
+            if(block.isAllNull()){
+                return null;
+            }
+            outerTuple = block.readNextTuple();
+        }
+        if(outerTuple == null || innerTuple == null){
             return null;
         }
 
@@ -138,6 +120,15 @@ public class PhysicalJoinOperator extends PhysicalOperator {
         }
         Tuple tuple = new Tuple(newTupleData);
         return tuple;
+    }
+
+    private void loadOuterTupleIntoBlock(){
+        Tuple leftTuple;
+        while((leftTuple = opLeft.getNextTuple()) != null){
+            if(!block.setNextTuple(leftTuple)){
+                break;
+            }
+        }
     }
 
 }
