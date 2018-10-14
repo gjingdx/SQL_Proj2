@@ -13,7 +13,7 @@ import java.util.Map;
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class BlockJoinOperator extends JoinOperator{
+public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
     Block block;
     /**
      * Init the schema of JoinOperator
@@ -21,7 +21,7 @@ public class BlockJoinOperator extends JoinOperator{
      * @param opRight last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public BlockJoinOperator(Operator opLeft, Operator opRight, PlainSelect plainSelect, int blockSize){
+    public PhysicalBlockJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect, int blockSize){
         super(opLeft, opRight, plainSelect);
         this.block = new Block(blockSize, opLeft.getSchema().size());
     }

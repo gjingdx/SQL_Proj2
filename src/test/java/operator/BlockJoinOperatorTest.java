@@ -17,13 +17,13 @@ public class BlockJoinOperatorTest{
         String statement = "SELECT * FROM Sailors, Reserves, Boats Where Boats.D = Reserves.H and Sailors.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator op1 = new ScanOperator(plainSelect, 0);
-        Operator op2 = new ScanOperator(plainSelect, 1);
-        Operator opBlockJoin = new BlockJoinOperator(op1, op2, plainSelect, 2);
+        PhysicalOperator op1 = new PhysicalScanOperator(plainSelect, 0);
+        PhysicalOperator op2 = new PhysicalScanOperator(plainSelect, 1);
+        PhysicalOperator opBlockJoin = new PhysicalBlockJoinOperator(op1, op2, plainSelect, 2);
 
-        Operator op3 = new ScanOperator(plainSelect, 0);
-        Operator op4 = new ScanOperator(plainSelect, 1);
-        Operator opJoin = new JoinOperator(op3, op4, plainSelect);
+        PhysicalOperator op3 = new PhysicalScanOperator(plainSelect, 0);
+        PhysicalOperator op4 = new PhysicalScanOperator(plainSelect, 1);
+        PhysicalOperator opJoin = new PhysicalJoinOperator(op3, op4, plainSelect);
         Tuple tuple, tuple2;
         while((tuple = opBlockJoin.getNextTuple()) !=null 
             )

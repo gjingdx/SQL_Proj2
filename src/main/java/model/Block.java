@@ -12,6 +12,7 @@ public class Block{
         this.blockSize = blockSize;
         outerBlock = new Tuple[this.blockSize * (Constants.PAGE_SIZE / (tupleSize * Constants.INT_SIZE))];
         initIndex();
+        
     }
 
     public void resetOuterBlockSize(int tupleSize){

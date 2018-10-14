@@ -18,6 +18,13 @@ public class BufferStateWrapper {
         tupleCount = 0;
     }
 
+    public BufferStateWrapper(int tupleSize) {
+        this.index = 2 * Constants.INT_SIZE;
+        this.byteBuffer = ByteBuffer.allocate(Constants.PAGE_SIZE);
+        this.tupleSize = tupleSize;
+        tupleCount = 0;
+    }
+
     public void putInt(int data) {
         byteBuffer.putInt(index, data);
         index += Constants.INT_SIZE;
