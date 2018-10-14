@@ -1,5 +1,8 @@
 package operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
+import logical.operator.ScanOperator;
+import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -9,21 +12,23 @@ import static org.junit.Assert.*;
 import java.io.StringReader;
 
 
-public class SortOperatorTest {
+public class PhysicalSortOperatorTest {
     @Test
     public void getNextTuple() throws Exception {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        PhysicalOperator op = new ScanOperator(plainSelect, 0);
-
-        PhysicalOperator sortOp = new SortOperator(op, plainSelect);
-        Tuple tuple = sortOp.getNextTuple();
+        ScanOperator logScanOp = new ScanOperator(plainSelect, 0);
+        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+        physPB.visit(logScanOp);
+        SortOperator logSortOp = new SortOperator(logScanOp, plainSelect);
+        PhysicalOperator physSortOp = new PhysicalSortOperator(logSortOp, physPB.getPhysOpChildren());
+        Tuple tuple = physSortOp.getNextTuple();
         long last = Long.MIN_VALUE;
         while(tuple != null){
             long cur = tuple.getDataAt(2);
             assertEquals(true, last <= cur);
-            tuple = sortOp.getNextTuple();
+            tuple = physSortOp.getNextTuple();
         }
     }
 
@@ -32,8 +37,8 @@ public class SortOperatorTest {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        PhysicalOperator op = new ScanOperator(plainSelect, 0);
-        PhysicalOperator sortOp = new SortOperator(op, plainSelect);
+        PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
+        PhysicalOperator sortOp = new PhysicalSortOperator(op, plainSelect);
         sortOp.dump(0);
     }
 }

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JoinOperator
+ * PhysicalJoinOperator
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
@@ -23,7 +23,7 @@ public class JoinOperator extends Operator{
     Expression joinCondition;
 
     /**
-     * Init the schema of JoinOperator
+     * Init the schema of PhysicalJoinOperator
      * @param opLeft last operator of outer tuple
      * @param opRight last operator of inner tuple
      * @param plainSelect unused temporally
@@ -138,9 +138,21 @@ public class JoinOperator extends Operator{
         }
     }
 
+    public PlainSelect getPlainSelect() {
+        return plainSelect;
+    }
+
+    public Tuple getOuterTuple() {
+        return outerTuple;
+    }
+
+    public Tuple getInnerTuple() {
+        return innerTuple;
+    }
+
     @Override
     public void accept(PhysicalPlanBuilder visitor) {
-
+        visitor.visit(this);
     }
 
 }

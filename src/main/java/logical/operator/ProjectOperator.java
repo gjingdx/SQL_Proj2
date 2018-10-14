@@ -82,13 +82,16 @@ public class ProjectOperator extends Operator {
         }
     }
 
+    public List<SelectItem> getSelectItems() {
+        return selectItems;
+    }
 
     /**
-     *
+     * Abstract method for accepting PhysicalPlanBuilder visitor,
+     * in which the visitor would visit the operator
      * @param visitor PhysicalPlanBuilder visitor to be accepted.
      */
-    @Override
-    public void accept(PhysicalPlanBuilder visitor) {
+    public void accept(PhysicalPlanBuilder visitor){
         visitor.visit(this);
     }
 }

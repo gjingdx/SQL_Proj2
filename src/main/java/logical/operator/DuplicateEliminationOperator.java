@@ -91,6 +91,7 @@ public class DuplicateEliminationOperator extends Operator{
 
     @Override
     public void accept(PhysicalPlanBuilder visitor) {
-
+        visitor.visit(this);
     }
+
 }

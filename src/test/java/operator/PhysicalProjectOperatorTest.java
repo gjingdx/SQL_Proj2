@@ -1,5 +1,10 @@
 package operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
+import logical.operator.Operator;
+import logical.operator.ProjectOperator;
+import logical.operator.ScanOperator;
+import logical.operator.SelectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -17,13 +22,19 @@ public class PhysicalProjectOperatorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
-        PhysicalOperator scanOp = new ScanOperator(plainSelect, 0);
-        PhysicalOperator selectOp = new SelectOperator(scanOp, plainSelect);
-        PhysicalOperator projectOp = new PhysicalProjectOperator(selectOp, plainSelect);
-        Tuple tuple = projectOp.getNextTuple();
+        Operator scanOp = new ScanOperator(plainSelect, 0);
+        SelectOperator selectOp = new SelectOperator(scanOp, plainSelect);
+        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+        physPB.visit(selectOp);
+        ProjectOperator projectOp = new ProjectOperator(selectOp, plainSelect);
+
+        PhysicalOperator physProjOp = new PhysicalProjectOperator(projectOp, physPB.getPhysOpChildren());
+
+        Tuple tuple = physProjOp.getNextTuple();
         while(tuple != null){
-            assertEquals(9, tuple.getDataAt(1));
-            tuple = selectOp.getNextTuple();
+            assertEquals(9, tuple.getDataAt(0));
+            System.out.println(tuple.getDataAt(0));
+            tuple = physProjOp.getNextTuple();
         }
     }
 
@@ -41,8 +52,8 @@ public class PhysicalProjectOperatorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
-        PhysicalOperator scanOp = new ScanOperator(plainSelect, 0);
-        PhysicalOperator selectOp = new SelectOperator(scanOp, plainSelect);
+        PhysicalOperator scanOp = new PhysicalScanOperator(plainSelect, 0);
+        PhysicalOperator selectOp = new PhysicalSelectOperator(scanOp, plainSelect);
         PhysicalOperator projectOp = new PhysicalProjectOperator(selectOp, plainSelect);
         System.out.println(projectOp.getSchema());
     }

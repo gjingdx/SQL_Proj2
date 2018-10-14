@@ -4,7 +4,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.*;
 import operator.PhysicalOperator;
-import operator.ScanOperator;
+import operator.PhysicalScanOperator;
 import model.Tuple;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();
@@ -71,7 +71,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();
@@ -111,7 +111,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();
@@ -151,7 +151,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();
@@ -192,7 +192,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();
@@ -232,7 +232,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();
@@ -272,7 +272,7 @@ public class SelectExpressionVisitorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         try{
             PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-            PhysicalOperator op = new ScanOperator(plainSelect, 0);
+            PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
             Catalog catalog = Catalog.getInstance();
             System.out.println(catalog.getCurrentSchema());
             Tuple currentTuple = op.getNextTuple();

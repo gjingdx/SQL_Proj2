@@ -105,29 +105,29 @@ public class Handler {
             tableCount = 1 + plainSelect.getJoins().size();
         }
 
-        opLeft = new ScanOperator(plainSelect, 0);
+        opLeft = new PhysicalScanOperator(plainSelect, 0);
         if(hasRelatedExpression(opLeft.getSchema(), plainSelect)){
-            opLeft = new SelectOperator(opLeft, plainSelect);
+            opLeft = new PhysicalSelectOperator(opLeft, plainSelect);
         }
 
         for(int i = 1; i < tableCount; ++i){
-            PhysicalOperator opRight = new ScanOperator(plainSelect, i);
+            PhysicalOperator opRight = new PhysicalScanOperator(plainSelect, i);
             if(hasRelatedExpression(opRight.getSchema(), plainSelect)){
-                opRight = new SelectOperator(opRight, plainSelect);
+                opRight = new PhysicalSelectOperator(opRight, plainSelect);
             }
-            opLeft = new JoinOperator(opLeft, opRight, plainSelect);
+            opLeft = new PhysicalJoinOperator(opLeft, opRight, plainSelect);
         }
         if(plainSelect.getSelectItems() != null 
         		&& plainSelect.getSelectItems().size() > 0 
         		&& plainSelect.getSelectItems().get(0) != "*")
         	opLeft = new PhysicalProjectOperator(opLeft, plainSelect);
         if(plainSelect.getDistinct() != null){
-            opLeft = new SortOperator(opLeft, plainSelect);
-            opLeft = new DuplicateEliminationOperator(opLeft);
+            opLeft = new PhysicalSortOperator(opLeft, plainSelect);
+            opLeft = new PhysicalDuplicateEliminationOperator(opLeft);
         }
         else {
             if(plainSelect.getOrderByElements() != null)
-                opLeft = new SortOperator(opLeft, plainSelect);
+                opLeft = new PhysicalSortOperator(opLeft, plainSelect);
         }
         return opLeft;
     }

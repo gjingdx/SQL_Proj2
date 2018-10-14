@@ -86,6 +86,14 @@ public class SortOperator extends Operator{
         return tupleList;
     }
 
+    public PlainSelect getPlainSelect() {
+        return plainSelect;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
     /**
      * comparator to sort tuples
      */
@@ -137,6 +145,11 @@ public class SortOperator extends Operator{
         else{
             return new Operator[] {this.operator};
         }
+    }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
     }
 
 }

@@ -1,29 +1,41 @@
 package operator;
 
+import logical.operator.SelectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.SelectExpressionVisitor;
 import util.JoinExpressionVisitor;
 
+import java.util.Deque;
 import java.util.Map;
 
-public class SelectOperator extends PhysicalOperator {
+public class PhysicalSelectOperator extends PhysicalOperator {
 
     private PhysicalOperator prevOp;
     private Expression expression;
     private Map<String, Integer> currentSchema;
 
     /**
-     * Constructor of SelectOperator
+     * Constructor of PhysicalSelectOperator
      * @param operator previous (child) operator
      * @param plainSelect plain sql sentence
      */
-    public SelectOperator(PhysicalOperator operator, PlainSelect plainSelect) {
+    public PhysicalSelectOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         this.prevOp = operator;
         this.currentSchema = operator.getSchema();
         this.expression = plainSelect.getWhere();
         
+        JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
+        expression.accept(joinExpress);
+        expression = joinExpress.getExpression();
+    }
+
+    public PhysicalSelectOperator(SelectOperator logSelectOp, Deque<PhysicalOperator> physOpChildren) {
+        this.prevOp = physOpChildren.pop();
+        this.expression = logSelectOp.getExpression();
+        this.currentSchema = logSelectOp.getSchema();
+
         JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
         expression.accept(joinExpress);
         expression = joinExpress.getExpression();

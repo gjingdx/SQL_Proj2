@@ -1,15 +1,21 @@
 package operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
+import logical.operator.Operator;
+import logical.operator.ProjectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
+
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PhysicalProjectOperator extends PhysicalOperator {
 
-    PhysicalOperator prevOp;
+    //Deque<PhysicalOperator> physOpChildren;
+    PhysicalOperator prevPhysicalOp;
     List<SelectItem> selectItems;
     Map<String, Integer> currentSchema;
 
@@ -19,12 +25,12 @@ public class PhysicalProjectOperator extends PhysicalOperator {
      * @param plainSelect plain sql sentence
      */
     @SuppressWarnings("unchecked")
-	public PhysicalProjectOperator(PhysicalOperator operator, PlainSelect plainSelect) {
-        prevOp = operator;
+	public PhysicalProjectOperator(PhysicalOperator physicalOp, PlainSelect plainSelect) {
+        prevPhysicalOp = physicalOp;
         selectItems = plainSelect.getSelectItems();
         // yet did not handle cases: select A,D from S, B
         if (selectItems.get(0).toString() == "*") {
-            currentSchema = operator.getSchema();
+            currentSchema = physicalOp.getSchema();
         } else {
             currentSchema = new HashMap<>();
             int i = 0;
@@ -36,16 +42,35 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         }
     }
 
+    public PhysicalProjectOperator (ProjectOperator logicalProjOp, Deque<PhysicalOperator> physChildren) {
+        //this.physOpChildren = physChildren;
+        prevPhysicalOp = physChildren.pop();
+        this.selectItems = logicalProjOp.getSelectItems();
+        this.currentSchema = logicalProjOp.getSchema();
+        if (selectItems.get(0).toString() == "*") {
+            currentSchema = prevPhysicalOp.getSchema();
+        } else {
+            currentSchema = new HashMap<>();
+            int i = 0;
+            for (SelectItem selectItem : selectItems) {
+                currentSchema.put(selectItem.toString(),
+                        i);
+                i++;
+            }
+        }
+    }
+
+
     /**
      * @return the next tuple selected by the project operator
      */
     @Override
     public Tuple getNextTuple() {
-        Tuple next = prevOp.getNextTuple();
-        if (next != null && currentSchema != prevOp.getSchema()) {
+        Tuple next = prevPhysicalOp.getNextTuple();
+        if (next != null && currentSchema != prevPhysicalOp.getSchema()) {
             int[] data = new int[currentSchema.size()];
             for (Map.Entry<String, Integer> entry : currentSchema.entrySet()){
-                data[entry.getValue()] = next.getDataAt(prevOp.getSchema().get(entry.getKey()));
+                data[entry.getValue()] = next.getDataAt(prevPhysicalOp.getSchema().get(entry.getKey()));
             }
             next = new Tuple(data);
         }
@@ -57,7 +82,7 @@ public class PhysicalProjectOperator extends PhysicalOperator {
      */
     @Override
     public void reset() {
-        prevOp.reset();
+        prevPhysicalOp.reset();
     }
 
     /**
@@ -67,4 +92,10 @@ public class PhysicalProjectOperator extends PhysicalOperator {
     public Map<String, Integer> getSchema() {
         return currentSchema;
     }
+
+//    @Override
+//    public List<PhysicalOperator> getChildren() {
+//        return physOpChildren;
+//    }
+
 }

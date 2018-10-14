@@ -7,6 +7,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.io.IOException;
+
+import logical.operator.ScanOperator;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import model.Tuple;
@@ -15,10 +17,10 @@ import util.Catalog;
 import util.Constants;
 
 /**
- * ScanOperator
+ * PhysicalScanOperator
  * Read the table from disk and fetch a tuple
  */
-public class ScanOperator extends PhysicalOperator implements TupleReader{
+public class PhysicalScanOperator extends PhysicalOperator implements TupleReader{
     private PhysicalOperator op;
     private File file;
     private RandomAccessFile readerPointer;
@@ -33,7 +35,7 @@ public class ScanOperator extends PhysicalOperator implements TupleReader{
      * @param plainSelect is the statement of sql
      * @param tableIndex is the index of the table in FROM section, start by 0
      */
-    public ScanOperator(PlainSelect plainSelect, int tableIndex){
+    public PhysicalScanOperator(PlainSelect plainSelect, int tableIndex){
         this.op = null;
         
         String item;
@@ -58,6 +60,19 @@ public class ScanOperator extends PhysicalOperator implements TupleReader{
         this.schema = Catalog.getInstance().getCurrentSchema();
 
         this.file = new File(Catalog.getInstance().getDataPath(tableName));
+        try{
+            this.readerPointer = new RandomAccessFile(this.file, "r");
+        }catch(FileNotFoundException e){
+            System.out.printf("Cannot find file %s!\n", this.file.getName());
+        }
+        readPage();
+    }
+
+    public PhysicalScanOperator(ScanOperator logScanOp) {
+
+        this.schema = logScanOp.getSchema();
+        this.file = logScanOp.getFile();
+
         try{
             this.readerPointer = new RandomAccessFile(this.file, "r");
         }catch(FileNotFoundException e){

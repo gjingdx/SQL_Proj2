@@ -77,4 +77,13 @@ public class SelectOperator extends Operator{
             return new Operator[] {this.prevOp};
         }
     }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
 }
