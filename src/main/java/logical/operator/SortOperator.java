@@ -1,5 +1,6 @@
 package logical.operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -85,6 +86,14 @@ public class SortOperator extends Operator{
         return tupleList;
     }
 
+    public PlainSelect getPlainSelect() {
+        return plainSelect;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
     /**
      * comparator to sort tuples
      */
@@ -137,4 +146,10 @@ public class SortOperator extends Operator{
             return new Operator[] {this.operator};
         }
     }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
+
 }

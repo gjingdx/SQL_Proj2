@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import util.Constants.*;
 
 /**
  * Singleton class to track and record states. For the operators to get info like schemas, files etc.
@@ -25,6 +26,8 @@ public class Catalog {
     // output path
     private String outputPath;
 
+    private JoinMethod joinMethod = JoinMethod.TNLJ;
+    private SortMethod sortMethod = SortMethod.IN_MEMORY;
 
     /**
      * private constructor for singleton class
@@ -192,5 +195,21 @@ public class Catalog {
      */
     public int getIndexOfColumn(String column) {
         return currentSchema.get(column);
+    }
+
+    public JoinMethod getJoinMethod() {
+        return joinMethod;
+    }
+
+    public void setJoinMethod(JoinMethod joinMethod) {
+        this.joinMethod = joinMethod;
+    }
+
+    public SortMethod getSortMethod() {
+        return sortMethod;
+    }
+
+    public void setSortMethod(SortMethod sortMethod) {
+        this.sortMethod = sortMethod;
     }
 }

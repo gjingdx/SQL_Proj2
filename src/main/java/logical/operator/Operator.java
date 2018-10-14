@@ -1,5 +1,6 @@
 package logical.operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.BufferStateWrapper;
 import model.Tuple;
 import model.TupleWriter;
@@ -109,4 +110,11 @@ public abstract class Operator implements TupleWriter {
      */
     public abstract Operator[] getChildren();
 
+
+    /**
+     * Abstract method for accepting PhysicalPlanBuilder visitor,
+     * in which the visitor would visit the operator
+     * @param visitor PhysicalPlanBuilder visitor to be accepted.
+     */
+    public abstract void accept(PhysicalPlanBuilder visitor);
 }

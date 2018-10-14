@@ -7,6 +7,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.io.IOException;
+
+import com.sql.interpreter.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import model.Tuple;
@@ -15,7 +17,7 @@ import util.Catalog;
 import util.Constants;
 
 /**
- * ScanOperator
+ * PhysicalScanOperator
  * Read the table from disk and fetch a tuple
  */
 public class ScanOperator extends Operator implements TupleReader{
@@ -113,6 +115,10 @@ public class ScanOperator extends Operator implements TupleReader{
         }
     }
 
+    public File getFile() {
+        return file;
+    }
+
     @Override
     public Tuple readNextTuple(){
         Tuple tuple = null;
@@ -150,5 +156,10 @@ public class ScanOperator extends Operator implements TupleReader{
         else{
             return new Operator[] {this.op};
         }
+    }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
     }
 }

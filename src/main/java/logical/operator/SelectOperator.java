@@ -1,5 +1,6 @@
 package logical.operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -15,7 +16,7 @@ public class SelectOperator extends Operator{
     private Map<String, Integer> currentSchema;
 
     /**
-     * Constructor of SelectOperator
+     * Constructor of Select Operator
      * @param operator previous (child) operator
      * @param plainSelect plain sql sentence
      */
@@ -75,5 +76,14 @@ public class SelectOperator extends Operator{
         else{
             return new Operator[] {this.prevOp};
         }
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
     }
 }
