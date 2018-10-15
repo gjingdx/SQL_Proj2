@@ -20,7 +20,7 @@ public class HandlerTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
-        PhysicalOperator op = Handler.constructQueryPlan(plainSelect);
+        PhysicalOperator op = Handler.constructPhysicalQueryPlan(plainSelect);
         op.dump(1);
     }
 }

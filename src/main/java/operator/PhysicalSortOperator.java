@@ -15,10 +15,10 @@ public class PhysicalSortOperator extends PhysicalOperator {
 
     // stores tuples
     private List<Tuple> tupleList;
-    private final PlainSelect plainSelect;
     private int currentIndex;
     private Map<String, Integer> schema;
     private PhysicalOperator physChild;
+    private List<OrderByElement> order;
 
     /**
      * Constructor
@@ -28,7 +28,6 @@ public class PhysicalSortOperator extends PhysicalOperator {
      */
     public PhysicalSortOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         tupleList = new ArrayList<>();
-        this.plainSelect = plainSelect;
         this.schema = operator.getSchema();
 
         // initialize the list
@@ -44,8 +43,8 @@ public class PhysicalSortOperator extends PhysicalOperator {
 
     public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
         //this.tupleList = logSortOp.getTupleList();
-        this.plainSelect = logSortOp.getPlainSelect();
-        this.currentIndex = logSortOp.getCurrentIndex();
+        this.currentIndex = 0;
+        this.order = logSortOp.getOrder();
         this.schema = logSortOp.getSchema();
         this.physChild = physChildren.pop();
 
@@ -105,9 +104,6 @@ public class PhysicalSortOperator extends PhysicalOperator {
      * comparator to sort tuples
      */
     class TupleComparator implements Comparator<Tuple> {
-
-        @SuppressWarnings("unchecked")
-		List<OrderByElement> order = plainSelect.getOrderByElements();
 
         @Override
         public int compare(Tuple t1, Tuple t2) {

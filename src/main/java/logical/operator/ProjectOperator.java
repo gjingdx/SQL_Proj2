@@ -1,7 +1,7 @@
 package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
-import model.Tuple;
+
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import java.util.HashMap;
@@ -35,30 +35,6 @@ public class ProjectOperator extends Operator {
                 i++;
             }
         }
-    }
-
-    /**
-     * @return the next tuple selected by the project operator
-     */
-    @Override
-    public Tuple getNextTuple() {
-        Tuple next = prevOp.getNextTuple();
-        if (next != null && currentSchema != prevOp.getSchema()) {
-            int[] data = new int[currentSchema.size()];
-            for (Map.Entry<String, Integer> entry : currentSchema.entrySet()){
-                data[entry.getValue()] = next.getDataAt(prevOp.getSchema().get(entry.getKey()));
-            }
-            next = new Tuple(data);
-        }
-        return next;
-    }
-
-    /**
-     * reset the project operator would be resetting the previous operator
-     */
-    @Override
-    public void reset() {
-        prevOp.reset();
     }
 
     /**

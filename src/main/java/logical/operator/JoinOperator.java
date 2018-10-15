@@ -1,7 +1,7 @@
 package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
-import model.Tuple;
+
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.*;
@@ -16,10 +16,7 @@ import java.util.Map;
  */
 public class JoinOperator extends Operator{
     private Operator opLeft, opRight;
-    private PlainSelect plainSelect;
     private Map<String, Integer> schema;
-    Tuple outerTuple;
-    Tuple innerTuple;
     Expression joinCondition;
 
     /**
@@ -31,7 +28,6 @@ public class JoinOperator extends Operator{
     public JoinOperator(Operator opLeft, Operator opRight, PlainSelect plainSelect){
         this.opLeft = opLeft;
         this.opRight = opRight;
-        this.plainSelect = plainSelect;
         this.schema = new HashMap<>();
         schema.putAll(opLeft.getSchema());
         for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
@@ -39,11 +35,7 @@ public class JoinOperator extends Operator{
         }
         Catalog.getInstance().setCurrentSchema(schema);
 
-        outerTuple = null;
-        innerTuple = null;
-
-        Expression expr = this.plainSelect.getWhere();
-
+        Expression expr = plainSelect.getWhere();
         // return cross product if there's no selection
         if(expr == null){
             this.joinCondition = null;
@@ -57,72 +49,11 @@ public class JoinOperator extends Operator{
     }
 
     /**
-     * get the next tuple of the operator.
-     */
-    @Override
-    public Tuple getNextTuple(){
-        Tuple next = crossProduction();
-        
-        while(next != null){
-            SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
-            joinCondition.accept(sv);
-            if (sv.getResult()) {
-                break;
-            }
-            next = crossProduction();
-        }
-        return next;
-    }
-
-    /**
-     * reset the operator.
-     */
-    @Override
-    public void reset(){
-        opLeft.reset();
-        opRight.reset();
-    }
-
-    /**
      * get the schema
      */
     @Override
     public Map<String, Integer> getSchema(){
         return this.schema;
-    }
-
-    /**
-     * implement cross production
-     * @return result tuple
-     */
-    private Tuple crossProduction(){
-        // update outer tuple and inner tuple
-        if(outerTuple == null && innerTuple == null){
-            outerTuple = opLeft.getNextTuple();
-            innerTuple = opRight.getNextTuple();
-        }
-        else{
-            innerTuple = opRight.getNextTuple();
-            if(innerTuple == null){
-                opRight.reset();
-                outerTuple = opLeft.getNextTuple();
-                innerTuple = opRight.getNextTuple();
-            }
-        }
-        if(innerTuple == null || outerTuple == null){
-            return null;
-        }
-
-        // Concentrate Tuple
-        int[] newTupleData = new int[outerTuple.getDataLength() + innerTuple.getDataLength()];
-        for(int i = 0; i < outerTuple.getDataLength(); i++){
-            newTupleData[i] = outerTuple.getDataAt(i);
-        }
-        for(int i = 0; i < innerTuple.getDataLength(); i++){
-            newTupleData[i + outerTuple.getDataLength()] = innerTuple.getDataAt(i);
-        }
-        Tuple tuple = new Tuple(newTupleData);
-        return tuple;
     }
 
     /**
@@ -138,16 +69,8 @@ public class JoinOperator extends Operator{
         }
     }
 
-    public PlainSelect getPlainSelect() {
-        return plainSelect;
-    }
-
-    public Tuple getOuterTuple() {
-        return outerTuple;
-    }
-
-    public Tuple getInnerTuple() {
-        return innerTuple;
+    public Expression getJoinCondition() {
+        return this.joinCondition;
     }
 
     @Override

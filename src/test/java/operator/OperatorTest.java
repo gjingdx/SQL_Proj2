@@ -1,4 +1,4 @@
-package logical.operator;
+package operator;
 
 import org.junit.Test;
 

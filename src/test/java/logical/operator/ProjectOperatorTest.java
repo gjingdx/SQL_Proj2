@@ -1,49 +1,37 @@
 package logical.operator;
 
-import model.Tuple;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.HashMap;
+import junit.framework.Assert;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-import java.io.StringReader;
-
-import static org.junit.Assert.assertEquals;
 
 public class ProjectOperatorTest {
-
-    @Test
-    public void getNextTuple() throws Exception {
+    ProjectOperator op;
+    public ProjectOperatorTest() throws Exception{
         String statement = "SELECT BT.E, BT.F FROM Boats AS BT WHERE BT.E = 9;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
         Operator scanOp = new ScanOperator(plainSelect, 0);
         Operator selectOp = new SelectOperator(scanOp, plainSelect);
-        Operator projectOp = new ProjectOperator(selectOp, plainSelect);
-        Tuple tuple = projectOp.getNextTuple();
-        while(tuple != null){
-            assertEquals(9, tuple.getDataAt(1));
-            tuple = selectOp.getNextTuple();
-        }
+        op = new ProjectOperator(selectOp, plainSelect);
     }
 
     @Test
-    public void reset() {
+    public void getChildrenTest()  {
+        Assert.assertEquals("Children: ", 1, op.getChildren().length);
     }
 
     @Test
-    public void dump() {
-    }
+    public void getSchema() {
+        Map<String, Integer> expectedSchema = new HashMap<>();
+        expectedSchema.put("BT.E", 0);
+        expectedSchema.put("BT.F", 1);
+        Assert.assertEquals(expectedSchema, op.getSchema());
 
-    @Test
-    public void getSchema() throws Exception{
-        String statement = "SELECT * FROM Boats AS BT WHERE BT.E = 9;";
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
-                parse(new StringReader(statement))).getSelectBody();
-        Operator scanOp = new ScanOperator(plainSelect, 0);
-        Operator selectOp = new SelectOperator(scanOp, plainSelect);
-        Operator projectOp = new ProjectOperator(selectOp, plainSelect);
-        System.out.println(projectOp.getSchema());
     }
 }
