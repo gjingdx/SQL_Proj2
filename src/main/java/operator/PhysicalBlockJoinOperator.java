@@ -32,16 +32,11 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
     @Override
     public Tuple getNextTuple(){
         Tuple next = crossProduction();
-        Expression expr = plainSelect.getWhere();
 
         // return cross product if there's no selection
-        if(expr == null){
+        if(joinCondition == null){
             return next;
         }
-        // join by join condition
-        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
-        expr.accept(joinExpressionVisitor);
-        Expression joinCondition = joinExpressionVisitor.getExpression();
         
         while(next != null){
             SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());

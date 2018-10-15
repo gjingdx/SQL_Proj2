@@ -38,6 +38,7 @@ public class SelectOperatorTest {
         expectedSchema.put("BT.D", 0);
         expectedSchema.put("BT.E", 1);
         expectedSchema.put("BT.F", 2);
-        Assert.assertEquals(expectedSchema, selectOp.getSchema())
+        Assert.assertEquals(expectedSchema, selectOp.getSchema());
+
     }
 }

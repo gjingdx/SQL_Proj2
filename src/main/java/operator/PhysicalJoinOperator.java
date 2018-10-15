@@ -19,7 +19,7 @@ public class PhysicalJoinOperator extends PhysicalOperator {
     protected PhysicalOperator opLeft, opRight;
 
     //private Deque<PhysicalOperator> physOpChildren;
-    protected PlainSelect plainSelect;
+    protected Expression joinCondition;
     protected Map<String, Integer> schema;
     protected Tuple outerTuple;
     protected Tuple innerTuple;
@@ -33,7 +33,6 @@ public class PhysicalJoinOperator extends PhysicalOperator {
     public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect){
         this.opLeft = opLeft;
         this.opRight = opRight;
-        this.plainSelect = plainSelect;
         this.schema = new HashMap<>();
         schema.putAll(opLeft.getSchema());
         for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
@@ -49,13 +48,8 @@ public class PhysicalJoinOperator extends PhysicalOperator {
         //this.physOpChildren = physOpChildren;
         this.opRight = physOpChildren.pop();
         this.opLeft = physOpChildren.pop();
-        this.plainSelect = logicalJoinOp.getPlainSelect();
-        this.schema = new HashMap<>();
-        schema.putAll(opLeft.getSchema());
-        for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
-            schema.put(entry.getKey(), entry.getValue() + opLeft.getSchema().size());
-        }
-        Catalog.getInstance().setCurrentSchema(schema);
+        this.joinCondition = logicalJoinOp.getJoinCondition();
+        this.schema = logicalJoinOp.getSchema();
 
         outerTuple = null;
         innerTuple = null;
@@ -67,16 +61,10 @@ public class PhysicalJoinOperator extends PhysicalOperator {
     @Override
     public Tuple getNextTuple(){
         Tuple next = crossProduction();
-        Expression expr = plainSelect.getWhere();
-
         // return cross product if there's no selection
-        if(expr == null){
+        if(joinCondition == null){
             return next;
         }
-        // join by join condition
-        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
-        expr.accept(joinExpressionVisitor);
-        Expression joinCondition = joinExpressionVisitor.getExpression();
         
         while(next != null){
             SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());

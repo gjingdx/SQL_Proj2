@@ -1,7 +1,5 @@
 package logical.operator;
 
-import model.Tuple;
-
 import java.io.StringReader;
 import java.util.Map;
 import java.util.HashMap;
