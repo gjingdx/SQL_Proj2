@@ -4,6 +4,8 @@ import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.StringReader;
@@ -19,15 +21,9 @@ public class DuplicateEliminationOperatorTest {
         Operator op = new ScanOperator(plainSelect, 0);
 
         Operator sortOp = new SortOperator(op, plainSelect);
-        Operator dupOp = new DuplicateEliminationOperator(sortOp);
+        DuplicateEliminationOperator dupOp = new DuplicateEliminationOperator(sortOp);
 
-        Tuple tuple = dupOp.getNextTuple();
-        Tuple last = new Tuple(new int[0]);
-        while(tuple != null){
-            assertNotSame(last, tuple);
-            last = tuple;
-            tuple = dupOp.getNextTuple();
-        }
+        Assert.assertEquals(1, dupOp.getChildren().length);
     }
 
 }
