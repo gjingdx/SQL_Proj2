@@ -48,7 +48,7 @@ public abstract class PhysicalOperator implements TupleWriter{
             while(tuple != null){
                 sb.append(tuple.toString());
                 sb.append("\n");
-                System.out.println(tuple);
+                //ystem.out.println(tuple);
                 tuple = getNextTuple();
             }
             output.write(sb.toString());

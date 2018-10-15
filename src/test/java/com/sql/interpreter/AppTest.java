@@ -16,9 +16,9 @@ public class AppTest {
     public void sqlResultMatch() throws Exception{
         Handler.init(new String[0]);
         Handler.parseSql();
-        for(int index = 1; index<=8; ++index){
+        for(int index = 1; index<=10; ++index){
             File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));
-            File expectOutputfile = new File("Samples/samples/expected_output/" + "query" + String.valueOf(index));
+            File expectOutputfile = new File("Samples/samples/expected/" + "query" + String.valueOf(index) + "_humanreadable");
             BufferedReader br1 = new BufferedReader(new FileReader(outfile));
             BufferedReader br2 = new BufferedReader(new FileReader(expectOutputfile));
             String str1=br1.readLine(), str2=br2.readLine();

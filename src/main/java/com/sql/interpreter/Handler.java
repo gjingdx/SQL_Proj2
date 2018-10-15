@@ -1,14 +1,17 @@
 package com.sql.interpreter;
 
+import logical.interpreter.LogicalPlanBuilder;
 import operator.*;
+import logical.operator.*;
+import util.Catalog;
+import util.Constants;
+import util.JoinExpressionVisitor;
+
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import util.Catalog;
-import util.Constants;
-import util.JoinExpressionVisitor;
 
 import java.io.File;
 import java.io.FileReader;
@@ -67,9 +70,10 @@ public class Handler {
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 System.out.println("Select body is " + select.getSelectBody());
-                PhysicalOperator operator = constructQueryPlan(plainSelect);
+                PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
                 operator.dump(ind);
                 ind++;
+                System.out.println("finished");
             }
         } catch (Exception e) {
             System.err.println("Exception occurred during parsing");
@@ -77,68 +81,11 @@ public class Handler {
         }
     }
 
-    /**
-    * consturct a left deep join query plan
-    *
-    *           distinct  
-    *              |
-    *             sort
-    *              |
-    *             join
-    *           /      \ 
-    *         join    scan
-    *        /    \
-    *   select   select
-    *      |       |
-    *    scan     scan
-    *
-    * @param plainSelect
-    * @return
-    */
-    public static PhysicalOperator constructQueryPlan(PlainSelect plainSelect){
-        int tableCount;
-        PhysicalOperator opLeft;
-        if(plainSelect.getJoins() == null){
-            tableCount = 1;
-        }
-        else{
-            tableCount = 1 + plainSelect.getJoins().size();
-        }
-
-        opLeft = new PhysicalScanOperator(plainSelect, 0);
-        if(hasRelatedExpression(opLeft.getSchema(), plainSelect)){
-            opLeft = new PhysicalSelectOperator(opLeft, plainSelect);
-        }
-
-        for(int i = 1; i < tableCount; ++i){
-            PhysicalOperator opRight = new PhysicalScanOperator(plainSelect, i);
-            if(hasRelatedExpression(opRight.getSchema(), plainSelect)){
-                opRight = new PhysicalSelectOperator(opRight, plainSelect);
-            }
-            opLeft = new PhysicalJoinOperator(opLeft, opRight, plainSelect);
-        }
-        if(plainSelect.getSelectItems() != null 
-        		&& plainSelect.getSelectItems().size() > 0 
-        		&& plainSelect.getSelectItems().get(0) != "*")
-        	opLeft = new PhysicalProjectOperator(opLeft, plainSelect);
-        if(plainSelect.getDistinct() != null){
-            opLeft = new PhysicalSortOperator(opLeft, plainSelect);
-            opLeft = new PhysicalDuplicateEliminationOperator(opLeft);
-        }
-        else {
-            if(plainSelect.getOrderByElements() != null)
-                opLeft = new PhysicalSortOperator(opLeft, plainSelect);
-        }
-        return opLeft;
-    }
-
-    private static boolean hasRelatedExpression(Map<String, Integer> schemaMap, PlainSelect plainSelect){
-        Expression originExpression = plainSelect.getWhere();
-        if(originExpression == null){
-            return false;
-        }
-        JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(schemaMap);
-        originExpression.accept(joinExpressionVisitor);
-        return joinExpressionVisitor.getExpression() != null;
+    public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect){
+        Operator logicalOperator = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
+        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+        logicalOperator.accept(physPB);
+        PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
+        return physicalOperator;
     }
 }

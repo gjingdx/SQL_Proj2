@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 
 public class DuplicateEliminationOperatorTest {
     @Test
-    public void getNextTuple() throws Exception {
+    public void getChildren() throws Exception {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();

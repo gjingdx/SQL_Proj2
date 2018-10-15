@@ -24,6 +24,7 @@ public class DuplicateEliminationOperator extends Operator{
      */
     public DuplicateEliminationOperator(Operator operator) {
         this.schema = operator.getSchema();
+        this.op = operator;
     }
 
     /**
