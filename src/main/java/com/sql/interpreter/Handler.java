@@ -71,7 +71,7 @@ public class Handler {
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 System.out.println("Select body is " + select.getSelectBody());
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
-                operator.dump(ind);
+                operator.dump2(ind, "");
                 ind++;
                 System.out.println("finished");
             }
