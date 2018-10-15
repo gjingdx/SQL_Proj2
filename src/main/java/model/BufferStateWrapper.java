@@ -54,7 +54,11 @@ public class BufferStateWrapper {
         byteBuffer.putInt(Constants.INT_SIZE, tupleCount);
     }
 
+    public boolean bufferIsEmpty() {
+        return index == Constants.INT_SIZE * 2;
+    }
+
     public boolean hasSpace() {
-        return index + tupleSize * Constants.INT_SIZE < Constants.PAGE_SIZE;
+        return index + tupleSize * Constants.INT_SIZE <= Constants.PAGE_SIZE;
     }
 }

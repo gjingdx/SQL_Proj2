@@ -70,7 +70,7 @@ public abstract class PhysicalOperator implements TupleWriter{
 //    public abstract List<PhysicalOperator> getChildren();
 
     public void dump2(int i, String s) {
-        String path = Catalog.getInstance().getOutputPath();
+        s = Catalog.getInstance().getOutputPath();
         BufferedWriter output;
         try{
             File file = new File(s + i);
@@ -90,12 +90,9 @@ public abstract class PhysicalOperator implements TupleWriter{
 
                 }
             }
-    //
-    //            while((byt = writePage())!=null){
-    //                byt.limit(byt.capacity());
-    //                byt.position(0);
-    //                fc.write(byt);
-    //            }
+            if (!bufferStateWrapper.bufferIsEmpty()) {
+                bufferStateWrapper.writeBuffer(fc);
+            }
             fout.close();
         } catch (Exception e) {
             e.printStackTrace();
