@@ -1,25 +1,24 @@
 package operator;
 
+import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
- * SortOperator
+ * PhysicalSortOperator
  * created by Yufu Mo
  */
-public class SortOperator extends Operator{
+public class PhysicalSortOperator extends PhysicalOperator {
 
     // stores tuples
     private List<Tuple> tupleList;
     private final PlainSelect plainSelect;
     private int currentIndex;
     private Map<String, Integer> schema;
+    private PhysicalOperator physChild;
 
     /**
      * Constructor
@@ -27,7 +26,7 @@ public class SortOperator extends Operator{
      * @param operator
      * @param plainSelect
      */
-    public SortOperator(Operator operator, PlainSelect plainSelect) {
+    public PhysicalSortOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         tupleList = new ArrayList<>();
         this.plainSelect = plainSelect;
         this.schema = operator.getSchema();
@@ -41,6 +40,25 @@ public class SortOperator extends Operator{
 
         Collections.sort(tupleList, new TupleComparator());
         operator.reset();
+    }
+
+    public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
+        //this.tupleList = logSortOp.getTupleList();
+        this.plainSelect = logSortOp.getPlainSelect();
+        this.currentIndex = logSortOp.getCurrentIndex();
+        this.schema = logSortOp.getSchema();
+        this.physChild = physChildren.pop();
+
+        tupleList = new ArrayList<>();
+        // initialize the list
+        Tuple tuple = physChild.getNextTuple();
+        while(tuple != null) {
+            tupleList.add(tuple);
+            tuple = physChild.getNextTuple();
+        }
+
+        Collections.sort(tupleList, new TupleComparator());
+        physChild.reset();
     }
 
     /**

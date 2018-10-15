@@ -1,5 +1,7 @@
 package operator;
 
+import com.sql.interpreter.PhysicalPlanBuilder;
+import logical.operator.Operator;
 import model.Tuple;
 import util.Catalog;
 
@@ -7,13 +9,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Abstract class for operator
  * Created by Yufu Mo
  */
-public abstract class Operator {
+public abstract class PhysicalOperator {
 
     /**
      * get the next tuple of the operator's output
@@ -58,5 +61,11 @@ public abstract class Operator {
      * @return the current schema of the operator
      */
     public abstract Map<String, Integer> getSchema();
+
+//    /**
+//     * @return an list of children of a physical operation
+//     */
+//    public abstract List<PhysicalOperator> getChildren();
+
 
 }

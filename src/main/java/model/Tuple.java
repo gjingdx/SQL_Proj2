@@ -7,7 +7,7 @@ import java.util.Arrays;
  * Created by Yufu Mo
  */
 public class Tuple {
-    private long[] data; // string array to store data
+    private int[] data; // string array to store data
 
     /**
      * Constructor for tuple
@@ -15,9 +15,9 @@ public class Tuple {
      */
     public Tuple(String s) {
         String[] sData = s.split(",");
-        data = new long[sData.length];
+        data = new int[sData.length];
         for(int i = 0; i < sData.length; ++i){
-            data[i] = Long.parseLong(sData[i]);
+            data[i] = Integer.parseInt(sData[i]);
         }
     }
 
@@ -26,23 +26,23 @@ public class Tuple {
      * @param length
      */
     public Tuple(int length) {
-        data = new long[length];
+        data = new int[length];
     }
 
     /**
      * Overload constructor with data input
      * @param data
      */
-    public Tuple(long[] data) {
+    public Tuple(int[] data) {
         this.data = data;
     }
 
     /**
      * Get data by index
      * @param index
-     * @return long
+     * @return int
      */
-    public long getDataAt(int index){
+    public int getDataAt(int index){
         return data[index];
     }
 

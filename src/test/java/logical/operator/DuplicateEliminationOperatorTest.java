@@ -1,4 +1,4 @@
-package operator;
+package logical.operator;
 
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -22,7 +22,7 @@ public class DuplicateEliminationOperatorTest {
         Operator dupOp = new DuplicateEliminationOperator(sortOp);
 
         Tuple tuple = dupOp.getNextTuple();
-        Tuple last = new Tuple(new long[0]);
+        Tuple last = new Tuple(new int[0]);
         while(tuple != null){
             assertNotSame(last, tuple);
             last = tuple;
