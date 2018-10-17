@@ -1,19 +1,19 @@
 package com.sql.interpreter;
 
 import org.junit.Test;
-
 import junit.framework.Assert;
-
 import java.io.*;
 
+import model.Tuple;
 import util.Catalog;
+import util.TableReader;
 
 /**
  * Unit test for simple App.
  */
 public class AppTest {
     @Test
-    public void sqlResultMatch() throws Exception{
+    public void sqlResultMatchReadable() throws Exception{
         Handler.init(new String[0]);
         Handler.parseSql();
         for(int index = 1; index<=10; ++index){
@@ -31,6 +31,25 @@ public class AppTest {
             Assert.assertNull(str2);
             br1.close();
             br2.close();
+        }
+    }
+
+    @Test
+    public void sqlResultMatchBinary() throws Exception{
+        Handler.init(new String[0]);
+        Handler.parseSql();
+        for(int index = 1; index<=10; ++index){
+            File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));
+            File expectOutputfile = new File("Samples/samples/expected/" + "query" + String.valueOf(index));
+            TableReader r1 = new TableReader(outfile);
+            TableReader r2  = new TableReader(expectOutputfile);
+            
+            Tuple t1 = null, t2 = null;
+            while((t1 = r1.readNextTuple())!=null && (t2=r2.readNextTuple())!=null){
+                Assert.assertEquals(t1.toString(), t2.toString());
+            }
+            Assert.assertNull(t1);
+            Assert.assertNull(t2);
         }
     }
 }

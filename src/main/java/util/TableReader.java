@@ -34,6 +34,10 @@ public class TableReader implements TupleReader{
         
     }
 
+    public TableReader(File file){
+        this.file = file;
+    }
+
     @Override
     public void init(){
         try{
