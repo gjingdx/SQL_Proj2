@@ -5,8 +5,6 @@ import logical.operator.*;
 import operator.*;
 import operator.PhysicalDuplicateEliminationOperator;
 import util.Catalog;
-import util.Catalog.*;
-import util.Constants.*;
 
 import java.util.*;
 

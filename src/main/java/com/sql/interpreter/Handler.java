@@ -87,7 +87,10 @@ public class Handler {
             e.printStackTrace();
         }
     }
-
+    /**
+     * parser the join and sort configuration into the Catalog
+     * @return true for no issue
+     */
     protected static boolean parserConfig(){
         int [][]ret = new int[2][2];
         File configFile = new File(Constants.CONFIG_PATH);
@@ -151,6 +154,11 @@ public class Handler {
         return false;
     }
 
+    /**
+     * build a logicalPlanTree then convert it to a physical plan
+     * @param plainSelect
+     * @return the root physical operator
+     */
     public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect){
         Operator logicalOperator = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();

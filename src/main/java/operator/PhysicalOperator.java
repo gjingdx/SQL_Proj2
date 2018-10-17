@@ -1,7 +1,5 @@
 package operator;
 
-import com.sql.interpreter.PhysicalPlanBuilder;
-import logical.operator.Operator;
 import model.Tuple;
 import model.TupleWriter;
 import model.BufferStateWrapper;
@@ -11,7 +9,6 @@ import util.Constants;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -1,7 +1,5 @@
 package operator;
 
-import com.sql.interpreter.PhysicalPlanBuilder;
-import logical.operator.Operator;
 import logical.operator.ProjectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
