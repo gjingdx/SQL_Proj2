@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 
 /**
- * Handler class to parse sql, construct query plan and handle initialization
+ * Handler class to parse SQL, construct query plan and handle initialization
  * Created by Yufu Mo
  */
 public class Handler {
@@ -29,7 +29,7 @@ public class Handler {
      */
     public static void init(String[] args) {
         String outputPath = Constants.OUTPUT_PATH;
-        if (args != null && args.length == 2) {
+        if (args != null && args.length >= 2) {
             if (args[0].charAt(args[0].length() - 1)== '/') {
                 args[0] = args[0].substring(0, args[0].length() - 1);
             }
@@ -77,7 +77,7 @@ public class Handler {
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
                 //operator.dump(ind);
-                operator.dump2(ind, "");
+                operator.dump(ind);
                 ind++;
                 long endTime = System.currentTimeMillis();
                 System.out.println("time: " + (endTime - startTime) + "ms");

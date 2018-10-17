@@ -1,7 +1,6 @@
 package operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
-import logical.operator.Operator;
 import logical.operator.ScanOperator;
 import logical.operator.SelectOperator;
 import model.Tuple;

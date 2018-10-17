@@ -7,12 +7,12 @@ import util.JoinExpressionVisitor;
 import java.util.Map;
 
 /**
- * Handler class to parse sql, construct query plan and handle initialization
+ * Handler class to parse SQL, construct query plan and handle initialization
  * Created by Yufu Mo
  */
 public class LogicalPlanBuilder {
     /**
-    * consturct a left deep join query plan
+    * Construct a left deep join query plan
     *
     *           distinct  
     *              |

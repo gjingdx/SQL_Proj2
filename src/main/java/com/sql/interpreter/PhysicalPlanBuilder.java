@@ -37,7 +37,6 @@ public class PhysicalPlanBuilder {
         Operator[] children = logicalJoinOp.getChildren();
         children[0].accept(this);
         children[1].accept(this);
-        // TODO: need to switch cases for JoinOps
         PhysicalJoinOperator physJoinOp;
         switch(Catalog.getInstance().getJoinMethod()) {
             case TNLJ:
@@ -70,7 +69,6 @@ public class PhysicalPlanBuilder {
         Operator[] children = logSortOp.getChildren();
         children[0].accept(this);
         PhysicalSortOperator physSelectOp;
-        // TODO: need to switch cases to SortOps
         switch (Catalog.getInstance().getSortMethod()) {
             case IN_MEMORY:
                 physSelectOp = new PhysicalSortOperator(logSortOp, physOpChildren);

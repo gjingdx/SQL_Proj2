@@ -6,11 +6,8 @@ import logical.operator.ScanOperator;
 import model.Tuple;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -31,14 +28,6 @@ public class PhysicalJoinOperatorTest {
         physPB.visit(op2);
         PhysicalJoinOperator physJoinOp = new PhysicalTupleJoinOperator(logJoinOp, physPB.getPhysOpChildren());
         Tuple tuple;
-        ArrayList<String> expectedResult = new ArrayList<>(Arrays.asList(
-            "1,200,50,1,101",
-            "1,200,50,1,102",
-            "1,200,50,1,103",
-            "2,200,200,2,101",
-            "3,100,105,3,102",
-            "4,100,50,4,104"
-        ));
         ArrayList<String> outputStrings = new ArrayList<>();
         while((tuple = physJoinOp.getNextTuple()) !=null){
             outputStrings.add(tuple.toString());
