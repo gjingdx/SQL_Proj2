@@ -14,7 +14,10 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.BufferedReader;
 import java.util.Map;
 
 /**
@@ -40,6 +43,7 @@ public class Handler {
             Constants.SCHEMA_PATH = Constants.inputPath + "/db/schema.txt";
             Constants.OUTPUT_PATH = args[1];
             Constants.SQLQURIES_PATH = Constants.inputPath + "/queries.sql";
+            Constants.CONFIG_PATH = Constants.inputPath = "/plan_builder_config.txt";
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
         }
@@ -83,6 +87,40 @@ public class Handler {
             System.err.println("Exception occurred during parsing");
             e.printStackTrace();
         }
+    }
+
+    protected int[][] parserConfig(){
+        int [][]ret = new int[2][2];
+        File configFile = new File(Constants.CONFIG_PATH);
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(configFile));
+            String join = br.readLine();
+            String sort = br.readLine();
+
+            if(!setConfig(ret[0], join))return null;
+            if(!setConfig(ret[1], sort))return null;
+        }catch(FileNotFoundException e){
+            System.err.println("Cannot find the target config file");
+            return null;
+        }catch(IOException e){
+            System.err.println("Unexpected config file format");
+            return null;
+        }
+        return ret;
+    }
+
+    private boolean setConfig(int [] ret ,String config){
+        String[] splitedConfig = config.split(",");
+        if(splitedConfig.length == 1){
+            ret [0] = Integer.valueOf(splitedConfig[0]);
+            return true;
+        }
+        if(splitedConfig.length == 2){
+            ret [0] = Integer.valueOf(splitedConfig[0]);
+            ret [1] = Integer.valueOf(splitedConfig[1]);
+            return true;
+        }
+        return false;
     }
 
     public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect){

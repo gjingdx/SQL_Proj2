@@ -7,11 +7,12 @@ import operator.PhysicalOperator;
 import org.junit.Test;
 
 import java.io.StringReader;
+import org.junit.Assert;
 
-public class HandlerTest {
+public class HandlerTest extends Handler {
 
     @Test
-    public void parseSql() {
+    public void parseSqlTest() {
     }
 
     @Test
@@ -22,6 +23,18 @@ public class HandlerTest {
                 parse(new StringReader(statement))).getSelectBody();
         PhysicalOperator op = Handler.constructPhysicalQueryPlan(plainSelect);
         op.dump(1);
+    }
+
+    @Test
+    public void parserConfigTest(){
+        int[][] config = parserConfig();
+        int[][] expected =new int[2][2];
+        expected[0][0] = 0;
+        expected[0][1] = 0;
+        expected[1][0] = 0;
+        expected[1][1] = 0;
+        Assert.assertArrayEquals(expected[0], config[0]);
+        Assert.assertArrayEquals(expected[1], config[1]);
     }
 }
 
