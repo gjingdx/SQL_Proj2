@@ -77,7 +77,7 @@ public class Handler {
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
                 //operator.dump(ind);
-                operator.dump2(ind, "");
+                operator.dump(ind);
                 ind++;
                 long endTime = System.currentTimeMillis();
                 System.out.println("time: " + (endTime - startTime) + "ms");

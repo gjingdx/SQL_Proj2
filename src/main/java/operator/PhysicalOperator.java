@@ -31,32 +31,6 @@ public abstract class PhysicalOperator implements TupleWriter{
     public abstract void reset();
 
     /**
-     * for debugging, get all the tuples at once and put them in a file.
-     * @param i the index of the output file.
-     */
-    public void dump(int i) {
-        String path = Catalog.getInstance().getOutputPath();
-        BufferedWriter output;
-        try {
-            File file = new File(path + i);
-            StringBuilder sb = new StringBuilder();
-            output = new BufferedWriter(new FileWriter(file));
-            Tuple tuple = getNextTuple();
-            while(tuple != null){
-                sb.append(tuple.toString());
-                sb.append("\n");
-                //ystem.out.println(tuple);
-                tuple = getNextTuple();
-            }
-            output.write(sb.toString());
-            output.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        reset();
-    }
-
-    /**
      * @return the current schema of the operator
      */
     public abstract Map<String, Integer> getSchema();
@@ -66,11 +40,10 @@ public abstract class PhysicalOperator implements TupleWriter{
 //     */
 //    public abstract List<PhysicalOperator> getChildren();
 
-    public void dump2(int i, String s) {
-        s = Catalog.getInstance().getOutputPath();
-        BufferedWriter output;
+    public void dump(int i) {
+        String path = Catalog.getInstance().getOutputPath();
         try{
-            File file = new File(s + i);
+            File file = new File(path + i);
             FileOutputStream fout = new FileOutputStream(file);
             FileChannel fc = fout.getChannel();
             BufferStateWrapper bufferStateWrapper = new BufferStateWrapper(2 * Constants.INT_SIZE,

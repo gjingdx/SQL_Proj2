@@ -10,10 +10,10 @@ import java.io.*;
 
 public class PhysicalOperatorTest {
     @Test
-    public void dump2() throws Exception {
+    public void dump() throws Exception {
         Handler.init(new String[0]);
         Handler.parseSql();
-        System.out.println();
+
         for(int index = 1; index <= 15; ++index){
             File outfile = new File(Catalog.getInstance().getOutputPath() + index);
             File expectOutputfile = new File("Samples/samples/expected/" + "query" + index);
@@ -31,6 +31,8 @@ public class PhysicalOperatorTest {
             for (int i = 0; i < bytesArrayExpected.length; i++) {
                 Assert.assertEquals(bytesArrayExpected[i], bytesArrayOutput[i]);
             }
+            outputStream.close();
+            expectedStream.close();
         }
     }
 

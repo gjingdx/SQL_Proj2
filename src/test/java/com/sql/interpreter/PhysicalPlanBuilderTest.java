@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -91,14 +90,6 @@ public class PhysicalPlanBuilderTest {
         physPB.visit(logJoinOp);
         PhysicalOperator physJoinOp= physPB.getPhysOpChildren().peek();
         Tuple tuple;
-        ArrayList<String> expectedResult = new ArrayList<>(Arrays.asList(
-                "1,200,50,1,101",
-                "1,200,50,1,102",
-                "1,200,50,1,103",
-                "2,200,200,2,101",
-                "3,100,105,3,102",
-                "4,100,50,4,104"
-        ));
         ArrayList<String> outputStrings = new ArrayList<>();
         while((tuple = physJoinOp.getNextTuple()) !=null){
             outputStrings.add(tuple.toString());

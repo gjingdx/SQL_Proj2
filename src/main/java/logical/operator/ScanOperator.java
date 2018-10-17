@@ -1,7 +1,6 @@
 package logical.operator;
 
 import java.util.Map;
-import java.io.File;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.PlainSelect;
