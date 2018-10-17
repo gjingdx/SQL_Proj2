@@ -7,6 +7,7 @@ import com.sql.interpreter.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import util.Catalog;
+import util.TableReader;
 
 
 /**
@@ -15,7 +16,7 @@ import util.Catalog;
  */
 public class ScanOperator extends Operator{
     private Operator op;
-    private File file;
+    private TableReader tableReader;
     private Map<String, Integer> schema;
 
     /**
@@ -36,7 +37,7 @@ public class ScanOperator extends Operator{
 
         String[] strs = item.split("\\s+");
         if(strs.length < 0){
-            this.file = null;
+            this.tableReader = null;
             return;
         }
         String tableName = strs[0];
@@ -46,8 +47,7 @@ public class ScanOperator extends Operator{
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
-
-        this.file = new File(Catalog.getInstance().getDataPath(tableName));
+        tableReader = new TableReader(tableName);
     }
 
     /**
@@ -58,8 +58,8 @@ public class ScanOperator extends Operator{
         return this.schema;
     }
 
-    public File getFile() {
-        return file;
+    public TableReader getTableReader() {
+        return tableReader;
     }
 
     /**

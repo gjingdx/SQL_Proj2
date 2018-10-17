@@ -65,15 +65,19 @@ public class Handler {
             Statement statement;
             int ind = 1;
             while ((statement = parser.Statement()) != null) {
+                long startTime = System.currentTimeMillis();
+
                 System.out.println(ind);
                 System.out.println("Read statement: " + statement);
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 System.out.println("Select body is " + select.getSelectBody());
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
+                //operator.dump(ind);
                 operator.dump2(ind, "");
                 ind++;
-                System.out.println("finished");
+                long endTime = System.currentTimeMillis();
+                System.out.println("time: " + (endTime - startTime) + "ms");
             }
         } catch (Exception e) {
             System.err.println("Exception occurred during parsing");

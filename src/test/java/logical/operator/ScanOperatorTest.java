@@ -19,8 +19,6 @@ public class ScanOperatorTest{
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
         ScanOperator op = new ScanOperator(plainSelect, 0);
-        
-        Assert.assertEquals(op.getFile().getName(), "Sailors");
         Assert.assertNull(op.getChildren());
 
         Map<String, Integer> expectedSchema = new HashMap<>();

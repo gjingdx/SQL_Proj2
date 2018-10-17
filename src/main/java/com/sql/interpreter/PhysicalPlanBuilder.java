@@ -43,19 +43,19 @@ public class PhysicalPlanBuilder {
         PhysicalJoinOperator physJoinOp;
         switch(Catalog.getInstance().getJoinMethod()) {
             case TNLJ:
-                physJoinOp = new PhysicalJoinOperator(logicalJoinOp, physOpChildren);
+                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
                 physOpChildren.push(physJoinOp);
                 break;
             case BNLJ:
-                physJoinOp = new PhysicalJoinOperator(logicalJoinOp, physOpChildren);
+                physJoinOp = new PhysicalBlockJoinOperator(logicalJoinOp, physOpChildren, 2);
                 physOpChildren.push(physJoinOp);
                 break;
             case SMJ:
-                physJoinOp = new PhysicalJoinOperator(logicalJoinOp, physOpChildren);
+                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
                 physOpChildren.push(physJoinOp);
                 break;
             default:
-                physJoinOp = new PhysicalJoinOperator(logicalJoinOp, physOpChildren);
+                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
                 physOpChildren.push(physJoinOp);
         }
 
