@@ -50,20 +50,21 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
             innerTuple = opRight.getNextTuple();
         }
         else{
-            innerTuple = opRight.getNextTuple();
-            if(innerTuple == null){
-                opRight.reset();
-                outerTuple = block.readNextTuple();
+            outerTuple = block.readNextTuple();
+            if(outerTuple == null){
+                block.reset();
                 innerTuple = opRight.getNextTuple();
+                outerTuple = block.readNextTuple();
             }
         }
-        if(outerTuple == null){
+        if(innerTuple == null){
             block.clearData();
             loadOuterTupleIntoBlock();
             if(block.isAllNull()){
                 return null;
             }
             outerTuple = block.readNextTuple();
+            opRight.reset();
         }
         if(outerTuple == null || innerTuple == null){
             return null;

@@ -38,18 +38,18 @@ public class AppTest {
     public void sqlResultMatchBinary() throws Exception{
         Handler.init(new String[0]);
         Handler.parseSql();
-        for(int index = 1; index<=10; ++index){
+        for(int index = 1; index<=15; ++index){
             File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));
             File expectOutputfile = new File("Samples/samples/expected/" + "query" + String.valueOf(index));
             TableReader r1 = new TableReader(outfile);
             TableReader r2  = new TableReader(expectOutputfile);
+            r1.init();
+            r2.init();
             
             Tuple t1 = null, t2 = null;
             while((t1 = r1.readNextTuple())!=null && (t2=r2.readNextTuple())!=null){
                 Assert.assertEquals(t1.toString(), t2.toString());
             }
-            Assert.assertNull(t1);
-            Assert.assertNull(t2);
         }
     }
 }
