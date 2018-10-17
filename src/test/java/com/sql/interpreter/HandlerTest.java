@@ -27,14 +27,7 @@ public class HandlerTest extends Handler {
 
     @Test
     public void parserConfigTest(){
-        int[][] config = parserConfig();
-        int[][] expected =new int[2][2];
-        expected[0][0] = 0;
-        expected[0][1] = 0;
-        expected[1][0] = 0;
-        expected[1][1] = 0;
-        Assert.assertArrayEquals(expected[0], config[0]);
-        Assert.assertArrayEquals(expected[1], config[1]);
+        Assert.assertTrue(parserConfig());
     }
 }
 

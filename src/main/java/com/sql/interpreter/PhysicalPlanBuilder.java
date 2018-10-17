@@ -47,7 +47,7 @@ public class PhysicalPlanBuilder {
                 physOpChildren.push(physJoinOp);
                 break;
             case BNLJ:
-                physJoinOp = new PhysicalBlockJoinOperator(logicalJoinOp, physOpChildren, 2);
+                physJoinOp = new PhysicalBlockJoinOperator(logicalJoinOp, physOpChildren, Catalog.getInstance().getJoinBlockSize());
                 physOpChildren.push(physJoinOp);
                 break;
             case SMJ:
