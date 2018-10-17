@@ -71,6 +71,10 @@ public class Block{
         return true;
     }
 
+    public void reset(){
+        initIndex();
+    }
+
     private void initIndex(){
         this.setIndex = 0;
         this.readIndex = 0;
