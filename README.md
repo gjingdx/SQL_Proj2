@@ -18,11 +18,14 @@
     ```
 ## Implement
 -  **Top-level class** is ```com.sql.interpreter.App```
+-  **Physical operators** lays in ```operator/```, all classes are prefixed with physical.
+-  **Logical operators** lays in ```logical/operator/``` 
 -  The runnable jar could be run in cmd 
 
-    ```java -jar cs4321 p1.jar $<inputdir> $<outputdir>```
+    ```java -jar cs4321 p1.jar $<inputdir> $<outputdir> $<tempdir>```
 ## Details
-**1. Query Plan(Operator Tree)**
+**1. Logical Query Plan(Operator Tree)**  
+```logical/interpreter/LogicalPlanBuilder```
   
 - After each scan operation, we implement a select operation if there exists related expression in where section.
 - Then we implement join operation if exists. The detailed join operation will be illustrated below.
@@ -52,7 +55,10 @@
     ```
     When join with B, we take the whole expression as the join condition, instead of ```S.A = R.G```, since there will be no difference to I/Os.
 
-**2. Join Expression Visitor**
+**2. Physical Plan Builder**  
+```com/sql/interpreter/PhysicalPlanBuilder```
+
+**3. Join Expression Visitor**
 - **How to evaluate a Join condition**
     1. Extract the related expression (Join condition), according to the current schema. We will demonstrate how to do this and some examples as below.
     2. Use the refined expression to accept the SelectExpressionVisitor to make the evaluation.
@@ -81,7 +87,7 @@
 __*JoinExpressionVisitor*__ lays in ```src/main/java/util/```, so does __*SelectExpressionVisitor*__.  
 The related comments are added on the related functions.
 
-**3. Select Expression Visitor**
+**4. Select Expression Visitor**
 - **Principles** 
 If we see select expressions as a tree, then they need to be evaluated 
 from the bottom layer up to top, which means previous result would be used 
