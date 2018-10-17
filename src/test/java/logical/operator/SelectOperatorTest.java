@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 
-import static org.junit.Assert.*;
 import java.io.StringReader;
 
 public class SelectOperatorTest {

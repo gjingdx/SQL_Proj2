@@ -1,6 +1,5 @@
 package com.sql.interpreter;
 
-import junit.framework.Assert;
 import logical.operator.*;
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;

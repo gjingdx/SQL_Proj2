@@ -7,14 +7,12 @@ import util.Catalog;
 
 import java.io.*;
 
-import static org.junit.Assert.*;
 
 public class PhysicalOperatorTest {
     @Test
     public void dump2() throws Exception {
         Handler.init(new String[0]);
         Handler.parseSql();
-        byte[] a = new byte[]{0, 0, 1, -1};
         System.out.println();
         for(int index = 1; index <= 15; ++index){
             File outfile = new File(Catalog.getInstance().getOutputPath() + index);

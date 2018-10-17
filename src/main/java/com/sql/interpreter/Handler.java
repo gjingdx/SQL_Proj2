@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.BufferedReader;
 
 /**
- * Handler class to parse sql, construct query plan and handle initialization
+ * Handler class to parse SQL, construct query plan and handle initialization
  * Created by Yufu Mo
  */
 public class Handler {
