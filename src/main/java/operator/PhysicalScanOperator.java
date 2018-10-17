@@ -1,20 +1,11 @@
 package operator;
 
 import java.util.Map;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.io.IOException;
-
-import logical.operator.ScanOperator;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
+import logical.operator.ScanOperator;
 import model.Tuple;
-import model.TupleReader;
 import util.Catalog;
-import util.Constants;
 import util.TableReader;
 
 /**

@@ -13,7 +13,7 @@ import util.Catalog;
 import util.Constants;
 
 /**
- * PhysicalScanOperator
+ * Table Reader, implements the tuple reader and store the buffer
  * Read the table from disk and fetch a tuple
  */
 public class TableReader implements TupleReader{
@@ -24,11 +24,6 @@ public class TableReader implements TupleReader{
     private int tupleCount;
     private int tuplePointer;
 
-    /**
-     * 
-     * @param plainSelect is the statement of sql
-     * @param tableIndex is the index of the table in FROM section, start by 0
-     */
     public TableReader(String tableName){
         this.file = new File(Catalog.getInstance().getDataPath(tableName));
         
