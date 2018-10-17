@@ -15,7 +15,7 @@ import java.util.Map;
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class PhysicalJoinOperator extends PhysicalOperator {
+public abstract class PhysicalJoinOperator extends PhysicalOperator {
     protected PhysicalOperator opLeft, opRight;
 
     //private Deque<PhysicalOperator> physOpChildren;
@@ -98,34 +98,6 @@ public class PhysicalJoinOperator extends PhysicalOperator {
      * implement cross production
      * @return result tuple
      */
-    protected Tuple crossProduction(){
-        // update outer tuple and inner tuple
-        if(outerTuple == null && innerTuple == null){
-            outerTuple = opLeft.getNextTuple();
-            innerTuple = opRight.getNextTuple();
-        }
-        else{
-            innerTuple = opRight.getNextTuple();
-            if(innerTuple == null){
-                opRight.reset();
-                outerTuple = opLeft.getNextTuple();
-                innerTuple = opRight.getNextTuple();
-            }
-        }
-        if(innerTuple == null || outerTuple == null){
-            return null;
-        }
-
-        // Concentrate Tuple
-        int[] newTupleData = new int[outerTuple.getDataLength() + innerTuple.getDataLength()];
-        for(int i = 0; i < outerTuple.getDataLength(); i++){
-            newTupleData[i] = outerTuple.getDataAt(i);
-        }
-        for(int i = 0; i < innerTuple.getDataLength(); i++){
-            newTupleData[i + outerTuple.getDataLength()] = innerTuple.getDataAt(i);
-        }
-        Tuple tuple = new Tuple(newTupleData);
-        return tuple;
-    }
+    protected abstract Tuple crossProduction();
 
 }

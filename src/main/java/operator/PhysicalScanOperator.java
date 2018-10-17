@@ -15,20 +15,15 @@ import model.Tuple;
 import model.TupleReader;
 import util.Catalog;
 import util.Constants;
+import util.TableReader;
 
 /**
  * PhysicalScanOperator
  * Read the table from disk and fetch a tuple
  */
-public class PhysicalScanOperator extends PhysicalOperator implements TupleReader{
-    private PhysicalOperator op;
-    private File file;
-    private RandomAccessFile readerPointer;
+public class PhysicalScanOperator extends PhysicalOperator{
+    private TableReader tableReader;
     private Map<String, Integer> schema;
-    private ByteBuffer bufferPage;
-    private int tupleSize;
-    private int tupleCount;
-    private int tuplePointer;
 
     /**
      * 
@@ -36,8 +31,6 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
      * @param tableIndex is the index of the table in FROM section, start by 0
      */
     public PhysicalScanOperator(PlainSelect plainSelect, int tableIndex){
-        this.op = null;
-        
         String item;
         if(tableIndex == 0){
             item = plainSelect.getFromItem().toString();
@@ -48,7 +41,7 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
 
         String[] strs = item.split("\\s+");
         if(strs.length < 0){
-            this.file = null;
+            this.tableReader = null;
             return;
         }
         String tableName = strs[0];
@@ -58,27 +51,15 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
-
-        this.file = new File(Catalog.getInstance().getDataPath(tableName));
-        try{
-            this.readerPointer = new RandomAccessFile(this.file, "r");
-        }catch(FileNotFoundException e){
-            System.out.printf("Cannot find file %s!\n", this.file.getName());
-        }
-        readPage();
+        tableReader = new TableReader(tableName);
+        tableReader.init();
     }
 
     public PhysicalScanOperator(ScanOperator logScanOp) {
 
         this.schema = logScanOp.getSchema();
-        this.file = logScanOp.getFile();
-
-        try{
-            this.readerPointer = new RandomAccessFile(this.file, "r");
-        }catch(FileNotFoundException e){
-            System.out.printf("Cannot find file %s!\n", this.file.getName());
-        }
-        readPage();
+        this.tableReader = logScanOp.getTableReader();
+        tableReader.init();
     }
 
     /**
@@ -86,7 +67,7 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
      */
     @Override
     public Tuple getNextTuple(){
-        return readNextTuple();
+        return tableReader.readNextTuple();
     }
 
     /**
@@ -94,12 +75,7 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
      */
     @Override
     public void reset(){
-        try{
-            readerPointer = new RandomAccessFile(this.file, "r");
-            readPage();
-		}catch(IOException e){
-			System.out.println("Files not found.");
-		}
+        tableReader.init();
     }
 
     /**
@@ -108,54 +84,5 @@ public class PhysicalScanOperator extends PhysicalOperator implements TupleReade
     @Override
     public Map<String, Integer> getSchema(){
         return this.schema;
-    }
-
-    private void readPage(){
-        try{
-            this.bufferPage = ByteBuffer.allocate(Constants.PAGE_SIZE);
-            FileChannel inChannel = readerPointer.getChannel();
-            int byteRead = inChannel.read(bufferPage);
-            if(byteRead == -1){
-                this.tupleCount = 0;
-                this.tupleSize = 0;
-                this.bufferPage = null;
-            }
-            if(bufferPage != null){
-                tupleSize = bufferPage.getInt(0);
-                tupleCount = bufferPage.getInt(Constants.INT_SIZE);
-                tuplePointer = 2 * Constants.INT_SIZE;
-            }
-        }catch(IOException e){
-            System.out.printf("Unexpected table file format\n");
-        }
-    }
-
-    @Override
-    public Tuple readNextTuple(){
-        Tuple tuple = null;
-        if(this.op != null){
-            tuple = this.op.getNextTuple();
-        }
-        if(this.tupleCount <= 0){
-            return null;
-        }
-        int [] tupleData = new int[tupleSize];
-        if(tuplePointer >= (2+tupleCount*tupleSize) * Constants.INT_SIZE){
-            readPage();
-            if(bufferPage == null){
-                try{
-                    readerPointer.close();
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }
-        for(int i =0 ; i < tupleSize; ++i){
-            tupleData[i] = bufferPage.getInt(tuplePointer);
-            tuplePointer += Constants.INT_SIZE;
-        }
-        tuple = new Tuple(tupleData);
-        return tuple;
     }
 }

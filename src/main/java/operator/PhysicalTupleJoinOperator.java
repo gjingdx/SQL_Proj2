@@ -1,34 +1,31 @@
 package operator;
 
 import model.Tuple;
-import model.Block;
 import logical.operator.JoinOperator;
-
-import java.util.Deque;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import java.util.Deque;
 
 /**
  * JoinOperator
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
-    Block block;
+public class PhysicalTupleJoinOperator extends PhysicalJoinOperator{
     /**
      * Init the schema of JoinOperator
      * @param opLeft last operator of outer tuple
      * @param opRight last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public PhysicalBlockJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect, int blockSize){
+    public PhysicalTupleJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect){
         super(opLeft, opRight, plainSelect);
-        this.block = new Block(blockSize, opLeft.getSchema().size());
     }
 
-    public PhysicalBlockJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren, int blockSize) {
+    public PhysicalTupleJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren) {
+        //this.physOpChildren = physOpChildren;
         super(logicalJoinOp, physOpChildren);
-        this.block = new Block(blockSize, opLeft.getSchema().size());
     }
+
 
     /**
      * implement cross production
@@ -36,36 +33,20 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
      */
     @Override
     protected Tuple crossProduction(){
-        // import outer pages into the block
-        if(block.isAllNull()){
-            loadOuterTupleIntoBlock();
-            // all outer pages are read
-            if(block.isAllNull()){
-                return null;
-            }
-        }
-
+        // update outer tuple and inner tuple
         if(outerTuple == null && innerTuple == null){
-            outerTuple = block.readNextTuple();
+            outerTuple = opLeft.getNextTuple();
             innerTuple = opRight.getNextTuple();
         }
         else{
             innerTuple = opRight.getNextTuple();
             if(innerTuple == null){
                 opRight.reset();
-                outerTuple = block.readNextTuple();
+                outerTuple = opLeft.getNextTuple();
                 innerTuple = opRight.getNextTuple();
             }
         }
-        if(outerTuple == null){
-            block.clearData();
-            loadOuterTupleIntoBlock();
-            if(block.isAllNull()){
-                return null;
-            }
-            outerTuple = block.readNextTuple();
-        }
-        if(outerTuple == null || innerTuple == null){
+        if(innerTuple == null || outerTuple == null){
             return null;
         }
 
@@ -79,15 +60,6 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
         }
         Tuple tuple = new Tuple(newTupleData);
         return tuple;
-    }
-
-    private void loadOuterTupleIntoBlock(){
-        Tuple leftTuple;
-        while((leftTuple = opLeft.getNextTuple()) != null){
-            if(!block.setNextTuple(leftTuple)){
-                break;
-            }
-        }
     }
 
 }

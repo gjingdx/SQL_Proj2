@@ -29,7 +29,7 @@ public class PhysicalJoinOperatorTest {
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         physPB.visit(op1);
         physPB.visit(op2);
-        PhysicalJoinOperator physJoinOp = new PhysicalJoinOperator(logJoinOp, physPB.getPhysOpChildren());
+        PhysicalJoinOperator physJoinOp = new PhysicalTupleJoinOperator(logJoinOp, physPB.getPhysOpChildren());
         Tuple tuple;
         ArrayList<String> expectedResult = new ArrayList<>(Arrays.asList(
             "1,200,50,1,101",

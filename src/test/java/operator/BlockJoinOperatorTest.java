@@ -23,7 +23,7 @@ public class BlockJoinOperatorTest{
 
         PhysicalOperator op3 = new PhysicalScanOperator(plainSelect, 0);
         PhysicalOperator op4 = new PhysicalScanOperator(plainSelect, 1);
-        PhysicalOperator opJoin = new PhysicalJoinOperator(op3, op4, plainSelect);
+        PhysicalOperator opJoin = new PhysicalTupleJoinOperator(op3, op4, plainSelect);
         Tuple tuple, tuple2;
         while((tuple = opBlockJoin.getNextTuple()) !=null 
             )
