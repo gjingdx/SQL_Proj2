@@ -29,6 +29,9 @@ public class Catalog {
     private JoinMethod joinMethod = JoinMethod.TNLJ;
     private SortMethod sortMethod = SortMethod.IN_MEMORY;
 
+    private int joinBlockSize = 0;
+    private int sortBlockSize = 0;
+
     /**
      * private constructor for singleton class
      * initialize the input and output path
@@ -212,4 +215,21 @@ public class Catalog {
     public void setSortMethod(SortMethod sortMethod) {
         this.sortMethod = sortMethod;
     }
+
+    public int getJoinBlockSize(){
+        return this.joinBlockSize;
+    }
+
+    public void setJoinBlockSize(int joinBlockSize){
+        this.joinBlockSize = joinBlockSize;
+    }
+
+    public int getSortBlockSize(){
+        return this.sortBlockSize;
+    }
+
+    public void setSortBlockSize(int sortBlockSize){
+        this.sortBlockSize = sortBlockSize;
+    }
+
 }

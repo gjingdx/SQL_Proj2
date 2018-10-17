@@ -5,9 +5,9 @@ import operator.*;
 import logical.operator.*;
 import util.Catalog;
 import util.Constants;
-import util.JoinExpressionVisitor;
+import util.Constants.JoinMethod;
+import util.Constants.SortMethod;
 
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedReader;
-import java.util.Map;
 
 /**
  * Handler class to parse sql, construct query plan and handle initialization
@@ -54,6 +53,7 @@ public class Handler {
         }
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
+        parserConfig();
     }
 
 
@@ -75,7 +75,6 @@ public class Handler {
                 System.out.println("Read statement: " + statement);
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
-                System.out.println("Select body is " + select.getSelectBody());
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
                 //operator.dump(ind);
                 operator.dump2(ind, "");
@@ -89,28 +88,57 @@ public class Handler {
         }
     }
 
-    protected int[][] parserConfig(){
+    protected static boolean parserConfig(){
         int [][]ret = new int[2][2];
         File configFile = new File(Constants.CONFIG_PATH);
         try{
             BufferedReader br = new BufferedReader(new FileReader(configFile));
             String join = br.readLine();
             String sort = br.readLine();
+            br.close();
 
-            if(!setConfig(ret[0], join))return null;
-            if(!setConfig(ret[1], sort))return null;
+            if(!setConfig(ret[0], join))return false;
+            if(!setConfig(ret[1], sort))return false;
+
+            switch(ret[0][0]){
+                case 0:
+                    Catalog.getInstance().setJoinMethod(JoinMethod.TNLJ);
+                    break;
+                case 1:
+                    Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
+                    Catalog.getInstance().setJoinBlockSize(ret[0][1]);
+                    break;
+                case 2:
+                    Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
+                    break;
+                default:
+                    return false;
+            }
+
+            switch(ret[1][0]){
+                case 0:
+                    Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
+                    break;
+                case 1:
+                    Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
+                    Catalog.getInstance().setSortBlockSize(ret[1][1]);
+                    break;
+                default:
+                    return false;
+            }
+
         }catch(FileNotFoundException e){
             System.err.println("Cannot find the target config file");
-            return null;
+            return false;
         }catch(IOException e){
             System.err.println("Unexpected config file format");
-            return null;
+            return false;
         }
-        return ret;
+        return true;
     }
 
-    private boolean setConfig(int [] ret ,String config){
-        String[] splitedConfig = config.split(",");
+    private static boolean setConfig(int [] ret ,String config){
+        String[] splitedConfig = config.split("\\s+");
         if(splitedConfig.length == 1){
             ret [0] = Integer.valueOf(splitedConfig[0]);
             return true;
