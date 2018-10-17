@@ -29,7 +29,7 @@ public class Handler {
      */
     public static void init(String[] args) {
         String outputPath = Constants.OUTPUT_PATH;
-        if (args != null && args.length == 2) {
+        if (args != null && args.length >= 2) {
             if (args[0].charAt(args[0].length() - 1)== '/') {
                 args[0] = args[0].substring(0, args[0].length() - 1);
             }

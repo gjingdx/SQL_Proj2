@@ -6,8 +6,6 @@ import logical.operator.ScanOperator;
 import model.Tuple;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
