@@ -14,11 +14,11 @@ import java.util.*;
 public class PhysicalSortOperator extends PhysicalOperator {
 
     // stores tuples
-    private List<Tuple> tupleList;
-    private int currentIndex;
-    private Map<String, Integer> schema;
-    private PhysicalOperator physChild;
-    private List<OrderByElement> order;
+    protected List<Tuple> tupleList;
+    protected int currentIndex;
+    protected Map<String, Integer> schema;
+    protected PhysicalOperator physChild;
+    protected List<OrderByElement> order;
 
     /**
      * Constructor
@@ -103,7 +103,7 @@ public class PhysicalSortOperator extends PhysicalOperator {
     /**
      * comparator to sort tuples
      */
-    class TupleComparator implements Comparator<Tuple> {
+    protected class TupleComparator implements Comparator<Tuple> {
 
         @Override
         public int compare(Tuple t1, Tuple t2) {
