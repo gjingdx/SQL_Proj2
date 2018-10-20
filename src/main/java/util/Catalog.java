@@ -130,6 +130,14 @@ public class Catalog {
     }
 
     /**
+     * return temp path
+     * @return temp path string
+     */
+    public String getTempPath(){
+        return getOutputPath();
+    }
+
+    /**
      * @return sql queries file path
      */
     public String getSqlQueriesPath() {

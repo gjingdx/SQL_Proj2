@@ -33,6 +33,10 @@ public class TableReader implements TupleReader{
         this.file = file;
     }
 
+    public TableReader(String filePath, String fileName){
+        this.file = new File(filePath + '\\' + fileName);
+    }
+
     @Override
     public void init(){
         try{
