@@ -11,11 +11,10 @@ import java.util.*;
  * PhysicalSortOperator
  * created by Yufu Mo
  */
-public class PhysicalSortOperator extends PhysicalOperator {
+public abstract class PhysicalSortOperator extends PhysicalOperator {
 
     // stores tuples
     protected List<Tuple> tupleList;
-    protected int currentIndex;
     protected Map<String, Integer> schema;
     protected PhysicalOperator physChild;
     protected List<OrderByElement> order;
@@ -29,60 +28,26 @@ public class PhysicalSortOperator extends PhysicalOperator {
     public PhysicalSortOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         tupleList = new ArrayList<>();
         this.schema = operator.getSchema();
-
-        // initialize the list
-        Tuple tuple = operator.getNextTuple();
-        while(tuple != null) {
-            tupleList.add(tuple);
-            tuple = operator.getNextTuple();
-        }
-
-        Collections.sort(tupleList, new TupleComparator());
-        operator.reset();
     }
 
     public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
         //this.tupleList = logSortOp.getTupleList();
-        this.currentIndex = 0;
         this.order = logSortOp.getOrder();
         this.schema = logSortOp.getSchema();
         this.physChild = physChildren.pop();
-
-        tupleList = new ArrayList<>();
-        // initialize the list
-        Tuple tuple = physChild.getNextTuple();
-        while(tuple != null) {
-            tupleList.add(tuple);
-            tuple = physChild.getNextTuple();
-        }
-
-        Collections.sort(tupleList, new TupleComparator());
-        physChild.reset();
     }
 
     /**
      * get the next tuple of the operator.
      */
     @Override
-    public Tuple getNextTuple() {
-        // TODO Auto-generated method stub
-        Tuple tuple = null;
-        if (currentIndex < tupleList.size()) {
-            tuple = tupleList.get(currentIndex);
-        }
-        currentIndex++;
-        return tuple;
-
-    }
+    public abstract Tuple getNextTuple();
 
     /**
      * reset the operator.
      */
     @Override
-    public void reset() {
-        // TODO Auto-generated method stub
-        currentIndex = 0;
-    }
+    public abstract void reset();
 
     /**
      * get the schema
