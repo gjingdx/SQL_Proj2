@@ -43,7 +43,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         firstRun();
         mergeSort();
         finalTemp = getFileLocation(id, preRunCount, 0);
-        tr = new BinaryTupleReader(new File(finalTemp));
+        tr = new BinaryTupleReader(finalTemp);
     }
 
     private void firstRun(){
@@ -89,7 +89,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
                 buffer = new ArrayList<>();
                 for(int j = 0; j < blockSize -1 && (j < indexTemp - i); ++j){
                     buffer.add( 
-                        new BinaryTupleReader(new File(getFileLocation(id, preRunCount, i + j)))
+                        new BinaryTupleReader(getFileLocation(id, preRunCount, i + j))
                     );
                 }
                 outputBuffer = new BinaryTupleWriter(getFileLocation(id, preRunCount+1, index), schema.size());
@@ -176,6 +176,6 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
 
     @Override
     public void reset(){
-        tr.init();
+        tr.reset();
     }
 }

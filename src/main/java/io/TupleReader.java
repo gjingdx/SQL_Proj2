@@ -6,7 +6,7 @@ public interface TupleReader{
     /**
      * reset the tuple reader
      */
-    void init();
+    void reset();
     
     /**
      * read the next tuple in the buffer page

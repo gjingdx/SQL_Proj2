@@ -24,24 +24,13 @@ public class BinaryTupleReader implements TupleReader{
     private int tupleCount;
     private int tuplePointer;
 
-    public BinaryTupleReader(String tableName){
-        this.file = new File(Catalog.getInstance().getDataPath(tableName));
-        init();
-        
-    }
-
-    public BinaryTupleReader(File file){
-        this.file = file;
-        init();
-    }
-
-    public BinaryTupleReader(String filePath, String fileName){
-        this.file = new File(filePath + '\\' + fileName);
-        init();
+    public BinaryTupleReader(String file){
+        this.file = new File(file);
+        reset();
     }
 
     @Override
-    public void init(){
+    public void reset(){
         try{
             this.readerPointer = new RandomAccessFile(this.file, "r");
         }catch(FileNotFoundException e){

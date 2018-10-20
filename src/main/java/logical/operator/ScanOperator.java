@@ -46,7 +46,7 @@ public class ScanOperator extends Operator{
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
-        binaryTupleReader = new BinaryTupleReader(tableName);
+        binaryTupleReader = new BinaryTupleReader(Catalog.getInstance().getDataPath(tableName));
     }
 
     /**

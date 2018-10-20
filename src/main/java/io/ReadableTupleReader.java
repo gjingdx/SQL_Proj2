@@ -28,7 +28,7 @@ public class ReadableTupleReader implements TupleReader{
     }
 
     @Override
-    public void init(){
+    public void reset(){
         try{
             readerPointer.seek(0);
             readIndex = 0;
