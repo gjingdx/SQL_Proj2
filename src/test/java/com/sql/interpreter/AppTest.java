@@ -39,12 +39,10 @@ public class AppTest {
         Handler.init(new String[0]);
         Handler.parseSql();
         for(int index = 1; index<=15; ++index){
-            File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));
-            File expectOutputfile = new File("Samples/samples/expected/" + "query" + String.valueOf(index));
+            String outfile = Catalog.getInstance().getOutputPath() + String.valueOf(index);
+            String expectOutputfile = "Samples/samples/expected/" + "query" + String.valueOf(index);
             BinaryTupleReader r1 = new BinaryTupleReader(outfile);
             BinaryTupleReader r2  = new BinaryTupleReader(expectOutputfile);
-            r1.init();
-            r2.init();
             
             Tuple t1 = null, t2 = null;
             while((t1 = r1.readNextTuple())!=null && (t2=r2.readNextTuple())!=null){

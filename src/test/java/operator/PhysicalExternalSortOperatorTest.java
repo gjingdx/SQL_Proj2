@@ -37,14 +37,4 @@ public class PhysicalExternalSortOperatorTest {
             tuple = physSortOp.getNextTuple();
         }
     }
-
-    @Test
-    public void dump() throws Exception {
-        String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
-        PhysicalOperator sortOp = new PhysicalSortOperator(op, plainSelect);
-        sortOp.dump(0);
-    }
 }
