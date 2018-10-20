@@ -19,4 +19,9 @@ public interface TupleReader{
      * read the next page
      */
     void readPage();
+
+    /**
+     * move back one position
+     */
+    void moveBack();
 }

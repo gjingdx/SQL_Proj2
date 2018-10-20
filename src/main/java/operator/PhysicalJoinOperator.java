@@ -84,6 +84,8 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
     public void reset(){
         opLeft.reset();
         opRight.reset();
+        innerTuple = null;
+        outerTuple = null;
     }
 
     /**

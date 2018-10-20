@@ -56,6 +56,7 @@ public class BinaryTupleWriter implements TupleWriter {
         }
     }
 
+    @Override
     public void finish() {
         if (!bufferIsEmpty()) {
             writeBuffer();

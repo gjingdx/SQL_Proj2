@@ -73,4 +73,14 @@ public class ReadableTupleReader implements TupleReader{
         }
     }
 
+    @Override
+    public void moveBack() {
+        try{
+            readerPointer.seek(readerPointer.getFilePointer() - Constants.INT_SIZE * tupleSize);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
+    }
+
 }
