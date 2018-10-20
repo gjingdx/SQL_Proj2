@@ -6,7 +6,7 @@ import com.sql.interpreter.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import util.Catalog;
-import io.BinaryTableReader;
+import io.BinaryTupleReader;
 
 
 /**
@@ -15,7 +15,7 @@ import io.BinaryTableReader;
  */
 public class ScanOperator extends Operator{
     private Operator op;
-    private BinaryTableReader binaryTableReader;
+    private BinaryTupleReader binaryTupleReader;
     private Map<String, Integer> schema;
 
     /**
@@ -36,7 +36,7 @@ public class ScanOperator extends Operator{
 
         String[] strs = item.split("\\s+");
         if(strs.length < 0){
-            this.binaryTableReader = null;
+            this.binaryTupleReader = null;
             return;
         }
         String tableName = strs[0];
@@ -46,7 +46,7 @@ public class ScanOperator extends Operator{
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
-        binaryTableReader = new BinaryTableReader(tableName);
+        binaryTupleReader = new BinaryTupleReader(tableName);
     }
 
     /**
@@ -57,8 +57,8 @@ public class ScanOperator extends Operator{
         return this.schema;
     }
 
-    public BinaryTableReader getBinaryTableReader() {
-        return binaryTableReader;
+    public BinaryTupleReader getBinaryTupleReader() {
+        return binaryTupleReader;
     }
 
     /**

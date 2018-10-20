@@ -7,7 +7,7 @@ import util.Constants;
 import java.io.*;
 import java.util.*;
 
-public class ReadableTableReader implements TupleReader{
+public class ReadableTupleReader implements TupleReader{
     File file;
     RandomAccessFile readerPointer;
     int tupleCount = 0;
@@ -15,7 +15,7 @@ public class ReadableTableReader implements TupleReader{
     List<Tuple> tupleList;
     int readIndex = 0;
 
-    public ReadableTableReader(String file, int tupleSize){
+    public ReadableTupleReader(String file, int tupleSize){
         this.file = new File(file);
         this.tupleSize = tupleSize;
         this.tupleCount = Constants.PAGE_SIZE / (tupleSize * Constants.INT_SIZE);
