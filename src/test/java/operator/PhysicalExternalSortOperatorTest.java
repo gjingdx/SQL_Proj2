@@ -1,9 +1,6 @@
 package operator;
 
 import com.sql.interpreter.Handler;
-import com.sql.interpreter.PhysicalPlanBuilder;
-import logical.operator.ScanOperator;
-import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;

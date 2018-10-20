@@ -14,6 +14,7 @@ public class ReadableTupleReader implements TupleReader{
     int tupleSize = 0;
     List<Tuple> tupleList;
     int readIndex = 0;
+    long lineSize = 0;
 
     public ReadableTupleReader(String file, int tupleSize){
         this.file = new File(file);
@@ -45,7 +46,9 @@ public class ReadableTupleReader implements TupleReader{
         if(tupleCount == 0)return;
         try{
             for(int i =0; i< tupleCount; i++){
+                long tempPos = readerPointer.getFilePointer();
                 String str = readerPointer.readLine();
+                this.lineSize = readerPointer.getFilePointer() - tempPos;
                 if(str == null){
                     tupleCount = 0;
                     tupleSize = 0;
@@ -76,7 +79,7 @@ public class ReadableTupleReader implements TupleReader{
     @Override
     public void moveBack() {
         try{
-            readerPointer.seek(readerPointer.getFilePointer() - Constants.INT_SIZE * tupleSize);
+            readerPointer.seek(readerPointer.getFilePointer() - lineSize);
         }catch(Exception e){
             e.printStackTrace();
         }
