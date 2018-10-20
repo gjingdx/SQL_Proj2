@@ -1,4 +1,4 @@
-package util;
+package io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel;
 import java.io.IOException;
 
 import model.Tuple;
-import model.TupleReader;
+import io.TupleReader;
 import util.Catalog;
 import util.Constants;
 
@@ -16,7 +16,7 @@ import util.Constants;
  * Table Reader, implements the tuple reader and store the buffer
  * Read the table from disk and fetch a tuple
  */
-public class TableReader implements TupleReader{
+public class BinaryTableReader implements TupleReader{
     private File file;
     private RandomAccessFile readerPointer;
     private ByteBuffer bufferPage;
@@ -24,16 +24,16 @@ public class TableReader implements TupleReader{
     private int tupleCount;
     private int tuplePointer;
 
-    public TableReader(String tableName){
+    public BinaryTableReader(String tableName){
         this.file = new File(Catalog.getInstance().getDataPath(tableName));
         
     }
 
-    public TableReader(File file){
+    public BinaryTableReader(File file){
         this.file = file;
     }
 
-    public TableReader(String filePath, String fileName){
+    public BinaryTableReader(String filePath, String fileName){
         this.file = new File(filePath + '\\' + fileName);
     }
 

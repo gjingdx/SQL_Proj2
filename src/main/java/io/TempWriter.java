@@ -1,8 +1,10 @@
-package util;
+package io;
 
 import model.Tuple;
-import model.TupleWriter;
+import io.TupleWriter;
 import model.BufferStateWrapper;
+import util.Catalog;
+import util.Constants;
 
 import java.io.*;
 import java.nio.ByteBuffer;

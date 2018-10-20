@@ -1,7 +1,8 @@
-package util;
+package io;
 
 import model.Tuple;
-import model.TupleReader;
+import io.TupleReader;
+import util.Constants;
 
 import java.io.*;
 import java.util.*;

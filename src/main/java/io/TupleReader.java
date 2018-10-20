@@ -1,4 +1,6 @@
-package model;
+package io;
+
+import model.Tuple;
 
 public interface TupleReader{
     /**

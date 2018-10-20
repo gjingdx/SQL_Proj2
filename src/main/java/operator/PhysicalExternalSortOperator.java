@@ -2,22 +2,19 @@ package operator;
 
 import logical.operator.SortOperator;
 import model.Tuple;
-import model.TupleReader;
-import model.TupleWriter;
+import io.TupleReader;
 import util.Catalog;
 import util.Constants;
-import util.TableReader;
-import util.TempWriter;
-import net.sf.jsqlparser.statement.select.OrderByElement;
+import io.BinaryTableReader;
+import io.TempWriter;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.util.*;
-import java.io.*;
 
 public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     private List<TupleReader> buffer;
     private final String id;
-    private TableReader outputBuffer;
+    private BinaryTableReader outputBuffer;
     int blockSize;
 
     public PhysicalExternalSortOperator(PhysicalOperator operator, PlainSelect plainSelect){
@@ -25,7 +22,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
         id = UUID.randomUUID().toString().substring(0, 8);
-        outputBuffer = new TableReader(Catalog.getInstance().getOutputPath(), id);
+        outputBuffer = new BinaryTableReader(Catalog.getInstance().getOutputPath(), id);
         firstRun();
     } 
 
@@ -34,7 +31,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
         id = UUID.randomUUID().toString().substring(0, 8);
-        outputBuffer = new TableReader(Catalog.getInstance().getOutputPath(), id);
+        outputBuffer = new BinaryTableReader(Catalog.getInstance().getOutputPath(), id);
         firstRun();
     }
 
