@@ -75,7 +75,7 @@ public class PhysicalPlanBuilder {
                 physOpChildren.push(physSelectOp);
                 break;
             case EXTERNAL:
-                physSelectOp = new PhysicalSortOperator(logSortOp, physOpChildren);
+                physSelectOp = new PhysicalExternalSortOperator(logSortOp, physOpChildren);
                 physOpChildren.push(physSelectOp);
                 break;
             default:

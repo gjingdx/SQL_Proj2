@@ -53,7 +53,7 @@ public class LogicalPlanBuilder {
         }
         if(plainSelect.getSelectItems() != null 
         		&& plainSelect.getSelectItems().size() > 0 
-        		&& plainSelect.getSelectItems().get(0) != "*")
+        		&& plainSelect.getSelectItems().get(0).toString() != "*")
         	opLeft = new ProjectOperator(opLeft, plainSelect);
         if(plainSelect.getDistinct() != null){
             opLeft = new SortOperator(opLeft, plainSelect);

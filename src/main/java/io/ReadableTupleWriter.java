@@ -37,6 +37,7 @@ public class ReadableTupleWriter implements TupleWriter{
         }
     }
 
+    @Override
     public void finish() {
         try {
             output.write(sb.toString());

@@ -26,15 +26,18 @@ public class BinaryTupleReader implements TupleReader{
 
     public BinaryTupleReader(String tableName){
         this.file = new File(Catalog.getInstance().getDataPath(tableName));
+        init();
         
     }
 
     public BinaryTupleReader(File file){
         this.file = file;
+        init();
     }
 
     public BinaryTupleReader(String filePath, String fileName){
         this.file = new File(filePath + '\\' + fileName);
+        init();
     }
 
     @Override
@@ -92,5 +95,12 @@ public class BinaryTupleReader implements TupleReader{
         }
         tuple = new Tuple(tupleData);
         return tuple;
+    }
+
+    @Override
+    public void moveBack() {
+        if(tuplePointer >  2 * Constants.INT_SIZE){
+            tuplePointer -= tupleSize * Constants.INT_SIZE;
+        }
     }
 }
