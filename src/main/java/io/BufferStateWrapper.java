@@ -1,5 +1,6 @@
-package model;
+package io;
 
+import model.Tuple;
 import util.Constants;
 
 import java.nio.ByteBuffer;

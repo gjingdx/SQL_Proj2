@@ -6,7 +6,7 @@ import java.io.*;
 
 import model.Tuple;
 import util.Catalog;
-import io.BinaryTableReader;
+import io.BinaryTupleReader;
 
 /**
  * Unit test for simple App.
@@ -41,8 +41,8 @@ public class AppTest {
         for(int index = 1; index<=15; ++index){
             File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));
             File expectOutputfile = new File("Samples/samples/expected/" + "query" + String.valueOf(index));
-            BinaryTableReader r1 = new BinaryTableReader(outfile);
-            BinaryTableReader r2  = new BinaryTableReader(expectOutputfile);
+            BinaryTupleReader r1 = new BinaryTupleReader(outfile);
+            BinaryTupleReader r2  = new BinaryTupleReader(expectOutputfile);
             r1.init();
             r2.init();
             

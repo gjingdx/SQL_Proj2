@@ -6,14 +6,14 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import logical.operator.ScanOperator;
 import model.Tuple;
 import util.Catalog;
-import io.BinaryTableReader;
+import io.BinaryTupleReader;
 
 /**
  * PhysicalScanOperator
  * Read the table from disk and fetch a tuple
  */
 public class PhysicalScanOperator extends PhysicalOperator{
-    private BinaryTableReader binaryTableReader;
+    private BinaryTupleReader binaryTupleReader;
     private Map<String, Integer> schema;
 
     /**
@@ -32,7 +32,7 @@ public class PhysicalScanOperator extends PhysicalOperator{
 
         String[] strs = item.split("\\s+");
         if(strs.length < 0){
-            this.binaryTableReader = null;
+            this.binaryTupleReader = null;
             return;
         }
         String tableName = strs[0];
@@ -42,15 +42,15 @@ public class PhysicalScanOperator extends PhysicalOperator{
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
-        binaryTableReader = new BinaryTableReader(tableName);
-        binaryTableReader.init();
+        binaryTupleReader = new BinaryTupleReader(tableName);
+        binaryTupleReader.init();
     }
 
     public PhysicalScanOperator(ScanOperator logScanOp) {
 
         this.schema = logScanOp.getSchema();
-        this.binaryTableReader = logScanOp.getBinaryTableReader();
-        binaryTableReader.init();
+        this.binaryTupleReader = logScanOp.getBinaryTupleReader();
+        binaryTupleReader.init();
     }
 
     /**
@@ -58,7 +58,7 @@ public class PhysicalScanOperator extends PhysicalOperator{
      */
     @Override
     public Tuple getNextTuple(){
-        return binaryTableReader.readNextTuple();
+        return binaryTupleReader.readNextTuple();
     }
 
     /**
@@ -66,7 +66,7 @@ public class PhysicalScanOperator extends PhysicalOperator{
      */
     @Override
     public void reset(){
-        binaryTableReader.init();
+        binaryTupleReader.init();
     }
 
     /**

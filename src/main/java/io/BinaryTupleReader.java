@@ -16,7 +16,7 @@ import util.Constants;
  * Table Reader, implements the tuple reader and store the buffer
  * Read the table from disk and fetch a tuple
  */
-public class BinaryTableReader implements TupleReader{
+public class BinaryTupleReader implements TupleReader{
     private File file;
     private RandomAccessFile readerPointer;
     private ByteBuffer bufferPage;
@@ -24,16 +24,16 @@ public class BinaryTableReader implements TupleReader{
     private int tupleCount;
     private int tuplePointer;
 
-    public BinaryTableReader(String tableName){
+    public BinaryTupleReader(String tableName){
         this.file = new File(Catalog.getInstance().getDataPath(tableName));
         
     }
 
-    public BinaryTableReader(File file){
+    public BinaryTupleReader(File file){
         this.file = file;
     }
 
-    public BinaryTableReader(String filePath, String fileName){
+    public BinaryTupleReader(String filePath, String fileName){
         this.file = new File(filePath + '\\' + fileName);
     }
 
