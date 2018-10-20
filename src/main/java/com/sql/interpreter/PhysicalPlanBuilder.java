@@ -71,7 +71,7 @@ public class PhysicalPlanBuilder {
         PhysicalSortOperator physSelectOp;
         switch (Catalog.getInstance().getSortMethod()) {
             case IN_MEMORY:
-                physSelectOp = new PhysicalSortOperator(logSortOp, physOpChildren);
+                physSelectOp = new PhysicalMemorySortOperator(logSortOp, physOpChildren);
                 physOpChildren.push(physSelectOp);
                 break;
             case EXTERNAL:
@@ -79,7 +79,7 @@ public class PhysicalPlanBuilder {
                 physOpChildren.push(physSelectOp);
                 break;
             default:
-                physSelectOp = new PhysicalSortOperator(logSortOp, physOpChildren);
+                physSelectOp = new PhysicalMemorySortOperator(logSortOp, physOpChildren);
                 physOpChildren.push(physSelectOp);
         }
     }

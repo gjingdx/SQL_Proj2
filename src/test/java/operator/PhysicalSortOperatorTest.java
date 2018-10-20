@@ -22,7 +22,7 @@ public class PhysicalSortOperatorTest {
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         physPB.visit(logScanOp);
         SortOperator logSortOp = new SortOperator(logScanOp, plainSelect);
-        PhysicalOperator physSortOp = new PhysicalSortOperator(logSortOp, physPB.getPhysOpChildren());
+        PhysicalOperator physSortOp = new PhysicalMemorySortOperator(logSortOp, physPB.getPhysOpChildren());
         Tuple tuple = physSortOp.getNextTuple();
         long last = Long.MIN_VALUE;
         while(tuple != null){
@@ -38,7 +38,7 @@ public class PhysicalSortOperatorTest {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
         PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
-        PhysicalOperator sortOp = new PhysicalSortOperator(op, plainSelect);
+        PhysicalOperator sortOp = new PhysicalMemorySortOperator(op, plainSelect);
         sortOp.dump(0);
     }
 }
