@@ -1,7 +1,6 @@
 package io;
-
-import model.BufferStateWrapper;
+import model.Tuple;
 
 public interface TupleWriter{
-    boolean writeNextTuple(BufferStateWrapper bufferStateWrapper);
+    void writeNextTuple(Tuple tuple);
 }

@@ -1,8 +1,9 @@
 package operator;
 
+import io.BinaryTupleWriter;
 import model.Tuple;
 import io.TupleWriter;
-import model.BufferStateWrapper;
+import io.BufferStateWrapper;
 import util.Catalog;
 import util.Constants;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * Abstract class for operator
  * Created by Yufu Mo
  */
-public abstract class PhysicalOperator implements TupleWriter{
+public abstract class PhysicalOperator {
 
     /**
      * get the next tuple of the operator's output
@@ -35,48 +36,17 @@ public abstract class PhysicalOperator implements TupleWriter{
      */
     public abstract Map<String, Integer> getSchema();
 
-//    /**
-//     * @return an list of children of a physical operation
-//     */
-//    public abstract List<PhysicalOperator> getChildren();
 
     public void dump(int i) {
-        String path = Catalog.getInstance().getOutputPath();
-        try{
-            File file = new File(path + i);
-            FileOutputStream fout = new FileOutputStream(file);
-            FileChannel fc = fout.getChannel();
-            BufferStateWrapper bufferStateWrapper = new BufferStateWrapper(2 * Constants.INT_SIZE,
-                    ByteBuffer.allocate(Constants.PAGE_SIZE), getSchema().size());
-
-            while (writeNextTuple(bufferStateWrapper)) {
-                // the buffer has no space for a tuple
-                if (!bufferStateWrapper.hasSpace()) {
-                    bufferStateWrapper.writeBuffer(fc);
-                    bufferStateWrapper = new BufferStateWrapper(2 * Constants.INT_SIZE,
-                            ByteBuffer.allocate(Constants.PAGE_SIZE), getSchema().size());
-                }
-                else {
-
-                }
-            }
-            if (!bufferStateWrapper.bufferIsEmpty()) {
-                bufferStateWrapper.writeBuffer(fc);
-            }
-            fout.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public boolean writeNextTuple(BufferStateWrapper bufferStateWrapper) {
+        String path = Catalog.getInstance().getOutputPath() + i;
+        TupleWriter tupleWriter = new BinaryTupleWriter(path, getSchema().size());
         Tuple tuple = getNextTuple();
-        if (tuple == null) {
-            return false;
+        while (tuple != null) {
+            tupleWriter.writeNextTuple(tuple);
+            tuple = getNextTuple();
         }
-        bufferStateWrapper.putTuple(tuple);
-        return true;
+        // finish
+        tupleWriter.writeNextTuple(null);
     }
 
 

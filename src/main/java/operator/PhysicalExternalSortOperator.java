@@ -1,12 +1,13 @@
 package operator;
 
+import io.BinaryTupleWriter;
+import io.TupleWriter;
 import logical.operator.SortOperator;
 import model.Tuple;
 import io.TupleReader;
 import util.Catalog;
 import util.Constants;
-import io.BinaryTableReader;
-import io.TempWriter;
+import io.BinaryTupleReader;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.util.*;
@@ -15,7 +16,7 @@ import java.io.*;
 public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     private List<TupleReader> buffer;
     private final String id;
-    private BinaryTableReader outputBuffer;
+    private BinaryTupleReader outputBuffer;
     int blockSize;
     int index = 0;
 
@@ -24,7 +25,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
         id = UUID.randomUUID().toString().substring(0, 8);
-        outputBuffer = new BinaryTableReader(Catalog.getInstance().getOutputPath(), id);
+        outputBuffer = new BinaryTupleReader(Catalog.getInstance().getOutputPath(), id);
         firstRun();
     } 
 
@@ -33,7 +34,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
         id = UUID.randomUUID().toString().substring(0, 8);
-        outputBuffer = new BinaryTableReader(Catalog.getInstance().getOutputPath(), id);
+        outputBuffer = new BinaryTupleReader(Catalog.getInstance().getOutputPath(), id);
         firstRun();
     }
 
@@ -52,10 +53,13 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
                 if(tupleList.size() == 0){
                     break;
                 }
-                Collections.sort(tupleList, new TupleComparator());
-                TempWriter tempWriter = new TempWriter("run1_" + index);
+                TupleWriter tupleWriter = new BinaryTupleWriter(
+                        Catalog.getInstance().getTempPath() + "//run1_" + index, schema.size());
                 index ++;
-                tempWriter.writeTupleList(tupleList);
+                for (Tuple tuple : tupleList) {
+                    tupleWriter.writeNextTuple(tuple);
+                }
+                tupleWriter.writeNextTuple(null);
             }
             if(index == 1){
                 renameTempToFinalTemp(Catalog.getInstance().getOutputPath() + "\\run1_0");
