@@ -10,12 +10,14 @@ import io.TempWriter;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.util.*;
+import java.io.*;
 
 public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     private List<TupleReader> buffer;
     private final String id;
     private BinaryTableReader outputBuffer;
     int blockSize;
+    int index = 0;
 
     public PhysicalExternalSortOperator(PhysicalOperator operator, PlainSelect plainSelect){
         super(operator, plainSelect);
@@ -37,7 +39,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
 
     private void firstRun(){
         try{
-            int index = 0;
+            index = 0;
             while(true){
                 int tupleCount = blockSize
                                 * ((Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (schema.size() * Constants.INT_SIZE));
@@ -50,13 +52,54 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
                 if(tupleList.size() == 0){
                     break;
                 }
+                Collections.sort(tupleList, new TupleComparator());
                 TempWriter tempWriter = new TempWriter("run1_" + index);
                 index ++;
                 tempWriter.writeTupleList(tupleList);
             }
+            if(index == 1){
+                renameTempToFinalTemp(Catalog.getInstance().getOutputPath() + "\\run1_0");
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
 
+    private void mergeSort(){
+        int indexTemp = index;
+        index = 0;
+        int preRunCount = 0;
+        while(indexTemp <= 1){
+            //
+            //
+            
+            for(int i = 0; i < indexTemp; i+= (blockSize - 1)){
+                for(int j = 0; j < blockSize -1; ++j){
+                    buffer.set(j, new BinaryTableReader(Catalog.getInstance().getTempPath(), "run" + preRunCount + '_' + (i + j)));
+                }
+                
+                index ++;
+            }
+            indexTemp = index;
+        }
+        
+    }
+
+    private void renameTempToFinalTemp(String tempFile) throws IOException{
+        // File (or directory) with old name
+        File file = new File("tempFile");
+
+        // File (or directory) with new name
+        File file2 = new File(Catalog.getInstance().getTempPath() + "\\id");
+
+        if (file2.exists())
+            throw new java.io.IOException("file exists");
+
+        // Rename file (or directory)
+        boolean success = file.renameTo(file2);
+
+        if (!success) {
+        // File was not successfully renamed
+        }
     }
 }

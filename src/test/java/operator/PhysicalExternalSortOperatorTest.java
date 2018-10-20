@@ -17,7 +17,7 @@ import java.io.StringReader;
 public class PhysicalExternalSortOperatorTest {
 
     public PhysicalExternalSortOperatorTest(){
-        Catalog.getInstance().setSortBlockSize(4);
+        Catalog.getInstance().setSortBlockSize(2);
     }
     @Test
     public void getNextTuple() throws Exception {
