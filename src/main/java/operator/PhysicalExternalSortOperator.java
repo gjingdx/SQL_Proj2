@@ -9,6 +9,7 @@ import io.TupleReader;
 import util.Catalog;
 import util.Constants;
 import io.BinaryTupleReader;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.util.*;
@@ -16,7 +17,7 @@ import java.io.*;
 
 public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     private List<TupleReader> buffer;
-    private final String id;
+    private final String id = UUID.randomUUID().toString().substring(0, 8);
     private BinaryTupleWriter outputBuffer;
     int blockSize;
     int index = 0;
@@ -26,20 +27,23 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
 
     public PhysicalExternalSortOperator(PhysicalOperator operator, PlainSelect plainSelect){
         super(operator, plainSelect);
-        this.blockSize = Catalog.getInstance().getSortBlockSize();
-        buffer = new ArrayList<>(blockSize - 1);
-        id = UUID.randomUUID().toString().substring(0, 8);
-        firstRun();
-        mergeSort();
-        finalTemp = getFileLocation(id, preRunCount, 0);
-        tr = new BinaryTupleReader(finalTemp);
+        init();
     } 
 
     public PhysicalExternalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren){
         super(logSortOp, physChildren);
+        init();
+        
+    }
+
+    public PhysicalExternalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren){
+        super(order, physChildren);
+        init();
+    }
+
+    private void init(){
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
-        id = UUID.randomUUID().toString().substring(0, 8);
         firstRun();
         mergeSort();
         finalTemp = getFileLocation(id, preRunCount, 0);
@@ -69,9 +73,6 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
                     tupleWriter.writeNextTuple(tuple);
                 }
                 tupleWriter.finish();
-            }
-            if(index == 1){
-                renameTempToFinalTemp(getFileLocation(id, 0, 0));
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -161,6 +162,8 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     }
 
     private void deletePrePassExtraTemp(int pass){
+        //System.out.println(id + '\t' + pass);
+        //System.out.println(Catalog.getInstance().getTempPath());
         File[] files = new File(Catalog.getInstance().getTempPath()).listFiles();
         for(File file : files){
             if(file.getName().contains(id + '_' + pass + '_')){
@@ -177,5 +180,17 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     @Override
     public void reset(){
         tr.reset();
+    }
+
+    public List<OrderByElement> getOrder(){
+        return order;
+    }
+
+    public void recordTupleReader(){
+        tr.recordPosition();
+    }
+
+    public void setRecordTupleReader(){
+        tr.moveToPosition();
     }
 }

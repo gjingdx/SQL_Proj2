@@ -24,4 +24,11 @@ public interface TupleReader{
      * move back one position
      */
     void moveBack();
+
+    /**
+     * 
+     */
+    void recordPosition();
+
+    void moveToPosition();
 }
