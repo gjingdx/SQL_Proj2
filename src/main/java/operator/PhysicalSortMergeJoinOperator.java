@@ -43,7 +43,8 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
         this.schema = logicalJoinOp.getSchema();
         Tr = opLeft.getNextTuple();
         Gs = opRight.getNextTuple();
-        Ts = null;
+        opRight.recordTupleReader();
+        Ts = Gs;
         isInLoop = false;
 
     }
@@ -54,6 +55,9 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
         opLeft.reset();
         Tr = opLeft.getNextTuple();
         Gs = opRight.getNextTuple();
+        opRight.recordTupleReader();
+        Ts = Gs;
+        isInLoop = false;
     }
 
     /**
@@ -83,24 +87,7 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
 
     protected Tuple crossProduction() {
         // search for equal
-        if (Tr == null || Gs == null)
-            return null;
-        if (new TupleComparator().compare(Tr, Gs) != 0) {
-            findNextEqual();
-        }
-        if (Tr == null || Gs == null)
-            return null;
-        if (new TupleComparator().compare(Tr, Gs) == 0) {
-            Tuple t = joinTuple(Tr, Gs);
-            Gs = opRight.getNextTuple();
-            return t;
-        }
-        // Concentrate Tuple
-        return null;
-    }
-
-    private void findNextEqual() {
-        while (Tr != null && Gs != null) {
+        while (Tr != null && Gs != null){
             if (new TupleComparator().compare(Tr, Gs) < 0) {
                 Tr = opLeft.getNextTuple();
                 // reset to block
@@ -111,15 +98,29 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
                 continue;
             }
             if (new TupleComparator().compare(Tr, Gs) > 0) {
+                
                 Gs = opRight.getNextTuple();
                 isInLoop = false;
+                opRight.recordTupleReader();
+                Ts = Gs;
                 continue;
             }
-            Ts = Gs;
-            opRight.recordTupleReader();
-            isInLoop = true;
-            break;
+
+            Tuple ret = joinTuple(Tr, Gs);
+            Gs = opRight.getNextTuple();
+
+            if (Gs == null || new TupleComparator().compare(Tr, Gs) != 0) {
+                Tr = opLeft.getNextTuple();
+                opRight.setRecordTupleReader();
+                Gs = Ts;
+            }
+
+            if (ret != null) {
+                return ret;
+            }
+
         }
+        return null;
     }
 
     private Tuple joinTuple(Tuple outerTuple, Tuple innerTuple) {

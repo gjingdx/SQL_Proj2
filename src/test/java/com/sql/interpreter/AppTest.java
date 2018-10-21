@@ -35,7 +35,7 @@ public class AppTest {
                 outputBin.add(t1.toString());
             }
             while ((t2 = r2.readNextTuple()) != null) {
-                Assert.assertTrue(t2.toString() + " lost", outputBin.contains(t2.toString()));
+                Assert.assertTrue("Index: " + index + ' ' + t2.toString() + " lost", outputBin.contains(t2.toString()));
                 expectedBin.add(t2.toString());
             }
             Assert.assertEquals("index: " + index, outputBin, expectedBin);
