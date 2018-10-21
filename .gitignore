@@ -19,6 +19,9 @@ target/
 # Output files
 Samples/samples/output/*
 
+# Sample folder
+Samples/*
+
 # Log file
 *.log
 

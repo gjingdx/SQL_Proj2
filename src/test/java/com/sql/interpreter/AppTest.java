@@ -57,7 +57,6 @@ public class AppTest {
                 expectedBin.add(t2.toString());
             }
             Assert.assertEquals("index: "+index, outputBin, expectedBin);
-            //Assert.assertTrue("index: "+index, expectedBin.equals(outputBin));
 //            while((t1 = r1.readNextTuple())!=null && (t2=r2.readNextTuple())!=null){
 //                Assert.assertEquals(t1.toString(), t2.toString());
 //            }
