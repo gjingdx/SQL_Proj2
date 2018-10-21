@@ -8,7 +8,7 @@ import java.util.Map;
  * Abstract class for operator
  * Created by Yufu Mo
  */
-public abstract class Operator{
+public abstract class Operator {
 
     /**
      * @return the current schema of the operator
@@ -24,6 +24,7 @@ public abstract class Operator{
     /**
      * Abstract method for accepting PhysicalPlanBuilder visitor,
      * in which the visitor would visit the operator
+     *
      * @param visitor PhysicalPlanBuilder visitor to be accepted.
      */
     public abstract void accept(PhysicalPlanBuilder visitor);

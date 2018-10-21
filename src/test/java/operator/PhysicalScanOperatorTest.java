@@ -1,18 +1,18 @@
 package operator;
 
-import logical.operator.ScanOperator;
-import org.junit.Test;
-
 import junit.framework.Assert;
-
-import java.io.*;
-import java.util.ArrayList;
-
+import logical.operator.ScanOperator;
+import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import org.junit.Test;
 import util.Constants;
-import model.Tuple;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.StringReader;
+import java.util.ArrayList;
 
 public class PhysicalScanOperatorTest {
 

@@ -5,7 +5,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import util.Catalog;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 
 
 public class PhysicalOperatorTest {
@@ -14,7 +15,7 @@ public class PhysicalOperatorTest {
         Handler.init(new String[0]);
         Handler.parseSql();
 
-        for(int index = 1; index <= 15; ++index){
+        for (int index = 1; index <= 15; ++index) {
             File outfile = new File(Catalog.getInstance().getOutputPath() + index);
             File expectOutputfile = new File("Samples/samples/expected/" + "query" + index);
             FileInputStream outputStream, expectedStream;

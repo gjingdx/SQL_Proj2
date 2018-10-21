@@ -1,13 +1,13 @@
 package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
-import util.JoinExpressionVisitor;
-
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import util.JoinExpressionVisitor;
+
 import java.util.Map;
 
-public class SelectOperator extends Operator{
+public class SelectOperator extends Operator {
 
     private Operator prevOp;
     private Expression expression;
@@ -15,14 +15,15 @@ public class SelectOperator extends Operator{
 
     /**
      * Constructor of Select Operator
-     * @param operator previous (child) operator
+     *
+     * @param operator    previous (child) operator
      * @param plainSelect plain sql sentence
      */
     public SelectOperator(Operator operator, PlainSelect plainSelect) {
         this.prevOp = operator;
         this.currentSchema = operator.getSchema();
         this.expression = plainSelect.getWhere();
-        
+
         JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
         expression.accept(joinExpress);
         expression = joinExpress.getExpression();
@@ -40,12 +41,11 @@ public class SelectOperator extends Operator{
      * method to get children
      */
     @Override
-    public Operator[] getChildren(){
-        if(this.prevOp == null){
+    public Operator[] getChildren() {
+        if (this.prevOp == null) {
             return null;
-        }
-        else{
-            return new Operator[] {this.prevOp};
+        } else {
+            return new Operator[]{this.prevOp};
         }
     }
 

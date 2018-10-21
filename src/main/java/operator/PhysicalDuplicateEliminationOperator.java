@@ -1,10 +1,8 @@
 package operator;
 
 import logical.operator.DuplicateEliminationOperator;
-import logical.operator.Operator;
 import model.Tuple;
 
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +23,7 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
     /**
      * Constructor to initiate the operator using the sorted list in sort operator.
      * Eliminate duplicates with a sorted list.
+     *
      * @param operator assuming it's sort operator
      */
     public PhysicalDuplicateEliminationOperator(PhysicalOperator operator) {
@@ -45,6 +44,7 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
 
     /**
      * method that gets the next tuple.
+     *
      * @return the next tuple.
      */
     @Override
@@ -73,7 +73,7 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
      * get the schema
      */
     @Override
-    public Map<String, Integer> getSchema(){
+    public Map<String, Integer> getSchema() {
         return this.schema;
     }
 

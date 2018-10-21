@@ -4,8 +4,8 @@ import logical.operator.SelectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import util.SelectExpressionVisitor;
 import util.JoinExpressionVisitor;
+import util.SelectExpressionVisitor;
 
 import java.util.Deque;
 import java.util.Map;
@@ -18,14 +18,15 @@ public class PhysicalSelectOperator extends PhysicalOperator {
 
     /**
      * Constructor of PhysicalSelectOperator
-     * @param operator previous (child) operator
+     *
+     * @param operator    previous (child) operator
      * @param plainSelect plain sql sentence
      */
     public PhysicalSelectOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         this.prevOp = operator;
         this.currentSchema = operator.getSchema();
         this.expression = plainSelect.getWhere();
-        
+
         JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
         expression.accept(joinExpress);
         expression = joinExpress.getExpression();

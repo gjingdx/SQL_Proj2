@@ -1,17 +1,19 @@
 package logical.operator;
 
-import java.io.StringReader;
-import java.util.Map;
-import java.util.HashMap;
 import junit.framework.Assert;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
 
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ProjectOperatorTest {
     ProjectOperator op;
-    public ProjectOperatorTest() throws Exception{
+
+    public ProjectOperatorTest() throws Exception {
         String statement = "SELECT BT.E, BT.F FROM Boats AS BT WHERE BT.E = 9;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
@@ -22,7 +24,7 @@ public class ProjectOperatorTest {
     }
 
     @Test
-    public void getChildrenTest()  {
+    public void getChildrenTest() {
         Assert.assertEquals("Children: ", 1, op.getChildren().length);
     }
 

@@ -4,7 +4,9 @@ import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
 
 /**
  * PhysicalSortOperator
@@ -18,6 +20,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
     /**
      * Constructor
      * read all tuples, store them in a list and sort them
+     *
      * @param operator
      * @param plainSelect
      */
@@ -27,7 +30,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         // initialize the list
         currentIndex = 0;
         Tuple tuple = operator.getNextTuple();
-        while(tuple != null) {
+        while (tuple != null) {
             tupleList.add(tuple);
             tuple = operator.getNextTuple();
         }
@@ -43,7 +46,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         // initialize the list
         currentIndex = 0;
         Tuple tuple = physChild.getNextTuple();
-        while(tuple != null) {
+        while (tuple != null) {
             tupleList.add(tuple);
             tuple = physChild.getNextTuple();
         }

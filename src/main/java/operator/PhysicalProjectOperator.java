@@ -19,11 +19,12 @@ public class PhysicalProjectOperator extends PhysicalOperator {
 
     /**
      * Constructor of PhysicalProjectOperator
-     * @param operator previous (child) operator
+     *
+     * @param operator    previous (child) operator
      * @param plainSelect plain sql sentence
      */
     @SuppressWarnings("unchecked")
-	public PhysicalProjectOperator(PhysicalOperator physicalOp, PlainSelect plainSelect) {
+    public PhysicalProjectOperator(PhysicalOperator physicalOp, PlainSelect plainSelect) {
         prevPhysicalOp = physicalOp;
         selectItems = plainSelect.getSelectItems();
         // yet did not handle cases: select A,D from S, B
@@ -40,7 +41,7 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         }
     }
 
-    public PhysicalProjectOperator (ProjectOperator logicalProjOp, Deque<PhysicalOperator> physChildren) {
+    public PhysicalProjectOperator(ProjectOperator logicalProjOp, Deque<PhysicalOperator> physChildren) {
         //this.physOpChildren = physChildren;
         prevPhysicalOp = physChildren.pop();
         this.selectItems = logicalProjOp.getSelectItems();
@@ -51,8 +52,7 @@ public class PhysicalProjectOperator extends PhysicalOperator {
             currentSchema = new HashMap<>();
             int i = 0;
             for (SelectItem selectItem : selectItems) {
-                currentSchema.put(selectItem.toString(),
-                        i);
+                currentSchema.put(selectItem.toString(), i);
                 i++;
             }
         }
@@ -67,7 +67,7 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         Tuple next = prevPhysicalOp.getNextTuple();
         if (next != null && currentSchema != prevPhysicalOp.getSchema()) {
             int[] data = new int[currentSchema.size()];
-            for (Map.Entry<String, Integer> entry : currentSchema.entrySet()){
+            for (Map.Entry<String, Integer> entry : currentSchema.entrySet()) {
                 data[entry.getValue()] = next.getDataAt(prevPhysicalOp.getSchema().get(entry.getKey()));
             }
             next = new Tuple(data);

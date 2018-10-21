@@ -1,23 +1,18 @@
 package com.sql.interpreter;
 
 import logical.interpreter.LogicalPlanBuilder;
-import operator.*;
-import logical.operator.*;
+import logical.operator.Operator;
+import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import operator.PhysicalOperator;
 import util.Catalog;
 import util.Constants;
 import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
-import net.sf.jsqlparser.parser.CCJSqlParser;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.BufferedReader;
+import java.io.*;
 
 /**
  * Handler class to parse SQL, construct query plan and handle initialization
@@ -30,7 +25,7 @@ public class Handler {
     public static void init(String[] args) {
         String outputPath = Constants.OUTPUT_PATH;
         if (args != null && args.length >= 2) {
-            if (args[0].charAt(args[0].length() - 1)== '/') {
+            if (args[0].charAt(args[0].length() - 1) == '/') {
                 args[0] = args[0].substring(0, args[0].length() - 1);
             }
             if (args[1].charAt(args[1].length() - 1) != '/') {
@@ -48,7 +43,7 @@ public class Handler {
         }
         new File(outputPath).mkdirs();
         final File[] files = new File(outputPath).listFiles();
-        for(File f : files){
+        for (File f : files) {
             f.delete();
         }
         outputPath += "query";
@@ -87,23 +82,25 @@ public class Handler {
             e.printStackTrace();
         }
     }
+
     /**
      * parser the join and sort configuration into the Catalog
+     *
      * @return true for no issue
      */
-    protected static boolean parserConfig(){
-        int [][]ret = new int[2][2];
+    protected static boolean parserConfig() {
+        int[][] ret = new int[2][2];
         File configFile = new File(Constants.CONFIG_PATH);
-        try{
+        try {
             BufferedReader br = new BufferedReader(new FileReader(configFile));
             String join = br.readLine();
             String sort = br.readLine();
             br.close();
 
-            if(!setConfig(ret[0], join))return false;
-            if(!setConfig(ret[1], sort))return false;
+            if (!setConfig(ret[0], join)) return false;
+            if (!setConfig(ret[1], sort)) return false;
 
-            switch(ret[0][0]){
+            switch (ret[0][0]) {
                 case 0:
                     Catalog.getInstance().setJoinMethod(JoinMethod.TNLJ);
                     break;
@@ -118,7 +115,7 @@ public class Handler {
                     return false;
             }
 
-            switch(ret[1][0]){
+            switch (ret[1][0]) {
                 case 0:
                     Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
                     break;
@@ -130,25 +127,25 @@ public class Handler {
                     return false;
             }
 
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.err.println("Cannot find the target config file");
             return false;
-        }catch(IOException e){
+        } catch (IOException e) {
             System.err.println("Unexpected config file format");
             return false;
         }
         return true;
     }
 
-    private static boolean setConfig(int [] ret ,String config){
+    private static boolean setConfig(int[] ret, String config) {
         String[] splitedConfig = config.split("\\s+");
-        if(splitedConfig.length == 1){
-            ret [0] = Integer.valueOf(splitedConfig[0]);
+        if (splitedConfig.length == 1) {
+            ret[0] = Integer.valueOf(splitedConfig[0]);
             return true;
         }
-        if(splitedConfig.length == 2){
-            ret [0] = Integer.valueOf(splitedConfig[0]);
-            ret [1] = Integer.valueOf(splitedConfig[1]);
+        if (splitedConfig.length == 2) {
+            ret[0] = Integer.valueOf(splitedConfig[0]);
+            ret[1] = Integer.valueOf(splitedConfig[1]);
             return true;
         }
         return false;
@@ -156,10 +153,11 @@ public class Handler {
 
     /**
      * build a logicalPlanTree then convert it to a physical plan
+     *
      * @param plainSelect
      * @return the root physical operator
      */
-    public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect){
+    public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect) {
         Operator logicalOperator = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         logicalOperator.accept(physPB);

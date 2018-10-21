@@ -1,37 +1,35 @@
 package operator;
 
-import java.util.Map;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-
+import io.BinaryTupleReader;
 import logical.operator.ScanOperator;
 import model.Tuple;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
-import io.BinaryTupleReader;
+
+import java.util.Map;
 
 /**
  * PhysicalScanOperator
  * Read the table from disk and fetch a tuple
  */
-public class PhysicalScanOperator extends PhysicalOperator{
+public class PhysicalScanOperator extends PhysicalOperator {
     private BinaryTupleReader binaryTupleReader;
     private Map<String, Integer> schema;
 
     /**
-     * 
      * @param plainSelect is the statement of sql
-     * @param tableIndex is the index of the table in FROM section, start by 0
+     * @param tableIndex  is the index of the table in FROM section, start by 0
      */
-    public PhysicalScanOperator(PlainSelect plainSelect, int tableIndex){
+    public PhysicalScanOperator(PlainSelect plainSelect, int tableIndex) {
         String item;
-        if(tableIndex == 0){
+        if (tableIndex == 0) {
             item = plainSelect.getFromItem().toString();
-        }
-        else{
-            item = plainSelect.getJoins().get(tableIndex-1).toString();
+        } else {
+            item = plainSelect.getJoins().get(tableIndex - 1).toString();
         }
 
         String[] strs = item.split("\\s+");
-        if(strs.length < 0){
+        if (strs.length < 0) {
             this.binaryTupleReader = null;
             return;
         }
@@ -57,7 +55,7 @@ public class PhysicalScanOperator extends PhysicalOperator{
      * get the next tuple of the operator.
      */
     @Override
-    public Tuple getNextTuple(){
+    public Tuple getNextTuple() {
         return binaryTupleReader.readNextTuple();
     }
 
@@ -65,7 +63,7 @@ public class PhysicalScanOperator extends PhysicalOperator{
      * reset the operator.
      */
     @Override
-    public void reset(){
+    public void reset() {
         binaryTupleReader.reset();
     }
 
@@ -73,7 +71,7 @@ public class PhysicalScanOperator extends PhysicalOperator{
      * get the schema
      */
     @Override
-    public Map<String, Integer> getSchema(){
+    public Map<String, Integer> getSchema() {
         return this.schema;
     }
 }

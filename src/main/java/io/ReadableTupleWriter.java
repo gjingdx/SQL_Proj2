@@ -1,9 +1,13 @@
 package io;
 
 import model.Tuple;
-import java.io.*;
 
-public class ReadableTupleWriter implements TupleWriter{
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class ReadableTupleWriter implements TupleWriter {
     private StringBuilder sb;
     private BufferedWriter output;
 
@@ -14,8 +18,7 @@ public class ReadableTupleWriter implements TupleWriter{
         try {
             File file = new File(path);
             output = new BufferedWriter(new FileWriter(file));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -30,8 +33,7 @@ public class ReadableTupleWriter implements TupleWriter{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             sb.append(tuple.toString());
             sb.append("\n");
         }
