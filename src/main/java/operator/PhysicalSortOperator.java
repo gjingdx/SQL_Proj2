@@ -31,10 +31,15 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     }
 
     public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
-        //this.tupleList = logSortOp.getTupleList();
         this.order = logSortOp.getOrder();
         this.schema = logSortOp.getSchema();
         this.physChild = physChildren.pop();
+    }
+
+    public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren){
+        this.physChild = physChildren.pop();
+        this.schema = physChild.getSchema();
+        this.order = order;
     }
 
     /**
