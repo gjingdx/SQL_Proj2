@@ -20,7 +20,7 @@ target/
 Samples/samples/output/*
 
 # Sample folder
-Samples/*
+Samples/
 
 # Log file
 *.log
