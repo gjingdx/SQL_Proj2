@@ -28,7 +28,6 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
     public PhysicalBlockJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren, int blockSize) {
         super(logicalJoinOp, physOpChildren);
         this.block = new Block(blockSize, opLeft.getSchema().size());
-        System.out.println(schema.toString());
     }
 
     /**
@@ -66,6 +65,7 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator{
             }
             outerTuple = block.readNextTuple();
             opRight.reset();
+            innerTuple = opRight.getNextTuple();
         }
         if(outerTuple == null || innerTuple == null){
             return null;

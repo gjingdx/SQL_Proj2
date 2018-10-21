@@ -70,8 +70,8 @@ public class AppTest {
             BinaryTupleReader r2  = new BinaryTupleReader(expectOutputfile);
             
             Tuple t1 = null, t2 = null;
-            while((t1 = r1.readNextTuple()) != null && (t2 = r2.readNextTuple()) != null){
-                Assert.assertEquals(t1.toString(), t2.toString());
+            while((t1 = r1.readNextTuple())!=null && (t2=r2.readNextTuple())!=null){
+                Assert.assertEquals(""+ index, t1.toString(), t2.toString());
             }
         }
     }
