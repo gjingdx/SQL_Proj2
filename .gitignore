@@ -20,7 +20,7 @@ target/
 Samples/samples/output/*
 
 # Sample folder
-Samples/
+Samples/samples/input/plan_builder_config.txt
 
 # Log file
 *.log
