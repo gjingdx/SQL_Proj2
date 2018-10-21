@@ -86,4 +86,13 @@ public class ReadableTupleReader implements TupleReader{
         
     }
 
+    @Override
+    public void recordPosition(){
+
+    }
+
+    @Override
+    public void moveToPosition(){
+        
+    }
 }

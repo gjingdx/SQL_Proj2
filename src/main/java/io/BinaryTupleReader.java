@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import model.Tuple;
 import io.TupleReader;
-import util.Catalog;
 import util.Constants;
 
 /**
@@ -24,9 +23,58 @@ public class BinaryTupleReader implements TupleReader{
     private int tupleCount;
     private int tuplePointer;
 
+    private long recordPosition;
+    private int recordTuplePointer;
+    private int recordTupleCount;
+    private int recordTupleSize;
+    private ByteBuffer recordBufferPage;
+
     public BinaryTupleReader(String file){
         this.file = new File(file);
         reset();
+    }
+
+    @Override
+    public void recordPosition(){
+        this.recordBufferPage = cloneByteBuffer(bufferPage);
+        this.recordTupleSize = tupleSize;
+        this.recordTupleCount = tupleCount;
+        this.recordTuplePointer = tuplePointer;
+        try{
+            this.recordPosition = readerPointer.getFilePointer();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void moveToPosition(){
+        this.bufferPage = cloneByteBuffer(recordBufferPage);
+        this.tupleSize = recordTupleSize;
+        this.tupleCount = recordTupleCount;
+        this.tuplePointer = recordTuplePointer;
+        try{
+            this.readerPointer.seek(recordPosition);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private static ByteBuffer cloneByteBuffer(final ByteBuffer original) {
+        // Create clone with same capacity as original.
+        final ByteBuffer clone = (original.isDirect()) ?
+            ByteBuffer.allocateDirect(original.capacity()) :
+            ByteBuffer.allocate(original.capacity());
+    
+        // Create a read-only copy of the original.
+        // This allows reading from the original without modifying it.
+        final ByteBuffer readOnlyCopy = original.asReadOnlyBuffer();
+    
+        // Flip and read from the original.
+        readOnlyCopy.flip();
+        clone.put(readOnlyCopy);
+    
+        return clone;
     }
 
     @Override

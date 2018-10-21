@@ -2,9 +2,12 @@ package com.sql.interpreter;
 
 
 import logical.operator.*;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import operator.PhysicalDuplicateEliminationOperator;
 import util.Catalog;
+import util.SortJoinExpressionVisitor;
 
 import java.util.*;
 
@@ -37,7 +40,7 @@ public class PhysicalPlanBuilder {
         Operator[] children = logicalJoinOp.getChildren();
         children[0].accept(this);
         children[1].accept(this);
-        PhysicalJoinOperator physJoinOp;
+        PhysicalOperator physJoinOp;
         switch(Catalog.getInstance().getJoinMethod()) {
             case TNLJ:
                 physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
@@ -48,8 +51,24 @@ public class PhysicalPlanBuilder {
                 physOpChildren.push(physJoinOp);
                 break;
             case SMJ:
-                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
-                physOpChildren.push(physJoinOp);
+                Expression joinCondition = logicalJoinOp.getJoinCondition();
+                SortJoinExpressionVisitor sj = new SortJoinExpressionVisitor(children[0].getSchema(), children[1].getSchema());
+                joinCondition.accept(sj);
+                List<List<OrderByElement>> orders = sj.getOrders();
+                if(orders.get(0).size() == 0){
+                    physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
+                    physOpChildren.push(physJoinOp);
+                }
+                else{
+                    //System.out.println(joinCondition.toString());
+                    //System.out.println(orders.get(1).toString());
+                    //System.out.println(orders.get(0).toString());
+                    PhysicalExternalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
+                    PhysicalExternalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+
+                    physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
+                    physOpChildren.push(physJoinOp);
+                }
                 break;
             default:
                 physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
