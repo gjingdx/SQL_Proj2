@@ -55,7 +55,8 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
             index = 0;
             while(true){
                 int tupleCount = blockSize
-                                * ((Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (schema.size() * Constants.INT_SIZE));
+                                * ((Constants.PAGE_SIZE - 2 * Constants.INT_SIZE)
+                        / (schema.size() * Constants.INT_SIZE));
                 List<Tuple> tupleList = new ArrayList<>();
                 for(int i =0 ;i < tupleCount; ++i){
                     Tuple tuple = physChild.getNextTuple();
@@ -86,31 +87,31 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         while(indexTemp > 1){
             index = 0;
             
-            for(int i = 0; i < indexTemp; i+= (blockSize - 1)){
+            for (int i = 0; i < indexTemp; i+= (blockSize - 1)) {
                 buffer = new ArrayList<>();
-                for(int j = 0; j < blockSize -1 && (j < indexTemp - i); ++j){
+                for (int j = 0; j < blockSize -1 && (j < indexTemp - i); ++j) {
                     buffer.add( 
                         new BinaryTupleReader(getFileLocation(id, preRunCount, i + j))
                     );
                 }
                 outputBuffer = new BinaryTupleWriter(getFileLocation(id, preRunCount+1, index), schema.size());
-                while(buffer.size() > 0){
+                while (buffer.size() > 0){
                      // find the minimum tuple
                     Tuple minimum_tuple = null;
                     int pos = -1;
-                    for(int j =0; j< buffer.size(); ++j){
+                    for (int j = 0; j < buffer.size(); ++j) {
                         Tuple tuple = buffer.get(j).readNextTuple();
-                        if(tuple == null){
+                        if (tuple == null) {
                             buffer.remove(j);
-                            j --;
+                            j--;
                             continue;
                         }
-                        if(minimum_tuple == null){
+                        if (minimum_tuple == null) {
                             minimum_tuple = tuple;
                             pos = j;
                             continue;
                         }
-                        if(new TupleComparator().compare(minimum_tuple, tuple) == 1){
+                        if (new TupleComparator().compare(minimum_tuple, tuple) == 1) {
                             minimum_tuple = tuple;
                             pos = j;
                         }
@@ -118,8 +119,8 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
                     
                     outputBuffer.writeNextTuple(minimum_tuple);
                     // reset all unused buffer page
-                    for(int j =0; j< buffer.size(); ++j){
-                        if(j == pos){
+                    for (int j =0; j< buffer.size(); ++j) {
+                        if (j == pos) {
                             continue;
                         }
                         buffer.get(j).moveBack();
@@ -135,14 +136,14 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         
     }
 
-    private void renameTempToFinalTemp(String tempFile) throws IOException{
+    private void renameTempToFinalTemp(String tempFile) throws IOException {
         // File (or directory) with old name
         File file = new File("tempFile");
 
         // File (or directory) with new name
         File file2 = new File(Catalog.getInstance().getTempPath() + "\\" + id);
 
-        if (file2.exists()){
+        if (file2.exists()) {
             file2.delete();
             //throw new java.io.IOException("file exists");
         }
@@ -157,16 +158,16 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
         }
     }
 
-    private String getFileLocation(String id, int pass, int index){
+    private String getFileLocation(String id, int pass, int index) {
         return Catalog.getInstance().getTempPath() + id + '_' + pass + '_' + index;
     }
 
-    private void deletePrePassExtraTemp(int pass){
+    private void deletePrePassExtraTemp(int pass) {
         //System.out.println(id + '\t' + pass);
         //System.out.println(Catalog.getInstance().getTempPath());
         File[] files = new File(Catalog.getInstance().getTempPath()).listFiles();
-        for(File file : files){
-            if(file.getName().contains(id + '_' + pass + '_')){
+        for (File file : files) {
+            if (file.getName().contains(id + '_' + pass + '_')) {
                 file.delete();
             }
         }

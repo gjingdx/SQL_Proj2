@@ -53,10 +53,10 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
         Tuple tuple = operator.getNextTuple();
 
         while (tuple != null && tuple.equals(prevTuple)) {
-            prevTuple = tuple;
+
             tuple = operator.getNextTuple();
         }
-
+        prevTuple = tuple;
         return tuple;
     }
 
