@@ -134,7 +134,7 @@ public class Catalog {
      * @return temp path string
      */
     public String getTempPath(){
-        return getOutputPath();
+        return Constants.OUTPUT_PATH;
     }
 
     /**

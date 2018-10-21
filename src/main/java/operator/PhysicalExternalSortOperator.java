@@ -162,6 +162,8 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator{
     }
 
     private void deletePrePassExtraTemp(int pass){
+        //System.out.println(id + '\t' + pass);
+        //System.out.println(Catalog.getInstance().getTempPath());
         File[] files = new File(Catalog.getInstance().getTempPath()).listFiles();
         for(File file : files){
             if(file.getName().contains(id + '_' + pass + '_')){

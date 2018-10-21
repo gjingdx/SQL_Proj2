@@ -3,6 +3,7 @@ package operator;
 import io.TupleReader;
 import model.Tuple;
 import logical.operator.JoinOperator;
+import util.*;
 
 import java.util.*;
 
@@ -60,6 +61,25 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator{
      */
     @Override
     public Tuple getNextTuple(){
+        Tuple next = crossProduction();
+        // return cross product if there's no selection
+        if(joinCondition == null){
+            return next;
+        }
+        
+        while(next != null){
+            SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
+            joinCondition.accept(sv);
+            if (sv.getResult()) {
+                break;
+            }
+            next = crossProduction();
+        }
+        return next;
+        
+    }
+
+    protected Tuple crossProduction(){
         // search for equal
         if(Tr == null || Gs == null)
             return null;
@@ -75,7 +95,6 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator{
         }
         // Concentrate Tuple
         return null;
-        
     }
 
     private void findNextEqual(){

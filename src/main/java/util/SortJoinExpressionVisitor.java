@@ -49,10 +49,20 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
 
 			if((rightSchema.containsKey(e1.toString())&&
 				leftSchema.containsKey(e2.toString()))
-				||
-				(leftSchema.containsKey(e1.toString())&&
-				rightSchema.containsKey(e2.toString()))
 			){
+				OrderByElement order1 = new OrderByElement();
+				order1.setAsc(true);
+				order1.setExpression(e1);
+				
+				OrderByElement order2 = new OrderByElement();
+				order2.setAsc(true);
+				order2.setExpression(e2);
+
+				ret.get(1).add(order1);
+				ret.get(0).add(order2);
+			}
+			else if(leftSchema.containsKey(e1.toString())&&
+			rightSchema.containsKey(e2.toString())){
 				OrderByElement order1 = new OrderByElement();
 				order1.setAsc(true);
 				order1.setExpression(e1);
