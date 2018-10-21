@@ -4,7 +4,8 @@ import logical.operator.JoinOperator;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import util.*;
+import util.Catalog;
+import util.SelectExpressionVisitor;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -26,11 +27,12 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
 
     /**
      * Init the schema of PhysicalJoinOperator
-     * @param opLeft last operator of outer tuple
-     * @param opRight last operator of inner tuple
+     *
+     * @param opLeft      last operator of outer tuple
+     * @param opRight     last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect){
+    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect) {
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.schema = new HashMap<>();
@@ -44,7 +46,7 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         innerTuple = null;
     }
 
-    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, JoinOperator logicalJoinOp){
+    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, JoinOperator logicalJoinOp) {
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.schema = new HashMap<>();
@@ -70,14 +72,14 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * get the next tuple of the operator.
      */
     @Override
-    public Tuple getNextTuple(){
+    public Tuple getNextTuple() {
         Tuple next = crossProduction();
         // return cross product if there's no selection
-        if(joinCondition == null){
+        if (joinCondition == null) {
             return next;
         }
-        
-        while(next != null){
+
+        while (next != null) {
             SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
             joinCondition.accept(sv);
             if (sv.getResult()) {
@@ -92,7 +94,7 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * reset the operator.
      */
     @Override
-    public void reset(){
+    public void reset() {
         opLeft.reset();
         opRight.reset();
         innerTuple = null;
@@ -103,12 +105,13 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * get the schema
      */
     @Override
-    public Map<String, Integer> getSchema(){
+    public Map<String, Integer> getSchema() {
         return this.schema;
     }
 
     /**
      * implement cross production
+     *
      * @return result tuple
      */
     protected abstract Tuple crossProduction();

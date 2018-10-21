@@ -8,8 +8,10 @@ import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import java.io.StringReader;
+
+import static org.junit.Assert.assertEquals;
 
 public class PhysicalSelectOperatorTest {
 
@@ -26,7 +28,7 @@ public class PhysicalSelectOperatorTest {
         PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, physPB.getPhysOpChildren());
 
         Tuple tuple = physSelectOp.getNextTuple();
-        while(tuple != null){
+        while (tuple != null) {
             assertEquals(9, tuple.getDataAt(1));
             System.out.println(tuple);
             tuple = physSelectOp.getNextTuple();

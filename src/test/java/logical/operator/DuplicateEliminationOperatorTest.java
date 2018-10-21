@@ -3,7 +3,6 @@ package logical.operator;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-
 import org.junit.Assert;
 import org.junit.Test;
 

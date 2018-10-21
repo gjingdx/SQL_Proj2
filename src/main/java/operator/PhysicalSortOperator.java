@@ -22,6 +22,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     /**
      * Constructor
      * read all tuples, store them in a list and sort them
+     *
      * @param operator
      * @param plainSelect
      */
@@ -36,7 +37,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
         this.physChild = physChildren.pop();
     }
 
-    public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren){
+    public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
         this.physChild = physChildren.pop();
         this.schema = physChild.getSchema();
         this.order = order;
@@ -58,12 +59,13 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
      * get the schema
      */
     @Override
-    public Map<String, Integer> getSchema(){
+    public Map<String, Integer> getSchema() {
         return this.schema;
     }
 
     /**
      * For distinct operator
+     *
      * @return sorted Tuple list
      */
     public List<Tuple> getTupleList() {
@@ -95,7 +97,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
 
             // for tie breaker
             // sort tuples by the order of columns.
-            for (int i = 0; i < schema.size(); i++){
+            for (int i = 0; i < schema.size(); i++) {
                 if (t1.getDataAt(i) > t2.getDataAt(i)) {
                     return 1;
                 }

@@ -2,15 +2,16 @@ package io;
 
 import model.Tuple;
 
-public interface TupleReader{
+public interface TupleReader {
     /**
      * reset the tuple reader
      */
     void reset();
-    
+
     /**
      * read the next tuple in the buffer page
      * if out of range, read next page
+     *
      * @return
      */
     Tuple readNextTuple();
@@ -26,7 +27,7 @@ public interface TupleReader{
     void moveBack();
 
     /**
-     * 
+     *
      */
     void recordPosition();
 
