@@ -48,13 +48,20 @@ public class BinaryTupleReader implements TupleReader {
 
     @Override
     public void moveToPosition() {
+        try {
+            this.readerPointer = new RandomAccessFile(this.file, "r");
+        } catch (FileNotFoundException e) {
+            System.out.printf("Cannot find file %s!\n", this.file.getName());
+        }
         this.bufferPage = cloneByteBuffer(recordBufferPage);
         this.tupleSize = recordTupleSize;
         this.tupleCount = recordTupleCount;
         this.tuplePointer = recordTuplePointer;
         try {
+            //System.out.println("succeed: " + recordPosition);
             this.readerPointer.seek(recordPosition);
         } catch (Exception e) {
+            System.out.println("record position fails: " + recordPosition);
             e.printStackTrace();
         }
     }
