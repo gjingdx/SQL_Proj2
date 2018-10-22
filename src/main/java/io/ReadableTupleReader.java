@@ -41,7 +41,6 @@ public class ReadableTupleReader implements TupleReader {
         }
     }
 
-    @Override
     public void readPage() {
         tupleList.clear();
         readIndex = 0;
@@ -60,6 +59,7 @@ public class ReadableTupleReader implements TupleReader {
             }
         } catch (IOException e) {
             System.out.printf("Unexpected table file format\n");
+            e.printStackTrace();
         }
     }
 
@@ -93,7 +93,12 @@ public class ReadableTupleReader implements TupleReader {
     }
 
     @Override
-    public void moveToPosition() {
+    public void revertToPosition() {
+
+    }
+
+    @Override
+    public void reset(int i){
 
     }
 }

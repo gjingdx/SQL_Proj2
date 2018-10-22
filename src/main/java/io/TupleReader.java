@@ -17,19 +17,19 @@ public interface TupleReader {
     Tuple readNextTuple();
 
     /**
-     * read the next page
-     */
-    void readPage();
-
-    /**
      * move back one position
      */
     void moveBack();
 
     /**
-     *
+     * record the current position
      */
     void recordPosition();
 
-    void moveToPosition();
+    /**
+     * revert to the record position
+     */
+    void revertToPosition();
+
+    void reset(int i);
 }

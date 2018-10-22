@@ -23,7 +23,6 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
     PhysicalExternalSortOperator opRight;
     PhysicalExternalSortOperator opLeft;
     Tuple Tr;
-    Tuple Ts;
     Tuple Gs;
     Boolean isInLoop;
 
@@ -41,22 +40,23 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
         this.rightOrder = opRight.getOrder();
         this.joinCondition = logicalJoinOp.getJoinCondition();
         this.schema = logicalJoinOp.getSchema();
-        Tr = opLeft.getNextTuple();
-        Gs = opRight.getNextTuple();
-        opRight.recordTupleReader();
-        Ts = Gs;
-        isInLoop = false;
 
+        init();
     }
 
     @Override
     public void reset() {
         opRight.reset();
         opLeft.reset();
+        
+        init();
+    }
+
+    private void init(){
+        opRight.recordTupleReader();
         Tr = opLeft.getNextTuple();
         Gs = opRight.getNextTuple();
-        opRight.recordTupleReader();
-        Ts = Gs;
+        
         isInLoop = false;
     }
 
@@ -90,19 +90,10 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
         while (Tr != null && Gs != null){
             if (new TupleComparator().compare(Tr, Gs) < 0) {
                 Tr = opLeft.getNextTuple();
-                // reset to block
-                if (isInLoop) {
-                    opRight.setRecordTupleReader();
-                    Gs = Ts;
-                }
-                continue;
             }
             if (new TupleComparator().compare(Tr, Gs) > 0) {
-                
-                Gs = opRight.getNextTuple();
-                isInLoop = false;
                 opRight.recordTupleReader();
-                Ts = Gs;
+                Gs = opRight.getNextTuple();
                 continue;
             }
 
@@ -110,9 +101,12 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
             Gs = opRight.getNextTuple();
 
             if (Gs == null || new TupleComparator().compare(Tr, Gs) != 0) {
+                if(Gs==null){
+                    int a = 1;
+                }
                 Tr = opLeft.getNextTuple();
                 opRight.setRecordTupleReader();
-                Gs = Ts;
+                Gs = opRight.getNextTuple();
             }
 
             if (ret != null) {
