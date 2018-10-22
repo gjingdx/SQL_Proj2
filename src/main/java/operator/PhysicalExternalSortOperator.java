@@ -193,6 +193,6 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      * revert to the record tuple reader
      */
     public void setRecordTupleReader() {
-        tr.moveToPosition();
+        tr.revertToPosition();
     }
 }
