@@ -4,7 +4,6 @@ import model.Tuple;
 import util.Constants;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ public class ReadableTupleReader implements TupleReader {
     List<Tuple> tupleList;
     int readIndex = 0;
     long lineSize = 0;
+    long recordPosition = 0;
 
     public ReadableTupleReader(String file, int tupleSize) {
         this.file = new File(file);
@@ -41,39 +41,16 @@ public class ReadableTupleReader implements TupleReader {
         }
     }
 
-    public void readPage() {
-        tupleList.clear();
-        readIndex = 0;
-        if (tupleCount == 0) return;
-        try {
-            for (int i = 0; i < tupleCount; i++) {
-                long tempPos = readerPointer.getFilePointer();
-                String str = readerPointer.readLine();
-                this.lineSize = readerPointer.getFilePointer() - tempPos;
-                if (str == null) {
-                    tupleCount = 0;
-                    tupleSize = 0;
-                    break;
-                }
-                tupleList.add(new Tuple(str));
-            }
-        } catch (IOException e) {
-            System.out.printf("Unexpected table file format\n");
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public Tuple readNextTuple() {
-        if (readIndex < tupleList.size()) {
-            Tuple tuple = tupleList.get(readIndex++);
-            return tuple;
-        }
-        readPage();
-        if (tupleList.size() == 0) {
+        try {
+            long p1 = readerPointer.getFilePointer();
+            Tuple ret = new Tuple(readerPointer.readLine());
+            this.lineSize = readerPointer.getFilePointer() - p1;
+            return ret;
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
-        } else {
-            return readNextTuple();
         }
     }
 
@@ -89,16 +66,28 @@ public class ReadableTupleReader implements TupleReader {
 
     @Override
     public void recordPosition() {
-
+        try {
+            recordPosition = readerPointer.getFilePointer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void revertToPosition() {
-
+        try {
+            readerPointer.seek(recordPosition);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void reset(int i){
-
+    public void reset(long i){
+        try {
+            readerPointer.seek(i * lineSize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

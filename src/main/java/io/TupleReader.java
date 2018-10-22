@@ -31,5 +31,5 @@ public interface TupleReader {
      */
     void revertToPosition();
 
-    void reset(int i);
+    void reset(long i);
 }

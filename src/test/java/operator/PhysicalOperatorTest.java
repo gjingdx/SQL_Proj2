@@ -4,6 +4,8 @@ import com.sql.interpreter.Handler;
 import junit.framework.Assert;
 import org.junit.Test;
 import util.Catalog;
+import util.Constants.JoinMethod;
+import util.Constants.SortMethod;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +15,8 @@ public class PhysicalOperatorTest {
     @Test
     public void dump() throws Exception {
         Handler.init(new String[0]);
+        Catalog.getInstance().setJoinMethod(JoinMethod.TNLJ);
+        Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
         Handler.parseSql();
 
         for (int index = 1; index <= 15; ++index) {
@@ -30,7 +34,7 @@ public class PhysicalOperatorTest {
             expectedStream.read(bytesArrayExpected);
             Assert.assertEquals(bytesArrayExpected.length, bytesArrayOutput.length);
             for (int i = 0; i < bytesArrayExpected.length; i++) {
-                Assert.assertEquals(bytesArrayExpected[i], bytesArrayOutput[i]);
+                Assert.assertEquals("index: " + index, bytesArrayExpected[i], bytesArrayOutput[i]);
             }
             outputStream.close();
             expectedStream.close();
