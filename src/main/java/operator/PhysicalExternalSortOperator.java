@@ -16,26 +16,42 @@ import java.io.IOException;
 import java.util.*;
 
 public class PhysicalExternalSortOperator extends PhysicalSortOperator {
-    private List<TupleReader> buffer;
-    private final String id = UUID.randomUUID().toString().substring(0, 8);
-    private BinaryTupleWriter outputBuffer;
-    int blockSize;
-    int index = 0;
-    int preRunCount = 0;
-    String finalTemp;
-    TupleReader tr;
+    private final String id = UUID.randomUUID().toString().substring(0, 8); // the identifier for the temp file serial
 
+    private List<TupleReader> buffer; // (blocksize - 1) tuple readers to read several temp files(runs)
+    private BinaryTupleWriter outputBuffer; // output buffer to merge sort
+    int blockSize;
+    int index = 0; // index of run
+    int prePass = 0;
+    String finalTemp; // the name of sorted temp file
+    TupleReader tr; // tuple reader to read the final temp file
+
+    /**
+     * used for simply test skipping the logical plan tree
+     * @param operator
+     * @param plainSelect
+     */
     public PhysicalExternalSortOperator(PhysicalOperator operator, PlainSelect plainSelect) {
         super(operator, plainSelect);
         init();
     }
 
+    /**
+     * used by physical plan builder
+     * @param logSortOp
+     * @param physChildren
+     */
     public PhysicalExternalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
         super(logSortOp, physChildren);
         init();
 
     }
 
+    /**
+     * used by smj
+     * @param order
+     * @param physChildren
+     */
     public PhysicalExternalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
         super(order, physChildren);
         init();
@@ -44,46 +60,45 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     private void init() {
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
-        firstRun();
-        mergeSort();
-        finalTemp = getFileLocation(id, preRunCount, 0);
+        try {
+            firstPass();
+            mergeSort();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        finalTemp = getTempFileName(id, prePass, 0);
         tr = new BinaryTupleReader(finalTemp);
     }
 
-    private void firstRun() {
-        try {
-            index = 0;
-            while (true) {
-                int tupleCount = blockSize
-                        * ((Constants.PAGE_SIZE - 2 * Constants.INT_SIZE)
-                        / (schema.size() * Constants.INT_SIZE));
-                List<Tuple> tupleList = new ArrayList<>();
-                for (int i = 0; i < tupleCount; ++i) {
-                    Tuple tuple = physChild.getNextTuple();
-                    if (tuple == null) break;
-                    tupleList.add(tuple);
-                }
-                if (tupleList.size() == 0) {
-                    break;
-                }
-                Collections.sort(tupleList, new TupleComparator());
-                TupleWriter tupleWriter = new BinaryTupleWriter(
-                        getFileLocation(id, 0, index), schema.size());
-                index++;
-                for (Tuple tuple : tupleList) {
-                    tupleWriter.writeNextTuple(tuple);
-                }
-                tupleWriter.finish();
+    private void firstPass() throws IOException {
+        index = 0;
+        while (true) {
+            int tupleCount = blockSize
+                    * ((Constants.PAGE_SIZE - 2 * Constants.INT_SIZE)
+                    / (schema.size() * Constants.INT_SIZE));
+            List<Tuple> tupleList = new ArrayList<>();
+            for (int i = 0; i < tupleCount; ++i) {
+                Tuple tuple = physChild.getNextTuple();
+                if (tuple == null) break;
+                tupleList.add(tuple);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (tupleList.size() == 0) {
+                break;
+            }
+            Collections.sort(tupleList, new TupleComparator());
+            TupleWriter tupleWriter = new BinaryTupleWriter(
+                getTempFileName(id, 0, index), schema.size());
+            index++;
+            for (Tuple tuple : tupleList) {
+                tupleWriter.writeNextTuple(tuple);
+            }
+            tupleWriter.finish();
         }
     }
 
     private void mergeSort() {
         int indexTemp = index;
-
-        //int preRunCount = 0;
+        prePass = 0;
         while (indexTemp > 1) {
             index = 0;
 
@@ -91,10 +106,10 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
                 buffer = new ArrayList<>();
                 for (int j = 0; j < blockSize - 1 && (j < indexTemp - i); ++j) {
                     buffer.add(
-                            new BinaryTupleReader(getFileLocation(id, preRunCount, i + j))
+                            new BinaryTupleReader(getTempFileName(id, prePass, i + j))
                     );
                 }
-                outputBuffer = new BinaryTupleWriter(getFileLocation(id, preRunCount + 1, index), schema.size());
+                outputBuffer = new BinaryTupleWriter(getTempFileName(id, prePass + 1, index), schema.size());
                 while (buffer.size() > 0) {
                     // find the minimum tuple
                     Tuple minimum_tuple = null;
@@ -130,41 +145,17 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
                 index++;
             }
             indexTemp = index;
-            deletePrePassExtraTemp(preRunCount);
-            preRunCount += 1;
+            deletePrePassExtraTemp(prePass);
+            prePass += 1;
         }
 
     }
 
-    private void renameTempToFinalTemp(String tempFile) throws IOException {
-        // File (or directory) with old name
-        File file = new File("tempFile");
-
-        // File (or directory) with new name
-        File file2 = new File(Catalog.getInstance().getTempPath() + "\\" + id);
-
-        if (file2.exists()) {
-            file2.delete();
-            //throw new java.io.IOException("file exists");
-        }
-
-        // Rename file (or directory)
-        boolean success = file.renameTo(file2);
-
-        if (!success) {
-            int a = 1;
-            throw new java.io.IOException("rename fail");
-            // File was not successfully renamed
-        }
-    }
-
-    private String getFileLocation(String id, int pass, int index) {
-        return Catalog.getInstance().getTempPath() + id + '_' + pass + '_' + index;
+    private String getTempFileName(String id, int pass, int index) {
+        return Catalog.getInstance().getTempPath() +"temp_" + id + '_' + pass + '_' + index;
     }
 
     private void deletePrePassExtraTemp(int pass) {
-        //System.out.println(id + '\t' + pass);
-        //System.out.println(Catalog.getInstance().getTempPath());
         File[] files = new File(Catalog.getInstance().getTempPath()).listFiles();
         for (File file : files) {
             if (file.getName().contains(id + '_' + pass + '_')) {
@@ -183,14 +174,24 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         tr.reset();
     }
 
+    /**
+     * get the order
+     * @return a list of OderByElement
+     */
     public List<OrderByElement> getOrder() {
         return order;
     }
 
+    /**
+     * make a stamp to record tuple reader
+     */
     public void recordTupleReader() {
         tr.recordPosition();
     }
 
+    /**
+     * revert to the record tuple reader
+     */
     public void setRecordTupleReader() {
         tr.moveToPosition();
     }
