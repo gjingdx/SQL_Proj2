@@ -7,6 +7,7 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
 import util.SortJoinExpressionVisitor;
+import util.Constants.SortMethod;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -62,10 +63,18 @@ public class PhysicalPlanBuilder {
                         //System.out.println(joinCondition.toString());
                         //System.out.println(orders.get(1).toString());
                         //System.out.println(orders.get(0).toString());
-                        PhysicalExternalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
-                        PhysicalExternalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
-                        physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
-                        physOpChildren.push(physJoinOp);
+                        if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
+                            PhysicalExternalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
+                            PhysicalExternalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                            physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
+                            physOpChildren.push(physJoinOp);
+                        }
+                        else {
+                            PhysicalMemorySortOperator rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
+                            PhysicalMemorySortOperator leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren);
+                            physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
+                            physOpChildren.push(physJoinOp);
+                        }
                         break;
                     }
                 }

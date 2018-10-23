@@ -2,11 +2,13 @@ package operator;
 
 import logical.operator.SortOperator;
 import model.Tuple;
+import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.List;
 
 /**
  * PhysicalSortOperator
@@ -16,6 +18,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
 
     // stores tuples
     private int currentIndex;
+    private int recordIndex;
 
     /**
      * Constructor
@@ -55,6 +58,22 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         physChild.reset();
     }
 
+    public PhysicalMemorySortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
+        super(order, physChildren);
+
+        tupleList = new ArrayList<>();
+        // initialize the list
+        currentIndex = 0;
+        Tuple tuple = physChild.getNextTuple();
+        while (tuple != null) {
+            tupleList.add(tuple);
+            tuple = physChild.getNextTuple();
+        }
+
+        Collections.sort(tupleList, new TupleComparator());
+        physChild.reset();
+    }
+
     /**
      * get the next tuple of the operator.
      */
@@ -75,5 +94,21 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
     @Override
     public void reset() {
         currentIndex = 0;
+    }
+
+    /**
+     * make a stamp to record tuple reader
+     */
+    @Override
+    public void recordTupleReader() {
+        this.recordIndex = currentIndex;
+    }
+
+    /**
+     * revert to the record tuple reader
+     */
+    @Override
+    public void setRecordTupleReader() {
+        currentIndex = recordIndex;
     }
 }

@@ -20,8 +20,8 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
     private Map<String, Integer> schema;
     List<OrderByElement> leftOrder;
     List<OrderByElement> rightOrder;
-    PhysicalExternalSortOperator opRight;
-    PhysicalExternalSortOperator opLeft;
+    PhysicalSortOperator opRight;
+    PhysicalSortOperator opLeft;
     Tuple Tr;
     Tuple Gs;
 
@@ -31,7 +31,7 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
      * @param opLeft      last operator of outer tuple
      * @param opRight     last operator of inner tuple
      */
-    public PhysicalSortMergeJoinOperator(JoinOperator logicalJoinOp, PhysicalExternalSortOperator opLeft, PhysicalExternalSortOperator opRight) {
+    public PhysicalSortMergeJoinOperator(JoinOperator logicalJoinOp, PhysicalSortOperator opLeft, PhysicalSortOperator opRight) {
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.leftOrder = opLeft.getOrder();
