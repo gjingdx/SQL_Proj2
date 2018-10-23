@@ -108,4 +108,16 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
             return 0;
         }
     }
+
+    /**
+     * get the order
+     * @return a list of OderByElement
+     */
+    public List<OrderByElement> getOrder() {
+        return order;
+    }
+
+    public abstract void recordTupleReader();
+
+    public abstract void setRecordTupleReader();
 }

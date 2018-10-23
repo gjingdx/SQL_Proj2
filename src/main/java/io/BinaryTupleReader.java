@@ -21,9 +21,9 @@ public class BinaryTupleReader implements TupleReader {
     private int tupleSize;
     private int tupleCount;
     private int tuplePointer;
-    private int pageIndex = 0;
 
-    private int recordTupleIndex;
+    private long pageIndex = 0;
+    private long recordTupleIndex;
     
     /*
     private long recordPosition;
@@ -166,26 +166,23 @@ public class BinaryTupleReader implements TupleReader {
 
     // the next tuple to read is the ith tuple
     @Override
-    public void reset(int i){
+    public void reset(long i){
         int maxTupleCountPerPage = (Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (tupleSize * Constants.INT_SIZE);
-        int pageIndex = i / maxTupleCountPerPage;
-        int newTuplePointer = ((i % maxTupleCountPerPage) * tupleSize + 2) * Constants.INT_SIZE;
-        tuplePointer = newTuplePointer;
+        long pageIndex = i / maxTupleCountPerPage;
+        long newTuplePointer = ((i % maxTupleCountPerPage) * tupleSize + 2) * Constants.INT_SIZE;
         long newReaderPointer = (long) pageIndex * Constants.PAGE_SIZE;
-
-        
         if (this.pageIndex - 1 != pageIndex || tupleCount == 0) {
-            //need to read bufferpage
+            //need to reread bufferpage
             try {
                 this.readerPointer = new RandomAccessFile(this.file, "r");
                 readerPointer.seek(newReaderPointer);
                 this.pageIndex = pageIndex;
                 readPage();
             } catch (Exception e){
-                System.out.println("Faile to reset tuple");
+                System.out.println("Failed to reset tuple");
                 e.printStackTrace();
             }
         }
-        tuplePointer = newTuplePointer;
+        tuplePointer = (int)newTuplePointer;
     }
 }

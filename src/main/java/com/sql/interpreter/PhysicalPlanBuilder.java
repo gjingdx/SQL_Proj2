@@ -7,6 +7,7 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
 import util.SortJoinExpressionVisitor;
+import util.Constants.SortMethod;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -62,8 +63,15 @@ public class PhysicalPlanBuilder {
                         //System.out.println(joinCondition.toString());
                         //System.out.println(orders.get(1).toString());
                         //System.out.println(orders.get(0).toString());
-                        PhysicalExternalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
-                        PhysicalExternalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                        PhysicalSortOperator rightSort, leftSort;
+                        if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
+                            rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
+                            leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                        }
+                        else {
+                            rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
+                            leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren); 
+                        }
                         physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
                         physOpChildren.push(physJoinOp);
                         break;

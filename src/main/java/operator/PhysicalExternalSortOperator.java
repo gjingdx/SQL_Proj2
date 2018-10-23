@@ -175,16 +175,9 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     }
 
     /**
-     * get the order
-     * @return a list of OderByElement
-     */
-    public List<OrderByElement> getOrder() {
-        return order;
-    }
-
-    /**
      * make a stamp to record tuple reader
      */
+    @Override
     public void recordTupleReader() {
         tr.recordPosition();
     }
@@ -192,6 +185,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     /**
      * revert to the record tuple reader
      */
+    @Override
     public void setRecordTupleReader() {
         tr.revertToPosition();
     }

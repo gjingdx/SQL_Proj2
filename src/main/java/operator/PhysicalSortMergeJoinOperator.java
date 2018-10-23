@@ -20,27 +20,24 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
     private Map<String, Integer> schema;
     List<OrderByElement> leftOrder;
     List<OrderByElement> rightOrder;
-    PhysicalExternalSortOperator opRight;
-    PhysicalExternalSortOperator opLeft;
+    PhysicalSortOperator opRight;
+    PhysicalSortOperator opLeft;
     Tuple Tr;
     Tuple Gs;
-    Boolean isInLoop;
 
     /**
      * Init the schema of JoinOperator
      *
      * @param opLeft      last operator of outer tuple
      * @param opRight     last operator of inner tuple
-     * @param plainSelect unused temporally
      */
-    public PhysicalSortMergeJoinOperator(JoinOperator logicalJoinOp, PhysicalExternalSortOperator opLeft, PhysicalExternalSortOperator opRight) {
+    public PhysicalSortMergeJoinOperator(JoinOperator logicalJoinOp, PhysicalSortOperator opLeft, PhysicalSortOperator opRight) {
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.leftOrder = opLeft.getOrder();
         this.rightOrder = opRight.getOrder();
         this.joinCondition = logicalJoinOp.getJoinCondition();
         this.schema = logicalJoinOp.getSchema();
-
         init();
     }
 
@@ -48,7 +45,6 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
     public void reset() {
         opRight.reset();
         opLeft.reset();
-        
         init();
     }
 
@@ -56,8 +52,6 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
         opRight.recordTupleReader();
         Tr = opLeft.getNextTuple();
         Gs = opRight.getNextTuple();
-        
-        isInLoop = false;
     }
 
     /**

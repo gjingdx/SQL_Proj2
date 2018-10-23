@@ -5,6 +5,7 @@ import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
+import util.JoinExpressionVisitor;
 import util.SelectExpressionVisitor;
 
 import java.util.Deque;
@@ -41,6 +42,18 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
             schema.put(entry.getKey(), entry.getValue() + opLeft.getSchema().size());
         }
         Catalog.getInstance().setCurrentSchema(schema);
+
+        Expression expr = plainSelect.getWhere();
+        // return cross product if there's no selection
+        if (expr == null) {
+            this.joinCondition = null;
+        }
+        // join by join condition
+        else {
+            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
+            expr.accept(joinExpressionVisitor);
+            this.joinCondition = joinExpressionVisitor.getExpression();
+        }
 
         outerTuple = null;
         innerTuple = null;
