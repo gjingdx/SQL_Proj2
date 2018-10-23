@@ -6,9 +6,6 @@ import model.Tuple;
 import org.junit.Test;
 import util.Catalog;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.util.HashSet;
 import java.util.Set;
 

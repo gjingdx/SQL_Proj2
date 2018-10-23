@@ -31,17 +31,22 @@ public class Handler {
             if (args[1].charAt(args[1].length() - 1) != '/') {
                 args[1] = args[1] + "/";
             }
+            if (args[2].charAt(args[2].length() - 1) != '/') {
+                args[2] = args[2] + "/";
+            }
             outputPath = args[1];
             Constants.inputPath = args[0];
             Constants.DATA_PATH = Constants.inputPath + "/db/data/";
             Constants.SCHEMA_PATH = Constants.inputPath + "/db/schema.txt";
             Constants.OUTPUT_PATH = args[1];
+            Constants.TEMP_PATH = args[2];
             Constants.SQLQURIES_PATH = Constants.inputPath + "/queries.sql";
             Constants.CONFIG_PATH = Constants.inputPath = "/plan_builder_config.txt";
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
         }
         new File(outputPath).mkdirs();
+        new File(Constants.TEMP_PATH).mkdirs();
         final File[] files = new File(outputPath).listFiles();
         for (File f : files) {
             f.delete();
