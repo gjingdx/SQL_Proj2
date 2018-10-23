@@ -63,18 +63,17 @@ public class PhysicalPlanBuilder {
                         //System.out.println(joinCondition.toString());
                         //System.out.println(orders.get(1).toString());
                         //System.out.println(orders.get(0).toString());
+                        PhysicalSortOperator rightSort, leftSort;
                         if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
-                            PhysicalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
-                            PhysicalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
-                            physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
-                            physOpChildren.push(physJoinOp);
+                            rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
+                            leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
                         }
                         else {
-                            PhysicalSortOperator rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
-                            PhysicalSortOperator leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren);
-                            physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
-                            physOpChildren.push(physJoinOp);
+                            rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
+                            leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren); 
                         }
+                        physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
+                        physOpChildren.push(physJoinOp);
                         break;
                     }
                 }
