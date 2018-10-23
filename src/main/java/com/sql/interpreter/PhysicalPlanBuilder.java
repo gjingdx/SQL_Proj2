@@ -64,14 +64,14 @@ public class PhysicalPlanBuilder {
                         //System.out.println(orders.get(1).toString());
                         //System.out.println(orders.get(0).toString());
                         if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
-                            PhysicalExternalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
-                            PhysicalExternalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                            PhysicalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
+                            PhysicalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
                             physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
                             physOpChildren.push(physJoinOp);
                         }
                         else {
-                            PhysicalMemorySortOperator rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
-                            PhysicalMemorySortOperator leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren);
+                            PhysicalSortOperator rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
+                            PhysicalSortOperator leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren);
                             physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
                             physOpChildren.push(physJoinOp);
                         }
