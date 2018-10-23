@@ -58,6 +58,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     }
 
     private void init() {
+        new File(Catalog.getInstance().getTempPath()).mkdirs();
         this.blockSize = Catalog.getInstance().getSortBlockSize();
         buffer = new ArrayList<>(blockSize - 1);
         try {
