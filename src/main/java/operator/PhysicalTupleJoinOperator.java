@@ -30,9 +30,8 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
 
 
     /**
-     * implement cross production
-     *
-     * @return result tuple
+     * implememts a cross production
+     * @return next joined tuple
      */
     @Override
     protected Tuple crossProduction() {

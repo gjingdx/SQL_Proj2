@@ -15,15 +15,13 @@ import java.util.Map;
  * it will inherit two tuple from two operators
  * then execute cross production of the two tuples
  */
-public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
-    private Expression joinCondition;
-    private Map<String, Integer> schema;
+public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
+    //private Expression joinCondition;
+    //private Map<SouterTupleing, Integer> schema;
     List<OrderByElement> leftOrder;
     List<OrderByElement> rightOrder;
     PhysicalSortOperator opRight;
     PhysicalSortOperator opLeft;
-    Tuple Tr;
-    Tuple Gs;
 
     /**
      * Init the schema of JoinOperator
@@ -32,12 +30,13 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
      * @param opRight     last operator of inner tuple
      */
     public PhysicalSortMergeJoinOperator(JoinOperator logicalJoinOp, PhysicalSortOperator opLeft, PhysicalSortOperator opRight) {
+        super(opLeft, opRight, logicalJoinOp);
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.leftOrder = opLeft.getOrder();
         this.rightOrder = opRight.getOrder();
-        this.joinCondition = logicalJoinOp.getJoinCondition();
-        this.schema = logicalJoinOp.getSchema();
+        //this.joinCondition = logicalJoinOp.getJoinCondition();
+        //this.schema = logicalJoinOp.getSchema();
         init();
     }
 
@@ -50,63 +49,39 @@ public class PhysicalSortMergeJoinOperator extends PhysicalOperator {
 
     private void init(){
         opRight.recordTupleReader();
-        Tr = opLeft.getNextTuple();
-        Gs = opRight.getNextTuple();
+        outerTuple = opLeft.getNextTuple();
+        innerTuple = opRight.getNextTuple();
     }
-
+    
     /**
-     * implement cross production
-     *
-     * @return result tuple
+     * implements sort merge join
+     * @return the next joined tuple
      */
     @Override
-    public Tuple getNextTuple() {
-        Tuple next = crossProduction();
-        // return cross product if there's no selection
-        if (joinCondition == null) {
-            return next;
-        }
-
-        while (next != null) {
-            SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
-            joinCondition.accept(sv);
-            if (sv.getResult()) {
-                break;
-            }
-            next = crossProduction();
-        }
-        return next;
-
-    }
-
     protected Tuple crossProduction() {
         // search for equal
-        while (Tr != null && Gs != null){
-            if (new TupleComparator().compare(Tr, Gs) < 0) {
-                Tr = opLeft.getNextTuple();
+        while (outerTuple != null && innerTuple != null){
+            if (new TupleComparator().compare(outerTuple, innerTuple) < 0) {
+                outerTuple = opLeft.getNextTuple();
             }
-            if (new TupleComparator().compare(Tr, Gs) > 0) {
+            if (new TupleComparator().compare(outerTuple, innerTuple) > 0) {
                 opRight.recordTupleReader();
-                Gs = opRight.getNextTuple();
+                innerTuple = opRight.getNextTuple();
                 continue;
             }
 
-            Tuple ret = joinTuple(Tr, Gs);
-            Gs = opRight.getNextTuple();
+            Tuple ret = joinTuple(outerTuple, innerTuple);
+            innerTuple = opRight.getNextTuple();
 
-            if (Gs == null || new TupleComparator().compare(Tr, Gs) != 0) {
-                if(Gs==null){
-                    int a = 1;
-                }
-                Tr = opLeft.getNextTuple();
-                opRight.setRecordTupleReader();
-                Gs = opRight.getNextTuple();
+            if (innerTuple == null || new TupleComparator().compare(outerTuple, innerTuple) != 0) {
+                outerTuple = opLeft.getNextTuple();
+                opRight.revertToRecord();
+                innerTuple = opRight.getNextTuple();
             }
 
             if (ret != null) {
                 return ret;
             }
-
         }
         return null;
     }

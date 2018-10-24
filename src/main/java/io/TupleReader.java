@@ -31,5 +31,9 @@ public interface TupleReader {
      */
     void revertToPosition();
 
+    /**
+     * move back to the position before ccertain tuple
+     * @param ith tuple
+     */
     void reset(long i);
 }

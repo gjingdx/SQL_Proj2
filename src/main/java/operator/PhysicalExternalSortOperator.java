@@ -57,6 +57,10 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         init();
     }
 
+    /**
+     * implements external merge sort
+     * write the final sorted tuple list into the temp file named "temp_{id}_{pass}_0"
+     */
     private void init() {
         new File(Catalog.getInstance().getTempPath()).mkdirs();
         this.blockSize = Catalog.getInstance().getSortBlockSize();
@@ -164,7 +168,10 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
             }
         }
     }
-
+    
+    /**
+     * read the final sorted temp
+     */
     @Override
     public Tuple getNextTuple() {
         return tr.readNextTuple();
@@ -187,7 +194,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      * revert to the record tuple reader
      */
     @Override
-    public void setRecordTupleReader() {
+    public void revertToRecord() {
         tr.revertToPosition();
     }
 }

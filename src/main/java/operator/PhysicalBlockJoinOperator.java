@@ -33,9 +33,8 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator {
     }
 
     /**
-     * implement cross production
-     *
-     * @return result tuple
+     * implements block join
+     * @return the next joined tuple
      */
     @Override
     protected Tuple crossProduction() {

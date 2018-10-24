@@ -15,9 +15,9 @@ import java.io.StringReader;
 import static org.junit.Assert.assertEquals;
 
 
-public class SMJTest {
+public class PhysicalSMJTest {
 
-    public SMJTest() {
+    public PhysicalSMJTest() {
         Catalog.getInstance().setSortBlockSize(50);
         Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
         Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);

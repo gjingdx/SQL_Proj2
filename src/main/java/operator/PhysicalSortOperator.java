@@ -20,9 +20,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     protected List<OrderByElement> order;
 
     /**
-     * Constructor
-     * read all tuples, store them in a list and sort them
-     *
+     * used for simply test skipping the logical plan tree
      * @param operator
      * @param plainSelect
      */
@@ -31,12 +29,22 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
         this.schema = operator.getSchema();
     }
 
+    /**
+     * used by physical plan builder
+     * @param logSortOp
+     * @param physChildren
+     */
     public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
         this.order = logSortOp.getOrder();
         this.schema = logSortOp.getSchema();
         this.physChild = physChildren.pop();
     }
 
+    /**
+     * used before SMJ
+     * @param order
+     * @param physChildren
+     */
     public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
         this.physChild = physChildren.pop();
         this.schema = physChild.getSchema();
@@ -79,7 +87,6 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
 
         @Override
         public int compare(Tuple t1, Tuple t2) {
-            // TODO Auto-generated method stub
             // sort tuples from the order from sql query.
             if (order != null) {
                 for (int i = 0; i < order.size(); i++) {
@@ -119,5 +126,5 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
 
     public abstract void recordTupleReader();
 
-    public abstract void setRecordTupleReader();
+    public abstract void revertToRecord();
 }

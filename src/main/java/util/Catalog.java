@@ -221,34 +221,66 @@ public class Catalog {
         return currentSchema.get(column);
     }
 
+    /**
+     * get the join method
+     * @return SMJ, TNLj, BNLJ
+     */
     public JoinMethod getJoinMethod() {
         return joinMethod;
     }
 
+    /**
+     * set the join method
+     * @param joinMethod
+     */
     public void setJoinMethod(JoinMethod joinMethod) {
         this.joinMethod = joinMethod;
     }
 
+    /**
+     * get the sort method
+     * @return IN_MEMORY, EXTERNAL
+     */
     public SortMethod getSortMethod() {
         return sortMethod;
     }
-
+    
+    /**
+     * set the sort method
+     * @param sortMethod
+     */
     public void setSortMethod(SortMethod sortMethod) {
         this.sortMethod = sortMethod;
     }
 
+    /**
+     * get the BNLJ block size
+     * @return int
+     */
     public int getJoinBlockSize() {
         return this.joinBlockSize;
     }
 
+    /**
+     * set the BNLJ block size
+     * @param joinBlockSize
+     */
     public void setJoinBlockSize(int joinBlockSize) {
         this.joinBlockSize = joinBlockSize;
     }
 
+    /**
+     * get the external sort block size
+     * @return block size
+     */
     public int getSortBlockSize() {
         return this.sortBlockSize;
     }
 
+    /**
+     * set the external sort block size
+     * @param sortBlockSize
+     */
     public void setSortBlockSize(int sortBlockSize) {
         this.sortBlockSize = sortBlockSize;
     }

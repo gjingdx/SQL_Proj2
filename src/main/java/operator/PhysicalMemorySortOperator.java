@@ -108,7 +108,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
      * revert to the record tuple reader
      */
     @Override
-    public void setRecordTupleReader() {
+    public void revertToRecord() {
         currentIndex = recordIndex;
     }
 }
