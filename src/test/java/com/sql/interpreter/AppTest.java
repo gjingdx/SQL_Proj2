@@ -56,7 +56,7 @@ public class AppTest {
         cmpResult();
     }
 
-    private void cmpResult(){
+    private void cmpResult() throws Exception{
         for (int index = 1; index <= 12; ++index) {
             String outfile = Catalog.getInstance().getOutputPath() + String.valueOf(index);
             String expectOutputfile = "Samples/samples/expected/" + "query" + String.valueOf(index);

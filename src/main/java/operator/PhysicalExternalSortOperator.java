@@ -68,7 +68,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         try {
             firstPass();
             mergeSort();
-        } catch(IOException e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
         finalTemp = getTempFileName(id, prePass, 0);
@@ -101,7 +101,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         }
     }
 
-    private void mergeSort() {
+    private void mergeSort() throws Exception{
         int indexTemp = index;
         prePass = 0;
         while (indexTemp > 1) {
@@ -175,12 +175,21 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      */
     @Override
     public Tuple getNextTuple() {
-        return tr.readNextTuple();
+        try {
+            return tr.readNextTuple();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public void reset() {
-        tr.reset();
+        try {
+            tr.reset();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -195,12 +204,12 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      * revert to the record tuple reader
      */
     @Override
-    public void revertToRecord() {
-        tr.revertToPosition();
+    public void revertToRecord() throws Exception{
+            tr.revertToPosition();
     }
 
     @Override
-    public void closeTupleReader(){
+    public void closeTupleReader() throws Exception{
         tr.close();
     }
 }

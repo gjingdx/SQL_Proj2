@@ -6,7 +6,7 @@ public interface TupleReader {
     /**
      * reset the tuple reader
      */
-    void reset();
+    void reset() throws Exception;
 
     /**
      * read the next tuple in the buffer page
@@ -14,12 +14,12 @@ public interface TupleReader {
      *
      * @return
      */
-    Tuple readNextTuple();
+    Tuple readNextTuple() throws Exception;
 
     /**
      * move back one position
      */
-    void moveBack();
+    void moveBack() throws Exception;
 
     /**
      * record the current position
@@ -29,16 +29,16 @@ public interface TupleReader {
     /**
      * revert to the record position
      */
-    void revertToPosition();
+    void revertToPosition() throws Exception;
 
     /**
      * move back to the position before ccertain tuple
      * @param ith tuple
      */
-    void reset(long i);
+    void reset(long i) throws Exception;
 
     /**
      * close the file if not closed
      */
-    void close();
+    void close() throws Exception;
 }

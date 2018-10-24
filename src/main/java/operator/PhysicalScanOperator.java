@@ -41,14 +41,12 @@ public class PhysicalScanOperator extends PhysicalOperator {
 
         this.schema = Catalog.getInstance().getCurrentSchema();
         binaryTupleReader = new BinaryTupleReader(Catalog.getInstance().getDataPath(tableName));
-        binaryTupleReader.reset();
     }
 
     public PhysicalScanOperator(ScanOperator logScanOp) {
 
         this.schema = logScanOp.getSchema();
         this.binaryTupleReader = logScanOp.getBinaryTupleReader();
-        binaryTupleReader.reset();
     }
 
     /**
@@ -56,7 +54,12 @@ public class PhysicalScanOperator extends PhysicalOperator {
      */
     @Override
     public Tuple getNextTuple() {
-        return binaryTupleReader.readNextTuple();
+        try {
+            return binaryTupleReader.readNextTuple();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -64,7 +67,11 @@ public class PhysicalScanOperator extends PhysicalOperator {
      */
     @Override
     public void reset() {
-        binaryTupleReader.reset();
+        try {
+            binaryTupleReader.reset();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
