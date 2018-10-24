@@ -5,6 +5,8 @@ import junit.framework.Assert;
 import model.Tuple;
 import org.junit.Test;
 import util.Catalog;
+import util.Constants.JoinMethod;
+import util.Constants.SortMethod;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,10 +18,45 @@ import java.util.Set;
 public class AppTest {
 
     @Test
-    public void sqlResultMatchBinary() throws Exception {
+    public void testBNLJ_Memory() throws Exception{
         Handler.init(new String[0]);
+        Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
+        Catalog.getInstance().setJoinBlockSize(2);
+        Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
         Handler.parseSql();
+        cmpResult();
+    }
 
+    @Test
+    public void testSMJ_External() throws Exception{
+        Handler.init(new String[0]);
+        Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
+        Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
+        Catalog.getInstance().setSortBlockSize(3);
+        Handler.parseSql();
+        cmpResult();
+    }
+
+    @Test
+    public void testSMJ_MemorySort() throws Exception{
+        Handler.init(new String[0]);
+        Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
+        Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
+        Catalog.getInstance().setSortBlockSize(3);
+        Handler.parseSql();
+        cmpResult();
+    }
+
+    @Test
+    public void testTNLJ() throws Exception{
+        Handler.init(new String[0]);
+        Catalog.getInstance().setJoinMethod(JoinMethod.TNLJ);
+        Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
+        Handler.parseSql();
+        cmpResult();
+    }
+
+    private void cmpResult(){
         for (int index = 1; index <= 12; ++index) {
             String outfile = Catalog.getInstance().getOutputPath() + String.valueOf(index);
             String expectOutputfile = "Samples/samples/expected/" + "query" + String.valueOf(index);

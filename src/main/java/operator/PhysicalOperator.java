@@ -41,8 +41,7 @@ public abstract class PhysicalOperator {
             tuple = getNextTuple();
         }
         // finish
-        tupleWriter.writeNextTuple(null);
+        tupleWriter.finish();
     }
-
 
 }

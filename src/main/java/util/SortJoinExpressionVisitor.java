@@ -15,9 +15,8 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * This visitor help extract related expression
- * accroding to the key of a schema hash map
- *
+ * This visitor help extract the left and right order 
+ * from equaill the join condition
  * @author xl664 Xinhe Li
  */
 public class SortJoinExpressionVisitor implements ExpressionVisitor {
@@ -26,7 +25,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
     private Map<String, Integer> leftSchema;
 
     /**
-     * Constructor give the schema of current tuple
+     * Constructor give the schema of right and left tuple
      *
      * @param Map<String, Integer>
      */
@@ -37,9 +36,8 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
     }
 
     /**
-     * extract the final expression
-     *
-     * @return the expression"
+     * extract the the Orders
+     * @return a list of order. list[0] refers to the right operator, whereas list[1] to left
      */
     public List<List<OrderByElement>> getOrders() {
         List<List<OrderByElement>> ret = new ArrayList<>();
@@ -78,15 +76,12 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
                 ret.get(1).add(order2);
             }
         }
-
         return ret;
-
     }
 
     /**
-     * method visit the long value.
-     * push a true value on the second stack since this node
-     * indicates a cross product.
+     * method visit the long value
+     * indicates no valid for sort element
      */
     @Override
     public void visit(LongValue node) {
@@ -95,9 +90,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for the column node.
-     * judge if the column is in the key set of the schema
-     * if true push the node into the stack
-     * else push null
+     * possible as an order
      *
      * @param the expression node.
      */
@@ -108,9 +101,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
 
     /**
      * method that visit the and expression node.
-     * if both left and right expression is valid, show this expression valid
-     * if only one of them valid, only remain that expression
-     * if both invalid, return null
+     * traverse the children nodes
      */
     @Override
     public void visit(AndExpression node) {
@@ -119,17 +110,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
     }
 
     /**
-     * method that visit the OR expression node.
-     * only wehn left expression and right expression both are valid
-     * return the node, else return null
-     */
-    @Override
-    public void visit(OrExpression node) {
-    }
-
-    /**
      * visit method for the equals to node.
-     *
      * @param an equals to expression node.
      */
     @Override
@@ -138,47 +119,26 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
         node.getRightExpression().accept(this);
     }
 
-    /**
-     * visit method for the greater than node.
-     *
-     * @param an greater expression node.
-     */
+    @Override
+    public void visit(OrExpression node) {
+    }
+
     @Override
     public void visit(GreaterThan node) {
     }
 
-    /**
-     * visit method for the greater than equals node.
-     *
-     * @param an greater than equals expression node.
-     */
     @Override
     public void visit(GreaterThanEquals node) {
     }
 
-    /**
-     * visit method for the minor than node.
-     *
-     * @param a minor than expression node.
-     */
     @Override
     public void visit(MinorThan node) {
     }
 
-    /**
-     * visit method for the minor than equals node.
-     *
-     * @param a minor than equals expression node.
-     */
     @Override
     public void visit(MinorThanEquals node) {
     }
 
-    /**
-     * visit method for the equals to node.
-     *
-     * @param an not equals to expression node.
-     */
     @Override
     public void visit(NotEqualsTo node) {
     }

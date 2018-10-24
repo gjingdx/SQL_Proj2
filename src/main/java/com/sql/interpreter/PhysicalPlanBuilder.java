@@ -55,14 +55,13 @@ public class PhysicalPlanBuilder {
                 break;
             case SMJ:
                 Expression joinCondition = logicalJoinOp.getJoinCondition();
+                // if there is no join condition, there will be no SMJ implements. 
+                // So does no order extracted from join condition
                 if (joinCondition != null) {
                     SortJoinExpressionVisitor sj = new SortJoinExpressionVisitor(children[0].getSchema(), children[1].getSchema());
                     joinCondition.accept(sj);
                     List<List<OrderByElement>> orders = sj.getOrders();
                     if (orders.get(0).size() != 0) {
-                        //System.out.println(joinCondition.toString());
-                        //System.out.println(orders.get(1).toString());
-                        //System.out.println(orders.get(0).toString());
                         PhysicalSortOperator rightSort, leftSort;
                         if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
                             rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);

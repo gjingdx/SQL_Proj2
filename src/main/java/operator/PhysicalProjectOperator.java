@@ -91,9 +91,4 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         return currentSchema;
     }
 
-//    @Override
-//    public List<PhysicalOperator> getChildren() {
-//        return physOpChildren;
-//    }
-
 }
