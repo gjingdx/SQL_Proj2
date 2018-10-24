@@ -1,5 +1,6 @@
 package operator;
 
+import com.sql.interpreter.Handler;
 import com.sql.interpreter.PhysicalPlanBuilder;
 import logical.operator.ScanOperator;
 import logical.operator.SortOperator;
@@ -37,6 +38,7 @@ public class PhysicalSortOperatorTest {
     @Test
     public void dump() throws Exception {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
+        Handler.init(new String[0]);
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
         PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);

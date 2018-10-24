@@ -4,7 +4,6 @@ import model.Tuple;
 import util.Constants;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -24,18 +23,15 @@ public class BinaryTupleReader implements TupleReader {
 
     private long pageIndex = 0;
     private long recordTupleIndex;
-    
-    /*
-    private long recordPosition;
-    private int recordTuplePointer;
-    private int recordTupleCount;
-    private int recordTupleSize;
-    private ByteBuffer recordBufferPage;
-    */
 
     public BinaryTupleReader(String file) {
-        this.file = new File(file);
-        reset();
+        this.file = new File(file); 
+        try {
+            reset();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            tupleCount = 0;
+        }
     }
 
     @Override
@@ -43,74 +39,20 @@ public class BinaryTupleReader implements TupleReader {
         int maxTupleCountPerPage = (Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (tupleSize * Constants.INT_SIZE);
         recordTupleIndex = (pageIndex - 1) * maxTupleCountPerPage + 
                         (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize);
-        
-        /*
-        this.recordBufferPage = cloneByteBuffer(bufferPage);
-        this.recordTupleSize = tupleSize;
-        this.recordTupleCount = tupleCount;
-        this.recordTuplePointer = tuplePointer;
-        try {
-            this.recordPosition = readerPointer.getFilePointer();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
-        
     }
 
     @Override
-    public void revertToPosition() {
+    public void revertToPosition() throws Exception{
         reset(recordTupleIndex);
-        /*
-        try {
-            this.readerPointer = new RandomAccessFile(this.file, "r");
-        } catch (FileNotFoundException e) {
-            System.out.printf("Cannot find file %s!\n", this.file.getName());
-            e.printStackTrace();
-        }
-        this.bufferPage = cloneByteBuffer(recordBufferPage);
-        this.tupleSize = recordTupleSize;
-        this.tupleCount = recordTupleCount;
-        this.tuplePointer = recordTuplePointer;
-        try {
-            //System.out.println("succeed: " + recordPosition);
-            this.readerPointer.seek(recordPosition);
-        } catch (Exception e) {
-            System.out.println("record position fails: " + recordPosition);
-            e.printStackTrace();
-        }
-        */
-        
-    }
-
-    private static ByteBuffer cloneByteBuffer(final ByteBuffer original) {
-        // Create clone with same capacity as original.
-        final ByteBuffer clone = (original.isDirect()) ?
-                ByteBuffer.allocateDirect(original.capacity()) :
-                ByteBuffer.allocate(original.capacity());
-
-        // Create a read-only copy of the original.
-        // This allows reading from the original without modifying it.
-        final ByteBuffer readOnlyCopy = original.asReadOnlyBuffer();
-
-        // Flip and read from the original.
-        readOnlyCopy.flip();
-        clone.put(readOnlyCopy);
-
-        return clone;
     }
 
     @Override
-    public void reset() {
-        try {
-            this.readerPointer = new RandomAccessFile(this.file, "r");
-        } catch (FileNotFoundException e) {
-            System.out.printf("Cannot find file %s!\n", this.file.getName());
-        }
+    public void reset() throws Exception{
+        this.readerPointer = new RandomAccessFile(this.file, "r");
         readPage();
     }
 
-    public void readPage() {
+    public void readPage() throws Exception{
         try {
             pageIndex ++;
             this.bufferPage = ByteBuffer.allocate(Constants.PAGE_SIZE);
@@ -127,12 +69,13 @@ public class BinaryTupleReader implements TupleReader {
                 tuplePointer = 2 * Constants.INT_SIZE;
             }
         } catch (IOException e) {
-            System.out.printf("Unexpected table file format\n");
+            e.printStackTrace();
+            throw new Exception("Unexpected table file format\n");
         }
     }
 
     @Override
-    public Tuple readNextTuple() {
+    public Tuple readNextTuple() throws Exception{
         Tuple tuple = null;
         if (this.tupleCount <= 0) {
             return null;
@@ -154,7 +97,10 @@ public class BinaryTupleReader implements TupleReader {
     }
 
     @Override
-    public void moveBack() {
+    public void moveBack() throws Exception{
+        if (tuplePointer == 0) {
+            throw new Exception("Unable to move back");
+        }
         if (tuplePointer > 2 * Constants.INT_SIZE) {
             tuplePointer -= tupleSize * Constants.INT_SIZE;
         }
@@ -162,7 +108,10 @@ public class BinaryTupleReader implements TupleReader {
 
     // the next tuple to read is the ith tuple
     @Override
-    public void reset(long i){
+    public void reset(long i) throws Exception{
+        if (i < 0) {
+            throw new Exception("Negative tuple position");
+        }
         int maxTupleCountPerPage = (Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (tupleSize * Constants.INT_SIZE);
         long pageIndex = i / maxTupleCountPerPage;
         long newTuplePointer = ((i % maxTupleCountPerPage) * tupleSize + 2) * Constants.INT_SIZE;
@@ -176,19 +125,15 @@ public class BinaryTupleReader implements TupleReader {
                 readPage();
             } catch (Exception e){
                 System.err.println("Failed to reset tuple");
-                e.printStackTrace();
+                throw e;
             }
         }
         tuplePointer = (int)newTuplePointer;
     }
 
     @Override
-    public void close(){
-        try {
-            readerPointer.getChannel().close();
-            readerPointer.close();
-        } catch (IOException e) {
-            System.out.print(e.getMessage());
-        }
+    public void close() throws IOException{
+        readerPointer.getChannel().close();
+        readerPointer.close();
     }
 }

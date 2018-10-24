@@ -46,7 +46,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) == 3) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -54,7 +54,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select expression successfully");
+                //System.out.println("select expression successfully");
                 currentTuple = op.getNextTuple();
             }
 
@@ -87,7 +87,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) != 3) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -95,7 +95,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select expression successfully");
+                //System.out.println("select expression successfully");
                 currentTuple = op.getNextTuple();
             }
 
@@ -127,7 +127,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) > 3) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -135,7 +135,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select greaterThan successfully");
+                //System.out.println("select greaterThan successfully");
                 currentTuple = op.getNextTuple();
             }
 
@@ -167,7 +167,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) >= 3) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -175,7 +175,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select greaterThan successfully");
+                //System.out.println("select greaterThan successfully");
                 currentTuple = op.getNextTuple();
             }
 
@@ -208,7 +208,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) < 3) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -216,7 +216,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select greaterThan successfully");
+                //System.out.println("select greaterThan successfully");
                 currentTuple = op.getNextTuple();
             }
 
@@ -248,7 +248,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) <= 3) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -256,7 +256,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select greaterThan successfully");
+                //System.out.println("select greaterThan successfully");
                 currentTuple = op.getNextTuple();
             }
 
@@ -288,7 +288,7 @@ public class SelectExpressionVisitorTest {
                 visitor = new SelectExpressionVisitor(currentTuple, op.getSchema());
                 if (whereEx != null) {
                     whereEx.accept(visitor);
-                    System.out.println(currentTuple.getDataAt(index));
+                    //System.out.println(currentTuple.getDataAt(index));
                     if (currentTuple.getDataAt(index) > 3 && currentTuple.getDataAt(index) < 5) {
                         assertEquals(true, visitor.getResult());
                     } else {
@@ -296,7 +296,7 @@ public class SelectExpressionVisitorTest {
                     }
 
                 }
-                System.out.println("select expression successfully");
+                //System.out.println("select expression successfully");
                 currentTuple = op.getNextTuple();
             }
 

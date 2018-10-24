@@ -52,31 +52,40 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
     @Override
     protected Tuple crossProduction() {
         // search for equal
-        while (outerTuple != null && innerTuple != null){
-            if (new TupleComparator().compare(outerTuple, innerTuple) < 0) {
-                outerTuple = opLeft.getNextTuple();
-            }
-            if (new TupleComparator().compare(outerTuple, innerTuple) > 0) {
-                ((PhysicalSortOperator)opRight).recordTupleReader();
+        try{
+            while (outerTuple != null && innerTuple != null){
+                if (new TupleComparator().compare(outerTuple, innerTuple) < 0) {
+                    outerTuple = opLeft.getNextTuple();
+                }
+                if (new TupleComparator().compare(outerTuple, innerTuple) > 0) {
+                    ((PhysicalSortOperator)opRight).recordTupleReader();
+                    innerTuple = opRight.getNextTuple();
+                    continue;
+                }
+
+                Tuple ret = joinTuple(outerTuple, innerTuple);
                 innerTuple = opRight.getNextTuple();
-                continue;
-            }
 
-            Tuple ret = joinTuple(outerTuple, innerTuple);
-            innerTuple = opRight.getNextTuple();
+                if (innerTuple == null || new TupleComparator().compare(outerTuple, innerTuple) != 0) {
+                    outerTuple = opLeft.getNextTuple();
+                    ((PhysicalSortOperator)opRight).revertToRecord();
+                    innerTuple = opRight.getNextTuple();
+                }
 
-            if (innerTuple == null || new TupleComparator().compare(outerTuple, innerTuple) != 0) {
-                outerTuple = opLeft.getNextTuple();
-                ((PhysicalSortOperator)opRight).revertToRecord();
-                innerTuple = opRight.getNextTuple();
+                if (ret != null) {
+                    return ret;
+                }
             }
-
-            if (ret != null) {
-                return ret;
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        ((PhysicalSortOperator)opLeft).closeTupleReader();
-        ((PhysicalSortOperator)opRight).closeTupleReader();
+        try{
+            ((PhysicalSortOperator)opLeft).closeTupleReader();
+            ((PhysicalSortOperator)opRight).closeTupleReader();
+        } catch (Exception e) {
+            System.out.println("Fail to close the some temp file");
+        }
         return null;
     }
 
