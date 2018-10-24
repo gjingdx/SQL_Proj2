@@ -3,6 +3,7 @@ package com.sql.interpreter;
 import logical.interpreter.LogicalPlanBuilder;
 import logical.operator.Operator;
 import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
@@ -63,7 +64,6 @@ public class Handler {
      */
     public static void parseSql() {
         try {
-            // try
             String inputPath = Catalog.getInstance().getSqlQueriesPath();
             CCJSqlParser parser = new CCJSqlParser(new FileReader(inputPath));
             Statement statement;
@@ -76,16 +76,23 @@ public class Handler {
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
-                //operator.dump(ind);
                 operator.dump(ind);
                 ind++;
+
+                operator = null;
+
                 long endTime = System.currentTimeMillis();
                 System.out.println("time: " + (endTime - startTime) + "ms");
             }
-        } catch (Exception e) {
+        } catch (ParseException e) {
             System.err.println("Exception occurred during parsing");
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
+
+        deleteTempFiles();
     }
 
     /**
@@ -168,5 +175,24 @@ public class Handler {
         logicalOperator.accept(physPB);
         PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
         return physicalOperator;
+    }
+
+    private static void deleteTempFiles() {
+        File[] fileList = new File(Catalog.getInstance().getTempPath()).listFiles();
+        for (File file: fileList) {
+            try {
+                deletFile(file);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void deletFile(File file) throws Exception{
+        if (file.getName().contains("temp_")) {
+            if (!file.delete()) {
+                throw new Exception("Fail to delete temp file: " + file.getName());
+            }
+        }
     }
 }

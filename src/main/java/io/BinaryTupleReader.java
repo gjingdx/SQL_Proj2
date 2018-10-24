@@ -141,11 +141,7 @@ public class BinaryTupleReader implements TupleReader {
         if (tuplePointer >= (2 + tupleCount * tupleSize) * Constants.INT_SIZE) {
             readPage();
             if (bufferPage == null) {
-                try {
-                    readerPointer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                close();
                 return null;
             }
         }
@@ -179,10 +175,20 @@ public class BinaryTupleReader implements TupleReader {
                 this.pageIndex = pageIndex;
                 readPage();
             } catch (Exception e){
-                System.out.println("Failed to reset tuple");
+                System.err.println("Failed to reset tuple");
                 e.printStackTrace();
             }
         }
         tuplePointer = (int)newTuplePointer;
+    }
+
+    @Override
+    public void close(){
+        try {
+            readerPointer.getChannel().close();
+            readerPointer.close();
+        } catch (IOException e) {
+            System.out.print(e.getMessage());
+        }
     }
 }

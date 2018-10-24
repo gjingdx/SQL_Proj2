@@ -36,4 +36,9 @@ public interface TupleReader {
      * @param ith tuple
      */
     void reset(long i);
+
+    /**
+     * close the file if not closed
+     */
+    void close();
 }

@@ -71,7 +71,6 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
     }
 
     public PhysicalJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren) {
-        //this.physOpChildren = physOpChildren;
         this.opRight = physOpChildren.pop();
         this.opLeft = physOpChildren.pop();
         this.joinCondition = logicalJoinOp.getJoinCondition();
@@ -128,5 +127,20 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * @return result tuple
      */
     protected abstract Tuple crossProduction();
+
+    protected Tuple joinTuple(Tuple outerTuple, Tuple innerTuple) {
+        if (outerTuple == null || innerTuple == null) {
+            return null;
+        }
+        int[] newTupleData = new int[outerTuple.getDataLength() + innerTuple.getDataLength()];
+        for (int i = 0; i < outerTuple.getDataLength(); i++) {
+            newTupleData[i] = outerTuple.getDataAt(i);
+        }
+        for (int i = 0; i < innerTuple.getDataLength(); i++) {
+            newTupleData[i + outerTuple.getDataLength()] = innerTuple.getDataAt(i);
+        }
+        Tuple tuple = new Tuple(newTupleData);
+        return tuple;
+    }
 
 }

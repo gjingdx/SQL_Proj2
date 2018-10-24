@@ -52,15 +52,7 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
         }
 
         // Concentrate Tuple
-        int[] newTupleData = new int[outerTuple.getDataLength() + innerTuple.getDataLength()];
-        for (int i = 0; i < outerTuple.getDataLength(); i++) {
-            newTupleData[i] = outerTuple.getDataAt(i);
-        }
-        for (int i = 0; i < innerTuple.getDataLength(); i++) {
-            newTupleData[i + outerTuple.getDataLength()] = innerTuple.getDataAt(i);
-        }
-        Tuple tuple = new Tuple(newTupleData);
-        return tuple;
+        return joinTuple(outerTuple, innerTuple);
     }
 
 }
