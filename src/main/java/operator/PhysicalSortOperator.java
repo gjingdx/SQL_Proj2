@@ -124,7 +124,18 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
         return order;
     }
 
+    /**
+     * record the tupleReader position
+     */
     public abstract void recordTupleReader();
 
+    /**
+     * revert the tuple reader to the record potision
+     */
     public abstract void revertToRecord();
+
+    /**
+     * close the tuple readers
+     */
+    public abstract void closeTupleReader();
 }

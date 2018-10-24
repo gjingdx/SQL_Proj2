@@ -111,4 +111,9 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
     public void revertToRecord() {
         currentIndex = recordIndex;
     }
+
+    @Override
+    public void closeTupleReader(){
+        tupleList.clear();
+    }
 }

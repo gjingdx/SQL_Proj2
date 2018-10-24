@@ -4,6 +4,7 @@ import model.Tuple;
 import util.Constants;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +89,15 @@ public class ReadableTupleReader implements TupleReader {
             readerPointer.seek(i * lineSize);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void close(){
+        try {
+            readerPointer.close();
+        } catch (IOException e) {
+            System.out.print(e.getMessage());
         }
     }
 }

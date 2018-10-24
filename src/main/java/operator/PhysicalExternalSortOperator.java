@@ -153,7 +153,6 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
             deletePrePassExtraTemp(prePass);
             prePass += 1;
         }
-
     }
 
     private String getTempFileName(String id, int pass, int index) {
@@ -164,7 +163,9 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         File[] files = new File(Catalog.getInstance().getTempPath()).listFiles();
         for (File file : files) {
             if (file.getName().contains(id + '_' + pass + '_')) {
-                file.delete();
+                if (!file.delete()) {
+                    System.out.print("Fail to delet pre passed file: " +file.getName());
+                }
             }
         }
     }
@@ -196,5 +197,10 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     @Override
     public void revertToRecord() {
         tr.revertToPosition();
+    }
+
+    @Override
+    public void closeTupleReader(){
+        tr.close();
     }
 }
