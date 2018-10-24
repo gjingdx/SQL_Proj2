@@ -1,6 +1,7 @@
 package operator;
 
 import logical.operator.DuplicateEliminationOperator;
+import logical.operator.Operator;
 import model.Tuple;
 
 import java.util.ArrayList;
@@ -16,9 +17,10 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
 
     // stores tuples
     private List<Tuple> tupleList;
-    private int currentIndex;
     private Map<String, Integer> schema;
     private PhysicalOperator physChild;
+    private Tuple prevTuple;
+    private PhysicalOperator operator;
 
     /**
      * Constructor to initiate the operator using the sorted list in sort operator.
@@ -26,42 +28,19 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
      * @param operator assuming it's sort operator
      */
     public PhysicalDuplicateEliminationOperator(PhysicalOperator operator) {
-        currentIndex = 0;
         this.schema = operator.getSchema();
-        this.tupleList = new ArrayList<>();
-        if (operator instanceof PhysicalSortOperator) {
-            List<Tuple> sortedList = ((PhysicalSortOperator) operator).getTupleList();
-
-            // initiate tupleList and eliminate duplicates
-            if (sortedList.size() > 1) {
-                tupleList.add(sortedList.get(0));
-                for (int i = 1; i < sortedList.size(); i++) {
-                    if (!sortedList.get(i).equals(sortedList.get(i - 1))) {
-                        tupleList.add(sortedList.get(i));
-                    }
-                }
-            }
-        }
+        this.operator = operator;
+        this.prevTuple = null;
     }
 
     public PhysicalDuplicateEliminationOperator(DuplicateEliminationOperator logDupEliOp, Deque<PhysicalOperator> physChildren) {
-        currentIndex = 0;
-        this.schema = logDupEliOp.getSchema();
-        this.tupleList = new ArrayList<>();
+        this.prevTuple = null;
         this.physChild = physChildren.pop();
-        if (physChild instanceof PhysicalSortOperator) {
-            List<Tuple> sortedList = ((PhysicalSortOperator) physChild).getTupleList();
-
-            // initiate tupleList and eliminate duplicates
-            if (sortedList.size() > 1) {
-                tupleList.add(sortedList.get(0));
-                for (int i = 1; i < sortedList.size(); i++) {
-                    if (!sortedList.get(i).equals(sortedList.get(i - 1))) {
-                        tupleList.add(sortedList.get(i));
-                    }
-                }
-            }
-        }
+        this.operator = physChild;
+        this.schema = operator.getSchema();
+//        if (physChild instanceof PhysicalSortOperator) {
+//
+//        }
     }
 
     /**
@@ -71,11 +50,13 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
     @Override
     public Tuple getNextTuple() {
         // TODO Auto-generated method stub
-        Tuple tuple = null;
-        if (currentIndex < tupleList.size()) {
-            tuple = tupleList.get(currentIndex);
+        Tuple tuple = operator.getNextTuple();
+
+        while (tuple != null && tuple.equals(prevTuple)) {
+            prevTuple = tuple;
+            tuple = operator.getNextTuple();
         }
-        currentIndex++;
+
         return tuple;
     }
 
@@ -85,7 +66,7 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
     @Override
     public void reset() {
         // TODO Auto-generated method stub
-        currentIndex = 0;
+        operator.reset();
     }
 
     /**

@@ -2,6 +2,7 @@ package com.sql.interpreter;
 
 import org.junit.Test;
 import junit.framework.Assert;
+
 import java.io.*;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,19 +17,19 @@ import io.BinaryTupleReader;
  */
 public class AppTest {
     @Test
-    public void sqlResultMatchReadable() throws Exception{
+    public void sqlResultMatchReadable() throws Exception {
         Handler.init(new String[0]);
         Handler.parseSql();
-        for(int index = 1; index<=10; ++index){
+        for (int index = 1; index <= 10; ++index) {
             File outfile = new File(Catalog.getInstance().getOutputPath() + String.valueOf(index));
             File expectOutputfile = new File("Samples/samples/expected/" + "query" + String.valueOf(index) + "_humanreadable");
             BufferedReader br1 = new BufferedReader(new FileReader(outfile));
             BufferedReader br2 = new BufferedReader(new FileReader(expectOutputfile));
-            String str1=br1.readLine(), str2=br2.readLine();
-            while(str1!=null && str2!=null){
+            String str1 = br1.readLine(), str2 = br2.readLine();
+            while (str1 != null && str2 != null) {
                 Assert.assertEquals(str1, str2);
-                str1=br1.readLine();
-                str2=br2.readLine();
+                str1 = br1.readLine();
+                str2 = br2.readLine();
             }
             Assert.assertNull(str1);
             Assert.assertNull(str2);
@@ -38,7 +39,7 @@ public class AppTest {
     }
 
     @Test
-    public void sqlResultMatchBinary() throws Exception{
+    public void sqlResultMatchBinary() throws Exception {
         Handler.init(new String[0]);
         Handler.parseSql();
 //        for(int index = 1; index<=12; ++index){
@@ -61,15 +62,15 @@ public class AppTest {
 ////                Assert.assertEquals(t1.toString(), t2.toString());
 ////            }
 //        }
-        for(int index = 13; index<=15; ++index){
+        for (int index = 13; index <= 15; ++index) {
             String outfile = Catalog.getInstance().getOutputPath() + String.valueOf(index);
             String expectOutputfile = "Samples/samples/expected/" + "query" + String.valueOf(index);
             BinaryTupleReader r1 = new BinaryTupleReader(outfile);
-            BinaryTupleReader r2  = new BinaryTupleReader(expectOutputfile);
-            
+            BinaryTupleReader r2 = new BinaryTupleReader(expectOutputfile);
+
             Tuple t1 = null, t2 = null;
-            while((t1 = r1.readNextTuple())!=null && (t2=r2.readNextTuple())!=null){
-                Assert.assertEquals(t1.toString(), t2.toString());
+            while ((t1 = r1.readNextTuple()) != null && (t2 = r2.readNextTuple()) != null) {
+                Assert.assertEquals("index: " + index, t1.toString(), t2.toString());
             }
         }
     }
