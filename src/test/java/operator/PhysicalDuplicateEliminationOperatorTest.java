@@ -34,7 +34,7 @@ public class PhysicalDuplicateEliminationOperatorTest {
         Tuple last = new Tuple(new int[0]);
         while (tuple != null) {
             assertNotSame(last, tuple);
-            System.out.println(tuple);
+            //System.out.println(tuple);
             last = tuple;
             tuple = physDupOp.getNextTuple();
         }

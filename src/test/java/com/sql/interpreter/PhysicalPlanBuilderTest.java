@@ -70,7 +70,7 @@ public class PhysicalPlanBuilderTest {
         Tuple tuple = physSelectOp.getNextTuple();
         while (tuple != null) {
             assertEquals(9, tuple.getDataAt(1));
-            System.out.println(tuple);
+            //System.out.println(tuple);
             tuple = physSelectOp.getNextTuple();
         }
     }
@@ -120,7 +120,7 @@ public class PhysicalPlanBuilderTest {
         Tuple tuple = physProjOp.getNextTuple();
         while (tuple != null) {
             assertEquals(9, tuple.getDataAt(0));
-            System.out.println(tuple.getDataAt(0));
+            //System.out.println(tuple.getDataAt(0));
             tuple = physProjOp.getNextTuple();
         }
     }
@@ -167,7 +167,7 @@ public class PhysicalPlanBuilderTest {
         Tuple last = new Tuple(new int[0]);
         while (tuple != null) {
             assertNotSame(last, tuple);
-            System.out.println(tuple);
+            //System.out.println(tuple);
             last = tuple;
             tuple = physDupOp.getNextTuple();
         }
