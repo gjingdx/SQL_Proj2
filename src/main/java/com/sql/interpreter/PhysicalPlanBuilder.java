@@ -1,13 +1,12 @@
 package com.sql.interpreter;
 
-
 import logical.operator.*;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
-import util.SortJoinExpressionVisitor;
 import util.Constants.SortMethod;
+import util.SortJoinExpressionVisitor;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -16,22 +15,20 @@ import java.util.List;
 public class PhysicalPlanBuilder {
 
     private Deque<PhysicalOperator> physOpChildren = new LinkedList<>();
-    ;
 
-
-//    private Operator[] getLogicalChildren(Operator logicalOp) {
-//        if (physOpChildren == null) {
-//            physOpChildren = new LinkedList<>();
-//        }
-//        Operator[] logicalChildren = logicalOp.getChildren();
-//        return logicalChildren;
-//    }
-
+    /**
+     * visit ScanOperator
+     *
+     * @param logScanOp
+     */
     public void visit(ScanOperator logScanOp) {
         PhysicalScanOperator physScanOp = new PhysicalScanOperator(logScanOp);
         physOpChildren.push(physScanOp);
     }
 
+    /**
+     * @param logSelectOp
+     */
     public void visit(SelectOperator logSelectOp) {
         Operator[] children = logSelectOp.getChildren();
         children[0].accept(this);
@@ -40,6 +37,9 @@ public class PhysicalPlanBuilder {
         physOpChildren.push(physSelectOp);
     }
 
+    /**
+     * @param logicalJoinOp
+     */
     public void visit(JoinOperator logicalJoinOp) {
         Operator[] children = logicalJoinOp.getChildren();
         children[0].accept(this);
@@ -86,6 +86,9 @@ public class PhysicalPlanBuilder {
 
     }
 
+    /**
+     * @param logicalProjOp
+     */
     public void visit(ProjectOperator logicalProjOp) {
         Operator[] children = logicalProjOp.getChildren();
         children[0].accept(this);
@@ -94,6 +97,9 @@ public class PhysicalPlanBuilder {
         physOpChildren.push(physProjOp);
     }
 
+    /**
+     * @param logSortOp
+     */
     public void visit(SortOperator logSortOp) {
         Operator[] children = logSortOp.getChildren();
         children[0].accept(this);
@@ -114,6 +120,9 @@ public class PhysicalPlanBuilder {
         }
     }
 
+    /**
+     * @param logDupElimOp
+     */
     public void visit(DuplicateEliminationOperator logDupElimOp) {
         Operator[] children = logDupElimOp.getChildren();
         children[0].accept(this);
@@ -123,6 +132,9 @@ public class PhysicalPlanBuilder {
         physOpChildren.push(physDupEliOp);
     }
 
+    /**
+     * @return the physOpChildren stack
+     */
     public Deque<PhysicalOperator> getPhysOpChildren() {
         return physOpChildren;
     }

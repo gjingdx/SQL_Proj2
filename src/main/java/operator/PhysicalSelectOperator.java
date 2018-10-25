@@ -7,7 +7,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.JoinExpressionVisitor;
 import util.SelectExpressionVisitor;
 
-import java.util.Deque;
 import java.util.Map;
 
 public class PhysicalSelectOperator extends PhysicalOperator {

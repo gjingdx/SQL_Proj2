@@ -3,7 +3,6 @@ package operator;
 import logical.operator.DuplicateEliminationOperator;
 import model.Tuple;
 
-import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
