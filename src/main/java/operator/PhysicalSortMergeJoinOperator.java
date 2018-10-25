@@ -57,6 +57,7 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
             while (outerTuple != null && innerTuple != null) {
                 if (new TupleComparator().compare(outerTuple, innerTuple) < 0) {
                     outerTuple = opLeft.getNextTuple();
+                    continue;
                 }
                 if (new TupleComparator().compare(outerTuple, innerTuple) > 0) {
                     ((PhysicalSortOperator) opRight).recordTupleReader();
