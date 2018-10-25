@@ -25,7 +25,8 @@ public class PhysicalSelectOperatorTest {
         logScanOp.accept(physPB);
         //PhysicalScanOperator physScanOp = new PhysicalScanOperator(logScanOp);
         SelectOperator logSelectOp = new SelectOperator(logScanOp, plainSelect);
-        PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, physPB.getPhysOpChildren());
+        PhysicalOperator child = physPB.getPhysOpChildren().pop();
+        PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, child);
 
         Tuple tuple = physSelectOp.getNextTuple();
         while (tuple != null) {

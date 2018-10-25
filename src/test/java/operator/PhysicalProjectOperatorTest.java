@@ -28,8 +28,8 @@ public class PhysicalProjectOperatorTest {
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         physPB.visit(selectOp);
         ProjectOperator projectOp = new ProjectOperator(selectOp, plainSelect);
-
-        PhysicalOperator physProjOp = new PhysicalProjectOperator(projectOp, physPB.getPhysOpChildren());
+        PhysicalOperator child = physPB.getPhysOpChildren().pop();
+        PhysicalOperator physProjOp = new PhysicalProjectOperator(projectOp, child);
 
         Tuple tuple = physProjOp.getNextTuple();
         while (tuple != null) {

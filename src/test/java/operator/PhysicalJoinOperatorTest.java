@@ -25,7 +25,9 @@ public class PhysicalJoinOperatorTest {
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         physPB.visit(op1);
         physPB.visit(op2);
-        PhysicalJoinOperator physJoinOp = new PhysicalTupleJoinOperator(logJoinOp, physPB.getPhysOpChildren());
+        PhysicalOperator rightChild = physPB.getPhysOpChildren().pop();
+        PhysicalOperator leftChild = physPB.getPhysOpChildren().pop();
+        PhysicalJoinOperator physJoinOp = new PhysicalTupleJoinOperator(logJoinOp, leftChild, rightChild);
         Tuple tuple;
         ArrayList<String> outputStrings = new ArrayList<>();
         while ((tuple = physJoinOp.getNextTuple()) != null) {

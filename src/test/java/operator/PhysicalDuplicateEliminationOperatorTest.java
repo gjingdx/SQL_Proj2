@@ -28,7 +28,8 @@ public class PhysicalDuplicateEliminationOperatorTest {
         physPB.visit(logSortOp);
 
         DuplicateEliminationOperator logDupOp = new DuplicateEliminationOperator(logSortOp);
-        PhysicalOperator physDupOp = new PhysicalDuplicateEliminationOperator(logDupOp, physPB.getPhysOpChildren());
+        PhysicalOperator child = physPB.getPhysOpChildren().pop();
+        PhysicalOperator physDupOp = new PhysicalDuplicateEliminationOperator(logDupOp, child);
 
         Tuple tuple = physDupOp.getNextTuple();
         Tuple last = new Tuple(new int[0]);

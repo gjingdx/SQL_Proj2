@@ -25,7 +25,8 @@ public class PhysicalSortOperatorTest {
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         physPB.visit(logScanOp);
         SortOperator logSortOp = new SortOperator(logScanOp, plainSelect);
-        PhysicalOperator physSortOp = new PhysicalMemorySortOperator(logSortOp, physPB.getPhysOpChildren());
+        PhysicalOperator child = physPB.getPhysOpChildren().pop();
+        PhysicalOperator physSortOp = new PhysicalMemorySortOperator(logSortOp, child);
         Tuple tuple = physSortOp.getNextTuple();
         long last = Long.MIN_VALUE;
         while (tuple != null) {
