@@ -23,9 +23,9 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
         super(opLeft, opRight, plainSelect);
     }
 
-    public PhysicalTupleJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren) {
+    public PhysicalTupleJoinOperator(JoinOperator logicalJoinOp, PhysicalOperator leftChild, PhysicalOperator rightChild) {
         //this.physOpChildren = physOpChildren;
-        super(logicalJoinOp, physOpChildren);
+        super(logicalJoinOp, leftChild, rightChild);
     }
 
 

@@ -70,9 +70,9 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         innerTuple = null;
     }
 
-    public PhysicalJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren) {
-        this.opRight = physOpChildren.pop();
-        this.opLeft = physOpChildren.pop();
+    public PhysicalJoinOperator(JoinOperator logicalJoinOp, PhysicalOperator leftChild, PhysicalOperator rightChild) {
+        this.opLeft = leftChild;
+        this.opRight = rightChild;
         this.joinCondition = logicalJoinOp.getJoinCondition();
         this.schema = logicalJoinOp.getSchema();
 
