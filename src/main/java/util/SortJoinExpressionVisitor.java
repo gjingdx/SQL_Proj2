@@ -15,8 +15,9 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * This visitor help extract the left and right order 
+ * This visitor help extract the left and right order
  * from equaill the join condition
+ *
  * @author xl664 Xinhe Li
  */
 public class SortJoinExpressionVisitor implements ExpressionVisitor {
@@ -27,7 +28,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
     /**
      * Constructor give the schema of right and left tuple
      *
-     * @param Map<String, Integer>
+     * @param rightSchema
      */
     public SortJoinExpressionVisitor(Map<String, Integer> rightSchema, Map<String, Integer> leftSchema) {
         columnStack = new Stack<>();
@@ -37,6 +38,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
 
     /**
      * extract the the Orders
+     *
      * @return a list of order. list[0] refers to the right operator, whereas list[1] to left
      */
     public List<List<OrderByElement>> getOrders() {
@@ -111,6 +113,7 @@ public class SortJoinExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for the equals to node.
+     *
      * @param an equals to expression node.
      */
     @Override

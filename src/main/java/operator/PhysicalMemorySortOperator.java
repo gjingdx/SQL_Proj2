@@ -44,6 +44,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
 
     /**
      * constructor, init PhysicalMemorySortOperator
+     *
      * @param logSortOp
      * @param child
      */
@@ -65,6 +66,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
 
     /**
      * init PhysicalMemorySortOperator
+     *
      * @param order
      * @param child
      */
@@ -123,7 +125,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
     }
 
     @Override
-    public void closeTupleReader(){
+    public void closeTupleReader() {
         tupleList.clear();
     }
 }

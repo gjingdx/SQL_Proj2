@@ -34,6 +34,7 @@ public class PhysicalSelectOperator extends PhysicalOperator {
 
     /**
      * init PhysicalSelectOperator
+     *
      * @param logSelectOp
      * @param child
      */

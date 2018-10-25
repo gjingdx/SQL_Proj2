@@ -45,6 +45,7 @@ public class PhysicalScanOperator extends PhysicalOperator {
 
     /**
      * init PhysicalScanOperator
+     *
      * @param logScanOp
      */
     public PhysicalScanOperator(ScanOperator logScanOp) {
@@ -59,7 +60,7 @@ public class PhysicalScanOperator extends PhysicalOperator {
     public Tuple getNextTuple() {
         try {
             return binaryTupleReader.readNextTuple();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

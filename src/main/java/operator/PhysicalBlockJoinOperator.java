@@ -34,6 +34,7 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator {
 
     /**
      * implements block join
+     *
      * @return the next joined tuple
      */
     @Override

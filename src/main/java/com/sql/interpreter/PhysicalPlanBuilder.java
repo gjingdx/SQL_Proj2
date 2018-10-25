@@ -67,11 +67,10 @@ public class PhysicalPlanBuilder {
                     List<List<OrderByElement>> orders = sj.getOrders();
                     if (orders.get(0).size() != 0) {
                         PhysicalSortOperator rightSort, leftSort;
-                        if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
+                        if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL) {
                             rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
                             leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
-                        }
-                        else {
+                        } else {
                             rightSort = new PhysicalMemorySortOperator(orders.get(0), rightChild);
                             leftSort = new PhysicalMemorySortOperator(orders.get(1), leftChild);
                         }

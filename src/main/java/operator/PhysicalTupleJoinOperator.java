@@ -25,6 +25,7 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
 
     /**
      * init PhysicalTupleJoinOperator
+     *
      * @param logicalJoinOp
      * @param leftChild
      * @param rightChild
@@ -37,6 +38,7 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
 
     /**
      * implememts a cross production
+     *
      * @return next joined tuple
      */
     @Override

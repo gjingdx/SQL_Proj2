@@ -84,7 +84,7 @@ public class ReadableTupleReader implements TupleReader {
     }
 
     @Override
-    public void reset(long i){
+    public void reset(long i) {
         try {
             readerPointer.seek(i * lineSize);
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class ReadableTupleReader implements TupleReader {
     }
 
     @Override
-    public void close(){
+    public void close() {
         try {
             readerPointer.close();
         } catch (IOException e) {

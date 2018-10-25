@@ -25,7 +25,7 @@ public class BinaryTupleReader implements TupleReader {
     private long recordTupleIndex;
 
     public BinaryTupleReader(String file) {
-        this.file = new File(file); 
+        this.file = new File(file);
         try {
             reset();
         } catch (Exception e) {
@@ -37,27 +37,27 @@ public class BinaryTupleReader implements TupleReader {
     @Override
     public void recordPosition() {
         int maxTupleCountPerPage = (Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (tupleSize * Constants.INT_SIZE);
-        recordTupleIndex = (pageIndex - 1) * maxTupleCountPerPage + 
-                        (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize);
+        recordTupleIndex = (pageIndex - 1) * maxTupleCountPerPage +
+                (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize);
     }
 
     @Override
-    public void revertToPosition() throws Exception{
+    public void revertToPosition() throws Exception {
         reset(recordTupleIndex);
     }
 
     @Override
-    public void reset() throws Exception{
+    public void reset() throws Exception {
         this.readerPointer = new RandomAccessFile(this.file, "r");
         readPage();
     }
 
-    public void readPage() throws Exception{
+    public void readPage() throws Exception {
         try {
-            pageIndex ++;
+            pageIndex++;
             this.bufferPage = ByteBuffer.allocate(Constants.PAGE_SIZE);
             FileChannel inChannel = readerPointer.getChannel();
-            
+
             int byteRead = inChannel.read(bufferPage);
             if (byteRead == -1) {
                 this.tupleCount = 0;
@@ -75,7 +75,7 @@ public class BinaryTupleReader implements TupleReader {
     }
 
     @Override
-    public Tuple readNextTuple() throws Exception{
+    public Tuple readNextTuple() throws Exception {
         Tuple tuple = null;
         if (this.tupleCount <= 0) {
             return null;
@@ -97,7 +97,7 @@ public class BinaryTupleReader implements TupleReader {
     }
 
     @Override
-    public void moveBack() throws Exception{
+    public void moveBack() throws Exception {
         if (tuplePointer == 0) {
             throw new Exception("Unable to move back");
         }
@@ -108,7 +108,7 @@ public class BinaryTupleReader implements TupleReader {
 
     // the next tuple to read is the ith tuple
     @Override
-    public void reset(long i) throws Exception{
+    public void reset(long i) throws Exception {
         if (i < 0) {
             throw new Exception("Negative tuple position");
         }
@@ -123,16 +123,16 @@ public class BinaryTupleReader implements TupleReader {
                 readerPointer.seek(newReaderPointer);
                 this.pageIndex = pageIndex;
                 readPage();
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.err.println("Failed to reset tuple");
                 throw e;
             }
         }
-        tuplePointer = (int)newTuplePointer;
+        tuplePointer = (int) newTuplePointer;
     }
 
     @Override
-    public void close() throws IOException{
+    public void close() throws IOException {
         readerPointer.getChannel().close();
         readerPointer.close();
     }

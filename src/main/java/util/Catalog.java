@@ -223,6 +223,7 @@ public class Catalog {
 
     /**
      * get the join method
+     *
      * @return SMJ, TNLj, BNLJ
      */
     public JoinMethod getJoinMethod() {
@@ -231,6 +232,7 @@ public class Catalog {
 
     /**
      * set the join method
+     *
      * @param joinMethod
      */
     public void setJoinMethod(JoinMethod joinMethod) {
@@ -239,14 +241,16 @@ public class Catalog {
 
     /**
      * get the sort method
+     *
      * @return IN_MEMORY, EXTERNAL
      */
     public SortMethod getSortMethod() {
         return sortMethod;
     }
-    
+
     /**
      * set the sort method
+     *
      * @param sortMethod
      */
     public void setSortMethod(SortMethod sortMethod) {
@@ -255,6 +259,7 @@ public class Catalog {
 
     /**
      * get the BNLJ block size
+     *
      * @return int
      */
     public int getJoinBlockSize() {
@@ -263,6 +268,7 @@ public class Catalog {
 
     /**
      * set the BNLJ block size
+     *
      * @param joinBlockSize
      */
     public void setJoinBlockSize(int joinBlockSize) {
@@ -271,6 +277,7 @@ public class Catalog {
 
     /**
      * get the external sort block size
+     *
      * @return block size
      */
     public int getSortBlockSize() {
@@ -279,6 +286,7 @@ public class Catalog {
 
     /**
      * set the external sort block size
+     *
      * @param sortBlockSize
      */
     public void setSortBlockSize(int sortBlockSize) {

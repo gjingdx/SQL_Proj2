@@ -61,6 +61,7 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
 
     /**
      * init physical join op using its physical op children and logical join op
+     *
      * @param opLeft
      * @param opRight
      * @param logicalJoinOp
@@ -78,6 +79,7 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
 
     /**
      * init join op
+     *
      * @param logicalJoinOp
      * @param leftChild
      * @param rightChild

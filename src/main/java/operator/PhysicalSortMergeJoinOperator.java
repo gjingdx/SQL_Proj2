@@ -22,8 +22,8 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
     /**
      * Init the schema of JoinOperator
      *
-     * @param opLeft      last operator of outer tuple
-     * @param opRight     last operator of inner tuple
+     * @param opLeft  last operator of outer tuple
+     * @param opRight last operator of inner tuple
      */
     public PhysicalSortMergeJoinOperator(JoinOperator logicalJoinOp, PhysicalSortOperator opLeft, PhysicalSortOperator opRight) {
         super(opLeft, opRight, logicalJoinOp);
@@ -39,26 +39,27 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
         init();
     }
 
-    private void init(){
-        ((PhysicalSortOperator)opRight).recordTupleReader();
+    private void init() {
+        ((PhysicalSortOperator) opRight).recordTupleReader();
         outerTuple = opLeft.getNextTuple();
         innerTuple = opRight.getNextTuple();
     }
-    
+
     /**
      * implements sort merge join
+     *
      * @return the next joined tuple
      */
     @Override
     protected Tuple crossProduction() {
         // search for equal
-        try{
-            while (outerTuple != null && innerTuple != null){
+        try {
+            while (outerTuple != null && innerTuple != null) {
                 if (new TupleComparator().compare(outerTuple, innerTuple) < 0) {
                     outerTuple = opLeft.getNextTuple();
                 }
                 if (new TupleComparator().compare(outerTuple, innerTuple) > 0) {
-                    ((PhysicalSortOperator)opRight).recordTupleReader();
+                    ((PhysicalSortOperator) opRight).recordTupleReader();
                     innerTuple = opRight.getNextTuple();
                     continue;
                 }
@@ -68,7 +69,7 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
 
                 if (innerTuple == null || new TupleComparator().compare(outerTuple, innerTuple) != 0) {
                     outerTuple = opLeft.getNextTuple();
-                    ((PhysicalSortOperator)opRight).revertToRecord();
+                    ((PhysicalSortOperator) opRight).revertToRecord();
                     innerTuple = opRight.getNextTuple();
                 }
 
@@ -80,9 +81,9 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
             e.printStackTrace();
             return null;
         }
-        try{
-            ((PhysicalSortOperator)opLeft).closeTupleReader();
-            ((PhysicalSortOperator)opRight).closeTupleReader();
+        try {
+            ((PhysicalSortOperator) opLeft).closeTupleReader();
+            ((PhysicalSortOperator) opRight).closeTupleReader();
         } catch (Exception e) {
             System.out.println("Fail to close the some temp file");
         }
