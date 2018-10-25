@@ -68,8 +68,23 @@
     then a instance of the physical operator corresponding to the logical operator will be created using its physical operator child/children created before and stored in a stack (Deque in Java).
      The physical operator instance would then be pushed into the stack. In this way, the physical operator tree is built. 
     
+**3. SMJ**  
+```operator/PhysicalSortMergeJoinOperator```
+- **Partition reset**  
+    In TupleReader, we set interfaces ```recordPosition```, ```revertToPosition```, ```moveBack```, and ```reset(i)```.  
+    1. ```reset(i)``` will reset the tuple reader to the position before the _ith_ tuple. First, we calculate which page the tuple lies in and set the filechannel to this position. Then read the page and set the tuple pointer to the position of the tuple in this page. This method is only used by revertToPostion. For requirement in instruction, we made it public.  
+    2. ```moveBack``` only go back one tuple length step in tuple reader. It is used in External Sort operation. When merging sort, we read all the first tuple in the blocks but only extracted the minimum one. To leave the remain still be the next tuple to read, we let these tuple readers move back one step. Fortunately, this action will actually reload any byte-buffer.
+    3. ```recordPosition``` and ```revertToPosition``` exist because we think the method of ```reset(i)``` seems inharmony with ```readNextTuple```, where the former only need record the index of tuple, while the other does not. So we make the method ```recordPosition``` to record the position of last inequal tuple in right table. Then, when need to reset, we only need to refer to ```revertToPosition``` to set back to the record position.
+    4. Distinct will not have such reset problem, since we sort the tuple not only by the sort element but also the rest columns.
+- **Unbouded State**  
+    1. SMJ  
+        SMJ will inherit two sort operations as left and right operation. The memory used to sort only happens in the construction of sort operation. The sorted tuple list will be stored in a temp file then. Thus, the memory used for SMJ is at most two pages for reading these two temp files (larger than minimum block size of external sort).
+    2. External Sort  
+        External Sort will store each run in each pass into a seperated temp file. When implementing merge sort, we only need block-1 tuple reader to read these runs, and one single page(tuple writer) to write out the minimum tuple among these buffered runs. Thus, the memory will be contrained in $block pages. 
+    3. Distinct
+        Whatever if there exists sort in the sql statement or not, we will implement sort operations before distinct. Thus, we do not need any memory in distinct.  
 
-**3. Join Expression Visitor**
+**4. Join Expression Visitor**
 - **How to evaluate a Join condition**
     1. Extract the related expression (Join condition), according to the current schema. We will demonstrate how to do this and some examples as below.
     2. Use the refined expression to accept the SelectExpressionVisitor to make the evaluation.
@@ -98,7 +113,7 @@
 __*JoinExpressionVisitor*__ lays in ```src/main/java/util/```, so does __*SelectExpressionVisitor*__.  
 The related comments are added on the related functions.
 
-**4. Select Expression Visitor**
+**5. Select Expression Visitor**
 - **Principles**  
 If we see select expressions as a tree, then they need to be evaluated 
 from the bottom layer up to top, which means previous result would be used 
