@@ -46,7 +46,7 @@ public class ScanOperator extends Operator {
         try {
             binaryTupleReader = new BinaryTupleReader(Catalog.getInstance().getDataPath(tableName));
         } catch (Exception e) {
-            
+
         }
     }
 

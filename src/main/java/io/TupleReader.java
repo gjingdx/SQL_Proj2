@@ -33,6 +33,7 @@ public interface TupleReader {
 
     /**
      * move back to the position before ccertain tuple
+     *
      * @param ith tuple
      */
     void reset(long i) throws Exception;

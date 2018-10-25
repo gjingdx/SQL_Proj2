@@ -12,9 +12,7 @@ public class ReadableTupleWriter implements TupleWriter {
     private BufferedWriter output;
 
     public ReadableTupleWriter(String path, int tupleSize) {
-
         this.sb = new StringBuilder();
-
         try {
             File file = new File(path);
             output = new BufferedWriter(new FileWriter(file));

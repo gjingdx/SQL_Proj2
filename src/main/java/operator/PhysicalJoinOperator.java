@@ -59,6 +59,13 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         innerTuple = null;
     }
 
+    /**
+     * init physical join op using its physical op children and logical join op
+     *
+     * @param opLeft
+     * @param opRight
+     * @param logicalJoinOp
+     */
     public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, JoinOperator logicalJoinOp) {
         this.opLeft = opLeft;
         this.opRight = opRight;
@@ -70,6 +77,13 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         innerTuple = null;
     }
 
+    /**
+     * init join op
+     *
+     * @param logicalJoinOp
+     * @param leftChild
+     * @param rightChild
+     */
     public PhysicalJoinOperator(JoinOperator logicalJoinOp, PhysicalOperator leftChild, PhysicalOperator rightChild) {
         this.opLeft = leftChild;
         this.opRight = rightChild;

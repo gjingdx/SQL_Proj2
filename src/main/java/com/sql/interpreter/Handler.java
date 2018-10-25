@@ -179,7 +179,7 @@ public class Handler {
 
     private static void deleteTempFiles() {
         File[] fileList = new File(Catalog.getInstance().getTempPath()).listFiles();
-        for (File file: fileList) {
+        for (File file : fileList) {
             try {
                 deletFile(file);
             } catch (Exception e) {
@@ -188,7 +188,7 @@ public class Handler {
         }
     }
 
-    private static void deletFile(File file) throws Exception{
+    private static void deletFile(File file) throws Exception {
         if (file.getName().contains("temp_")) {
             if (!file.delete()) {
                 throw new Exception("Fail to delete temp file: " + file.getName());

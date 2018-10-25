@@ -42,6 +42,12 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         operator.reset();
     }
 
+    /**
+     * constructor, init PhysicalMemorySortOperator
+     *
+     * @param logSortOp
+     * @param child
+     */
     public PhysicalMemorySortOperator(SortOperator logSortOp, PhysicalOperator child) {
         super(logSortOp, child);
 
@@ -58,6 +64,12 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         physChild.reset();
     }
 
+    /**
+     * init PhysicalMemorySortOperator
+     *
+     * @param order
+     * @param child
+     */
     public PhysicalMemorySortOperator(List<OrderByElement> order, PhysicalOperator child) {
         super(order, child);
 
@@ -113,7 +125,7 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
     }
 
     @Override
-    public void closeTupleReader(){
+    public void closeTupleReader() {
         tupleList.clear();
     }
 }

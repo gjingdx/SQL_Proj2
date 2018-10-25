@@ -28,6 +28,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
 
     /**
      * used for simply test skipping the logical plan tree
+     *
      * @param operator
      * @param plainSelect
      */
@@ -38,8 +39,9 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
 
     /**
      * used by physical plan builder
+     *
      * @param logSortOp
-     * @param physChildren
+     * @param child
      */
     public PhysicalExternalSortOperator(SortOperator logSortOp, PhysicalOperator child) {
         super(logSortOp, child);
@@ -49,8 +51,9 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
 
     /**
      * used by smj
+     *
      * @param order
-     * @param physChildren
+     * @param child
      */
     public PhysicalExternalSortOperator(List<OrderByElement> order, PhysicalOperator child) {
         super(order, child);
@@ -68,7 +71,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         try {
             firstPass();
             mergeSort();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         finalTemp = getTempFileName(id, prePass, 0);
@@ -92,7 +95,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
             }
             Collections.sort(tupleList, new TupleComparator());
             TupleWriter tupleWriter = new BinaryTupleWriter(
-                getTempFileName(id, 0, index), schema.size());
+                    getTempFileName(id, 0, index), schema.size());
             index++;
             for (Tuple tuple : tupleList) {
                 tupleWriter.writeNextTuple(tuple);
@@ -101,7 +104,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         }
     }
 
-    private void mergeSort() throws Exception{
+    private void mergeSort() throws Exception {
         int indexTemp = index;
         prePass = 0;
         while (indexTemp > 1) {
@@ -156,7 +159,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     }
 
     private String getTempFileName(String id, int pass, int index) {
-        return Catalog.getInstance().getTempPath() +"temp_" + id + '_' + pass + '_' + index;
+        return Catalog.getInstance().getTempPath() + "temp_" + id + '_' + pass + '_' + index;
     }
 
     private void deletePrePassExtraTemp(int pass) {
@@ -164,12 +167,12 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         for (File file : files) {
             if (file.getName().contains(id + '_' + pass + '_')) {
                 if (!file.delete()) {
-                    System.out.print("Fail to delet pre passed file: " +file.getName());
+                    System.out.print("Fail to delet pre passed file: " + file.getName());
                 }
             }
         }
     }
-    
+
     /**
      * read the final sorted temp
      */
@@ -204,12 +207,12 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      * revert to the record tuple reader
      */
     @Override
-    public void revertToRecord() throws Exception{
-            tr.revertToPosition();
+    public void revertToRecord() throws Exception {
+        tr.revertToPosition();
     }
 
     @Override
-    public void closeTupleReader() throws Exception{
+    public void closeTupleReader() throws Exception {
         tr.close();
     }
 }

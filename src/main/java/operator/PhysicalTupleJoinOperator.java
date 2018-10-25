@@ -23,6 +23,13 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
         super(opLeft, opRight, plainSelect);
     }
 
+    /**
+     * init PhysicalTupleJoinOperator
+     *
+     * @param logicalJoinOp
+     * @param leftChild
+     * @param rightChild
+     */
     public PhysicalTupleJoinOperator(JoinOperator logicalJoinOp, PhysicalOperator leftChild, PhysicalOperator rightChild) {
         //this.physOpChildren = physOpChildren;
         super(logicalJoinOp, leftChild, rightChild);
@@ -31,6 +38,7 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
 
     /**
      * implememts a cross production
+     *
      * @return next joined tuple
      */
     @Override
