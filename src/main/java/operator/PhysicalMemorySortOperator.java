@@ -7,7 +7,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 
 /**

@@ -5,7 +5,6 @@ import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

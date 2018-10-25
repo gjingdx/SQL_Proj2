@@ -1,6 +1,7 @@
 package operator;
 
-import io.*;
+import io.BinaryTupleWriter;
+import io.TupleWriter;
 import model.Tuple;
 import util.Catalog;
 

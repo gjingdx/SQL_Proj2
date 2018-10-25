@@ -13,7 +13,10 @@ import util.Constants;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     private final String id = UUID.randomUUID().toString().substring(0, 8); // the identifier for the temp file serial

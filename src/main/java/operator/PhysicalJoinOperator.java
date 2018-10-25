@@ -8,7 +8,6 @@ import util.Catalog;
 import util.JoinExpressionVisitor;
 import util.SelectExpressionVisitor;
 
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 

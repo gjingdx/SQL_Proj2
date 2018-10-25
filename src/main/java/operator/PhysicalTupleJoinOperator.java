@@ -4,8 +4,6 @@ import logical.operator.JoinOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
-import java.util.Deque;
-
 /**
  * JoinOperator
  * it will inherit two tuple from two operators
