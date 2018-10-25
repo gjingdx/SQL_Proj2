@@ -79,8 +79,6 @@ public class Handler {
                 operator.dump(ind);
                 ind++;
 
-                operator = null;
-
                 long endTime = System.currentTimeMillis();
                 System.out.println("time: " + (endTime - startTime) + "ms");
             }
@@ -183,7 +181,7 @@ public class Handler {
             try {
                 deletFile(file);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                //System.out.println(e.getMessage());
             }
         }
     }
