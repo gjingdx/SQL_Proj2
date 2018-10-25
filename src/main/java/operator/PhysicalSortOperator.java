@@ -34,10 +34,10 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
      * @param logSortOp
      * @param physChildren
      */
-    public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
+    public PhysicalSortOperator(SortOperator logSortOp, PhysicalOperator child) {
         this.order = logSortOp.getOrder();
         this.schema = logSortOp.getSchema();
-        this.physChild = physChildren.pop();
+        this.physChild = child;
     }
 
     /**
@@ -45,8 +45,8 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
      * @param order
      * @param physChildren
      */
-    public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
-        this.physChild = physChildren.pop();
+    public PhysicalSortOperator(List<OrderByElement> order, PhysicalOperator child) {
+        this.physChild = child;
         this.schema = physChild.getSchema();
         this.order = order;
     }

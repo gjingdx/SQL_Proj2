@@ -27,8 +27,8 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator {
         this.block = new Block(blockSize, opLeft.getSchema().size());
     }
 
-    public PhysicalBlockJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren, int blockSize) {
-        super(logicalJoinOp, physOpChildren);
+    public PhysicalBlockJoinOperator(JoinOperator logicalJoinOp, PhysicalOperator leftChild, PhysicalOperator rightChild, int blockSize) {
+        super(logicalJoinOp, leftChild, rightChild);
         this.block = new Block(blockSize, opLeft.getSchema().size());
     }
 

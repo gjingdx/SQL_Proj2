@@ -77,6 +77,7 @@ public class AppTest {
 //                Assert.assertEquals(t1.toString(), t2.toString());
 //            }
         }
+
         for (int index = 13; index <= 15; ++index) {
             String outfile = Catalog.getInstance().getOutputPath() + String.valueOf(index);
             String expectOutputfile = "Samples/samples/expected/" + "query" + String.valueOf(index);

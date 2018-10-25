@@ -32,9 +32,9 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
         this.prevTuple = null;
     }
 
-    public PhysicalDuplicateEliminationOperator(DuplicateEliminationOperator logDupEliOp, Deque<PhysicalOperator> physChildren) {
+    public PhysicalDuplicateEliminationOperator(DuplicateEliminationOperator logDupEliOp, PhysicalOperator child) {
         this.prevTuple = null;
-        this.physChild = physChildren.pop();
+        this.physChild = child;
         this.operator = physChild;
         this.schema = operator.getSchema();
 //        if (physChild instanceof PhysicalSortOperator) {

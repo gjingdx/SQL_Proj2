@@ -42,8 +42,8 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         operator.reset();
     }
 
-    public PhysicalMemorySortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
-        super(logSortOp, physChildren);
+    public PhysicalMemorySortOperator(SortOperator logSortOp, PhysicalOperator child) {
+        super(logSortOp, child);
 
         tupleList = new ArrayList<>();
         // initialize the list
@@ -58,8 +58,8 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
         physChild.reset();
     }
 
-    public PhysicalMemorySortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
-        super(order, physChildren);
+    public PhysicalMemorySortOperator(List<OrderByElement> order, PhysicalOperator child) {
+        super(order, child);
 
         tupleList = new ArrayList<>();
         // initialize the list

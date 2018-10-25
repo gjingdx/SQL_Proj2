@@ -41,8 +41,8 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      * @param logSortOp
      * @param physChildren
      */
-    public PhysicalExternalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
-        super(logSortOp, physChildren);
+    public PhysicalExternalSortOperator(SortOperator logSortOp, PhysicalOperator child) {
+        super(logSortOp, child);
         init();
 
     }
@@ -52,8 +52,8 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
      * @param order
      * @param physChildren
      */
-    public PhysicalExternalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
-        super(order, physChildren);
+    public PhysicalExternalSortOperator(List<OrderByElement> order, PhysicalOperator child) {
+        super(order, child);
         init();
     }
 

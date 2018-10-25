@@ -32,8 +32,8 @@ public class PhysicalSelectOperator extends PhysicalOperator {
         expression = joinExpress.getExpression();
     }
 
-    public PhysicalSelectOperator(SelectOperator logSelectOp, Deque<PhysicalOperator> physOpChildren) {
-        this.prevOp = physOpChildren.pop();
+    public PhysicalSelectOperator(SelectOperator logSelectOp, PhysicalOperator child) {
+        this.prevOp = child;
         this.expression = logSelectOp.getExpression();
         this.currentSchema = logSelectOp.getSchema();
 

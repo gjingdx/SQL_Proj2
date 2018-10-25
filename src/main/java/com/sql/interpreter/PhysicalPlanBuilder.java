@@ -35,7 +35,8 @@ public class PhysicalPlanBuilder {
     public void visit(SelectOperator logSelectOp) {
         Operator[] children = logSelectOp.getChildren();
         children[0].accept(this);
-        PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, physOpChildren);
+        PhysicalOperator child = physOpChildren.pop();
+        PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, child);
         physOpChildren.push(physSelectOp);
     }
 
@@ -43,14 +44,17 @@ public class PhysicalPlanBuilder {
         Operator[] children = logicalJoinOp.getChildren();
         children[0].accept(this);
         children[1].accept(this);
+        PhysicalOperator rightChild = physOpChildren.pop();
+        PhysicalOperator leftChild = physOpChildren.pop();
         PhysicalOperator physJoinOp;
         switch (Catalog.getInstance().getJoinMethod()) {
             case TNLJ:
-                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
+                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, leftChild, rightChild);
                 physOpChildren.push(physJoinOp);
                 break;
             case BNLJ:
-                physJoinOp = new PhysicalBlockJoinOperator(logicalJoinOp, physOpChildren, Catalog.getInstance().getJoinBlockSize());
+                physJoinOp = new PhysicalBlockJoinOperator(logicalJoinOp, leftChild, rightChild,
+                        Catalog.getInstance().getJoinBlockSize());
                 physOpChildren.push(physJoinOp);
                 break;
             case SMJ:
@@ -64,12 +68,12 @@ public class PhysicalPlanBuilder {
                     if (orders.get(0).size() != 0) {
                         PhysicalSortOperator rightSort, leftSort;
                         if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
-                            rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
-                            leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                            rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
+                            leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
                         }
                         else {
-                            rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
-                            leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren); 
+                            rightSort = new PhysicalMemorySortOperator(orders.get(0), rightChild);
+                            leftSort = new PhysicalMemorySortOperator(orders.get(1), leftChild);
                         }
                         physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
                         physOpChildren.push(physJoinOp);
@@ -77,7 +81,7 @@ public class PhysicalPlanBuilder {
                     }
                 }
             default:
-                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
+                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, leftChild, rightChild);
                 physOpChildren.push(physJoinOp);
         }
 
@@ -86,25 +90,27 @@ public class PhysicalPlanBuilder {
     public void visit(ProjectOperator logicalProjOp) {
         Operator[] children = logicalProjOp.getChildren();
         children[0].accept(this);
-        PhysicalProjectOperator physProjOp = new PhysicalProjectOperator(logicalProjOp, physOpChildren);
+        PhysicalOperator child = physOpChildren.pop();
+        PhysicalProjectOperator physProjOp = new PhysicalProjectOperator(logicalProjOp, child);
         physOpChildren.push(physProjOp);
     }
 
     public void visit(SortOperator logSortOp) {
         Operator[] children = logSortOp.getChildren();
         children[0].accept(this);
+        PhysicalOperator child = physOpChildren.pop();
         PhysicalSortOperator physSelectOp;
         switch (Catalog.getInstance().getSortMethod()) {
             case IN_MEMORY:
-                physSelectOp = new PhysicalMemorySortOperator(logSortOp, physOpChildren);
+                physSelectOp = new PhysicalMemorySortOperator(logSortOp, child);
                 physOpChildren.push(physSelectOp);
                 break;
             case EXTERNAL:
-                physSelectOp = new PhysicalExternalSortOperator(logSortOp, physOpChildren);
+                physSelectOp = new PhysicalExternalSortOperator(logSortOp, child);
                 physOpChildren.push(physSelectOp);
                 break;
             default:
-                physSelectOp = new PhysicalMemorySortOperator(logSortOp, physOpChildren);
+                physSelectOp = new PhysicalMemorySortOperator(logSortOp, child);
                 physOpChildren.push(physSelectOp);
         }
     }
@@ -112,7 +118,9 @@ public class PhysicalPlanBuilder {
     public void visit(DuplicateEliminationOperator logDupElimOp) {
         Operator[] children = logDupElimOp.getChildren();
         children[0].accept(this);
-        PhysicalDuplicateEliminationOperator physDupEliOp = new PhysicalDuplicateEliminationOperator(logDupElimOp, physOpChildren);
+        PhysicalOperator child = physOpChildren.pop();
+        PhysicalDuplicateEliminationOperator physDupEliOp =
+                new PhysicalDuplicateEliminationOperator(logDupElimOp, child);
         physOpChildren.push(physDupEliOp);
     }
 

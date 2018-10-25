@@ -12,6 +12,7 @@ target/
 # itellij
 .idea/
 *.iml
+.metadata/
 
 # Compiled class file
 *.class

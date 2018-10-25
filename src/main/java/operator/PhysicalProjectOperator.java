@@ -41,9 +41,9 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         }
     }
 
-    public PhysicalProjectOperator(ProjectOperator logicalProjOp, Deque<PhysicalOperator> physChildren) {
+    public PhysicalProjectOperator(ProjectOperator logicalProjOp, PhysicalOperator child) {
         //this.physOpChildren = physChildren;
-        prevPhysicalOp = physChildren.pop();
+        prevPhysicalOp = child;
         this.selectItems = logicalProjOp.getSelectItems();
         this.currentSchema = logicalProjOp.getSchema();
         if (selectItems.get(0).toString() == "*") {
