@@ -9,6 +9,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+
+/**
+ * Implementation of TupleWriter, to deal with binary files
+ *
+ * @author Yufu Mo ym445
+ */
 public class BinaryTupleWriter implements TupleWriter {
 
     private int index;

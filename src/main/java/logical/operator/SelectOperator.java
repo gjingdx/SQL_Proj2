@@ -7,6 +7,12 @@ import util.JoinExpressionVisitor;
 
 import java.util.Map;
 
+
+/**
+ * Select operator
+ *
+ * @author Jing Guo
+ */
 public class SelectOperator extends Operator {
 
     private Operator prevOp;
