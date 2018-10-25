@@ -7,6 +7,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+
+/**
+ * Implementation of TupleWriter, to deal with human readable files
+ *
+ * @author Yufu Mo ym445
+ */
 public class ReadableTupleWriter implements TupleWriter {
     private StringBuilder sb;
     private BufferedWriter output;

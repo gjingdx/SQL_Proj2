@@ -2,6 +2,9 @@ package io;
 
 import model.Tuple;
 
+/**
+ * An interface for tuplereader classes
+ */
 public interface TupleReader {
     /**
      * reset the tuple reader

@@ -9,6 +9,12 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Implementation of TupleReader, to deal with human readable files
+ *
+ * @author Yufu Mo ym445
+ */
 public class ReadableTupleReader implements TupleReader {
     File file;
     RandomAccessFile readerPointer;

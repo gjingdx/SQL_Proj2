@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * PhysicalProjectOperator
+ *
+ * @author Jing Guo
+ */
 public class PhysicalProjectOperator extends PhysicalOperator {
 
     //Deque<PhysicalOperator> physOpChildren;

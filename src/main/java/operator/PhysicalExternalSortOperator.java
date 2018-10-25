@@ -18,6 +18,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * External sort operator
+ *
+ * @author Xinghe Li
+ */
 public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     private final String id = UUID.randomUUID().toString().substring(0, 8); // the identifier for the temp file serial
 
