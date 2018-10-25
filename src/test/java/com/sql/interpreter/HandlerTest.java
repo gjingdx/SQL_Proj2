@@ -4,10 +4,10 @@ import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import operator.PhysicalOperator;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.StringReader;
-import org.junit.Assert;
 
 public class HandlerTest extends Handler {
 
@@ -16,7 +16,7 @@ public class HandlerTest extends Handler {
     }
 
     @Test
-    public void constructQueryPlan() throws Exception{
+    public void constructQueryPlan() throws Exception {
         String statement = "SELECT S.A, S.B, Reserves.G, Boats.D FROM Sailors AS S, Reserves, Boats WHERE Reserves.H = Boats.D And S.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
@@ -26,7 +26,7 @@ public class HandlerTest extends Handler {
     }
 
     @Test
-    public void parserConfigTest(){
+    public void parserConfigTest() {
         Assert.assertTrue(parserConfig());
     }
 }

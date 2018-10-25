@@ -1,15 +1,9 @@
 package operator;
 
-import io.BinaryTupleWriter;
+import io.*;
 import model.Tuple;
-import io.TupleWriter;
-import io.BufferStateWrapper;
 import util.Catalog;
-import util.Constants;
 
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Map;
 
 /**
@@ -21,6 +15,7 @@ public abstract class PhysicalOperator {
     /**
      * get the next tuple of the operator's output
      * return null if the operator has no more output
+     *
      * @return the next tuple of the operator's output
      */
     public abstract Tuple getNextTuple();
@@ -46,8 +41,7 @@ public abstract class PhysicalOperator {
             tuple = getNextTuple();
         }
         // finish
-        tupleWriter.writeNextTuple(null);
+        tupleWriter.finish();
     }
-
 
 }

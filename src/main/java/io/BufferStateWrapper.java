@@ -10,6 +10,7 @@ import java.nio.channels.FileChannel;
  * A wrapper class to encapsulate byte buffer and relevant states including
  * index, tuple size and counts.
  * Provide write and read method.
+ *
  * @author Yufu Mo
  */
 public class BufferStateWrapper {
@@ -34,6 +35,7 @@ public class BufferStateWrapper {
 
     /**
      * put int in buffer
+     *
      * @param data
      */
     public void putInt(int data) {
@@ -43,6 +45,7 @@ public class BufferStateWrapper {
 
     /**
      * put tuple in buffer
+     *
      * @param tuple
      */
     public void putTuple(Tuple tuple) {
@@ -54,15 +57,15 @@ public class BufferStateWrapper {
 
     /**
      * write buffer to file
+     *
      * @param fileChannel
      * @return
      */
     public boolean writeBuffer(FileChannel fileChannel) {
         putMetaData();
-        try{
+        try {
             fileChannel.write(byteBuffer);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -79,6 +82,7 @@ public class BufferStateWrapper {
 
     /**
      * check if buffer is empty, for the edge case when there is a new empty BufferStateWrapper created
+     *
      * @return
      */
     public boolean bufferIsEmpty() {
@@ -87,6 +91,7 @@ public class BufferStateWrapper {
 
     /**
      * check if the buffer has space for a tuple
+     *
      * @return
      */
     public boolean hasSpace() {

@@ -1,18 +1,18 @@
 package operator;
 
-import logical.operator.ScanOperator;
-import org.junit.Test;
-
 import junit.framework.Assert;
-
-import java.io.*;
-import java.util.ArrayList;
-
+import logical.operator.ScanOperator;
+import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import org.junit.Test;
 import util.Constants;
-import model.Tuple;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.StringReader;
+import java.util.ArrayList;
 
 public class PhysicalScanOperatorTest {
 
@@ -28,6 +28,7 @@ public class PhysicalScanOperatorTest {
         ArrayList<String> expectedResult = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(Constants.DATA_PATH + "Sailors_humanreadable"));
         String line;
+        
         while((line = br.readLine())!=null){
             expectedResult.add(line);
         }
@@ -35,9 +36,12 @@ public class PhysicalScanOperatorTest {
         // get scanOperator result
         ArrayList<String> outputResult = new ArrayList<>();
         Tuple tuple;
+        int index = 0;
+        physScanOp.reset();
         while((tuple = physScanOp.getNextTuple()) != null){
+            Assert.assertEquals(expectedResult.get(index++), tuple.toString());
             outputResult.add(tuple.toString());
         }
-        Assert.assertEquals(expectedResult, outputResult);
+        //Assert.assertEquals(expectedResult, outputResult);
     }
 }

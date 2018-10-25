@@ -20,8 +20,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     protected List<OrderByElement> order;
 
     /**
-     * Constructor
-     * read all tuples, store them in a list and sort them
+     * used for simply test skipping the logical plan tree
      * @param operator
      * @param plainSelect
      */
@@ -30,13 +29,23 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
         this.schema = operator.getSchema();
     }
 
+    /**
+     * used by physical plan builder
+     * @param logSortOp
+     * @param physChildren
+     */
     public PhysicalSortOperator(SortOperator logSortOp, Deque<PhysicalOperator> physChildren) {
         this.order = logSortOp.getOrder();
         this.schema = logSortOp.getSchema();
         this.physChild = physChildren.pop();
     }
 
-    public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren){
+    /**
+     * used before SMJ
+     * @param order
+     * @param physChildren
+     */
+    public PhysicalSortOperator(List<OrderByElement> order, Deque<PhysicalOperator> physChildren) {
         this.physChild = physChildren.pop();
         this.schema = physChild.getSchema();
         this.order = order;
@@ -58,12 +67,13 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
      * get the schema
      */
     @Override
-    public Map<String, Integer> getSchema(){
+    public Map<String, Integer> getSchema() {
         return this.schema;
     }
 
     /**
      * For distinct operator
+     *
      * @return sorted Tuple list
      */
     public List<Tuple> getTupleList() {
@@ -77,7 +87,6 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
 
         @Override
         public int compare(Tuple t1, Tuple t2) {
-            // TODO Auto-generated method stub
             // sort tuples from the order from sql query.
             if (order != null) {
                 for (int i = 0; i < order.size(); i++) {
@@ -95,7 +104,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
 
             // for tie breaker
             // sort tuples by the order of columns.
-            for (int i = 0; i < schema.size(); i++){
+            for (int i = 0; i < schema.size(); i++) {
                 if (t1.getDataAt(i) > t2.getDataAt(i)) {
                     return 1;
                 }
@@ -106,4 +115,27 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
             return 0;
         }
     }
+
+    /**
+     * get the order
+     * @return a list of OderByElement
+     */
+    public List<OrderByElement> getOrder() {
+        return order;
+    }
+
+    /**
+     * record the tupleReader position
+     */
+    public abstract void recordTupleReader();
+
+    /**
+     * revert the tuple reader to the record potision
+     */
+    public abstract void revertToRecord() throws Exception;
+
+    /**
+     * close the tuple readers
+     */
+    public abstract void closeTupleReader() throws Exception;
 }

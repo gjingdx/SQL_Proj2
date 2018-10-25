@@ -10,6 +10,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
+
 import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +32,7 @@ public class PhysicalProjectOperatorTest {
         PhysicalOperator physProjOp = new PhysicalProjectOperator(projectOp, physPB.getPhysOpChildren());
 
         Tuple tuple = physProjOp.getNextTuple();
-        while(tuple != null){
+        while (tuple != null) {
             assertEquals(9, tuple.getDataAt(0));
             System.out.println(tuple.getDataAt(0));
             tuple = physProjOp.getNextTuple();
@@ -47,7 +48,7 @@ public class PhysicalProjectOperatorTest {
     }
 
     @Test
-    public void getSchema() throws Exception{
+    public void getSchema() throws Exception {
         String statement = "SELECT * FROM Boats AS BT WHERE BT.E = 9;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.

@@ -7,12 +7,16 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
 import util.SortJoinExpressionVisitor;
+import util.Constants.SortMethod;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PhysicalPlanBuilder {
 
-    private Deque<PhysicalOperator> physOpChildren = new LinkedList<>();;
+    private Deque<PhysicalOperator> physOpChildren = new LinkedList<>();
+    ;
 
 
 //    private Operator[] getLogicalChildren(Operator logicalOp) {
@@ -40,7 +44,7 @@ public class PhysicalPlanBuilder {
         children[0].accept(this);
         children[1].accept(this);
         PhysicalOperator physJoinOp;
-        switch(Catalog.getInstance().getJoinMethod()) {
+        switch (Catalog.getInstance().getJoinMethod()) {
             case TNLJ:
                 physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, physOpChildren);
                 physOpChildren.push(physJoinOp);
@@ -51,16 +55,22 @@ public class PhysicalPlanBuilder {
                 break;
             case SMJ:
                 Expression joinCondition = logicalJoinOp.getJoinCondition();
-                if(joinCondition != null){
+                // if there is no join condition, there will be no SMJ implements. 
+                // So does no order extracted from join condition
+                if (joinCondition != null) {
                     SortJoinExpressionVisitor sj = new SortJoinExpressionVisitor(children[0].getSchema(), children[1].getSchema());
                     joinCondition.accept(sj);
                     List<List<OrderByElement>> orders = sj.getOrders();
-                    if(orders.get(0).size() != 0){
-                        //System.out.println(joinCondition.toString());
-                        //System.out.println(orders.get(1).toString());
-                        //System.out.println(orders.get(0).toString());
-                        PhysicalExternalSortOperator rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
-                        PhysicalExternalSortOperator leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                    if (orders.get(0).size() != 0) {
+                        PhysicalSortOperator rightSort, leftSort;
+                        if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL){
+                            rightSort = new PhysicalExternalSortOperator(orders.get(0), physOpChildren);
+                            leftSort = new PhysicalExternalSortOperator(orders.get(1), physOpChildren);
+                        }
+                        else {
+                            rightSort = new PhysicalMemorySortOperator(orders.get(0), physOpChildren);
+                            leftSort = new PhysicalMemorySortOperator(orders.get(1), physOpChildren); 
+                        }
                         physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
                         physOpChildren.push(physJoinOp);
                         break;

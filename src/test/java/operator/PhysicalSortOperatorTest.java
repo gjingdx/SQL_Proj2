@@ -1,5 +1,6 @@
 package operator;
 
+import com.sql.interpreter.Handler;
 import com.sql.interpreter.PhysicalPlanBuilder;
 import logical.operator.ScanOperator;
 import logical.operator.SortOperator;
@@ -8,8 +9,10 @@ import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import java.io.StringReader;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class PhysicalSortOperatorTest {
@@ -25,7 +28,7 @@ public class PhysicalSortOperatorTest {
         PhysicalOperator physSortOp = new PhysicalMemorySortOperator(logSortOp, physPB.getPhysOpChildren());
         Tuple tuple = physSortOp.getNextTuple();
         long last = Long.MIN_VALUE;
-        while(tuple != null){
+        while (tuple != null) {
             long cur = tuple.getDataAt(2);
             assertEquals(true, last <= cur);
             tuple = physSortOp.getNextTuple();
@@ -35,6 +38,7 @@ public class PhysicalSortOperatorTest {
     @Test
     public void dump() throws Exception {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
+        Handler.init(new String[0]);
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
         PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);

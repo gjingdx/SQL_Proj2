@@ -1,20 +1,19 @@
 package logical.operator;
 
+import junit.framework.Assert;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-import java.util.Map;
-import java.util.HashMap;
-
-import junit.framework.Assert;
 
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SortOperatorTest {
     SortOperator sortOp;
 
-    public SortOperatorTest() throws Exception{
+    public SortOperatorTest() throws Exception {
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
@@ -22,14 +21,14 @@ public class SortOperatorTest {
 
         sortOp = new SortOperator(op, plainSelect);
     }
-    
+
     @Test
-    public void getOrder()  {
+    public void getOrder() {
         Assert.assertEquals("Order: ", "[BT.F]", sortOp.getOrder().toString());
     }
 
     @Test
-    public void getChildrenTest()  {
+    public void getChildrenTest() {
         Assert.assertEquals("Children: ", 1, sortOp.getChildren().length);
     }
 

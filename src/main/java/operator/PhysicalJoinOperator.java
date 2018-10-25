@@ -4,7 +4,9 @@ import logical.operator.JoinOperator;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import util.*;
+import util.Catalog;
+import util.JoinExpressionVisitor;
+import util.SelectExpressionVisitor;
 
 import java.util.Deque;
 import java.util.HashMap;
@@ -26,11 +28,12 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
 
     /**
      * Init the schema of PhysicalJoinOperator
-     * @param opLeft last operator of outer tuple
-     * @param opRight last operator of inner tuple
+     *
+     * @param opLeft      last operator of outer tuple
+     * @param opRight     last operator of inner tuple
      * @param plainSelect unused temporally
      */
-    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect){
+    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, PlainSelect plainSelect) {
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.schema = new HashMap<>();
@@ -40,11 +43,23 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         }
         Catalog.getInstance().setCurrentSchema(schema);
 
+        Expression expr = plainSelect.getWhere();
+        // return cross product if there's no selection
+        if (expr == null) {
+            this.joinCondition = null;
+        }
+        // join by join condition
+        else {
+            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
+            expr.accept(joinExpressionVisitor);
+            this.joinCondition = joinExpressionVisitor.getExpression();
+        }
+
         outerTuple = null;
         innerTuple = null;
     }
 
-    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, JoinOperator logicalJoinOp){
+    public PhysicalJoinOperator(PhysicalOperator opLeft, PhysicalOperator opRight, JoinOperator logicalJoinOp) {
         this.opLeft = opLeft;
         this.opRight = opRight;
         this.schema = new HashMap<>();
@@ -56,7 +71,6 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
     }
 
     public PhysicalJoinOperator(JoinOperator logicalJoinOp, Deque<PhysicalOperator> physOpChildren) {
-        //this.physOpChildren = physOpChildren;
         this.opRight = physOpChildren.pop();
         this.opLeft = physOpChildren.pop();
         this.joinCondition = logicalJoinOp.getJoinCondition();
@@ -70,14 +84,14 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * get the next tuple of the operator.
      */
     @Override
-    public Tuple getNextTuple(){
+    public Tuple getNextTuple() {
         Tuple next = crossProduction();
         // return cross product if there's no selection
-        if(joinCondition == null){
+        if (joinCondition == null) {
             return next;
         }
-        
-        while(next != null){
+
+        while (next != null) {
             SelectExpressionVisitor sv = new SelectExpressionVisitor(next, this.getSchema());
             joinCondition.accept(sv);
             if (sv.getResult()) {
@@ -92,7 +106,7 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * reset the operator.
      */
     @Override
-    public void reset(){
+    public void reset() {
         opLeft.reset();
         opRight.reset();
         innerTuple = null;
@@ -103,14 +117,30 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
      * get the schema
      */
     @Override
-    public Map<String, Integer> getSchema(){
+    public Map<String, Integer> getSchema() {
         return this.schema;
     }
 
     /**
      * implement cross production
+     *
      * @return result tuple
      */
     protected abstract Tuple crossProduction();
+
+    protected Tuple joinTuple(Tuple outerTuple, Tuple innerTuple) {
+        if (outerTuple == null || innerTuple == null) {
+            return null;
+        }
+        int[] newTupleData = new int[outerTuple.getDataLength() + innerTuple.getDataLength()];
+        for (int i = 0; i < outerTuple.getDataLength(); i++) {
+            newTupleData[i] = outerTuple.getDataAt(i);
+        }
+        for (int i = 0; i < innerTuple.getDataLength(); i++) {
+            newTupleData[i + outerTuple.getDataLength()] = innerTuple.getDataAt(i);
+        }
+        Tuple tuple = new Tuple(newTupleData);
+        return tuple;
+    }
 
 }

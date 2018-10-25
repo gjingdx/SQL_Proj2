@@ -1,6 +1,5 @@
 package io;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import model.Tuple;
 import util.Constants;
 
@@ -28,8 +27,7 @@ public class BinaryTupleWriter implements TupleWriter {
             File file = new File(path);
             this.fileOutputStream = new FileOutputStream(file);
             this.fileChannel = fileOutputStream.getChannel();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -47,8 +45,7 @@ public class BinaryTupleWriter implements TupleWriter {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             if (!bufferHasSpace()) {
                 writeBuffer();
             }
@@ -71,6 +68,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
     /**
      * put int in buffer
+     *
      * @param data
      */
     public void putInt(int data) {
@@ -80,6 +78,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
     /**
      * put tuple in buffer
+     *
      * @param tuple
      */
     public void putTuple(Tuple tuple) {
@@ -92,20 +91,20 @@ public class BinaryTupleWriter implements TupleWriter {
 
     /**
      * write buffer to file
+     *
      * @return
      */
     public boolean writeBuffer() {
         // put metadata
         byteBuffer.putInt(0, tupleSize);
         byteBuffer.putInt(Constants.INT_SIZE, tupleCount);
-        try{
+        try {
             fileChannel.write(byteBuffer);
             // reset buffer
             this.index = 2 * Constants.INT_SIZE;
             this.tupleCount = 0;
             this.byteBuffer = ByteBuffer.allocate(Constants.PAGE_SIZE);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -115,6 +114,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
     /**
      * check if buffer is empty, for the edge case when there is a new empty BufferStateWrapper created
+     *
      * @return
      */
     public boolean bufferIsEmpty() {
@@ -123,6 +123,7 @@ public class BinaryTupleWriter implements TupleWriter {
 
     /**
      * check if the buffer has space for a tuple
+     *
      * @return
      */
     public boolean bufferHasSpace() {

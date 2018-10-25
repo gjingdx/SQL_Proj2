@@ -7,10 +7,11 @@ package com.sql.interpreter;
 public class App {
     /**
      * Entrance of the project
+     *
      * @param args
      */
     public static void main(String[] args) {
         Handler.init(args);
         Handler.parseSql();
-	  }
+    }
 }
