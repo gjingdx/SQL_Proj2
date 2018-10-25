@@ -72,7 +72,6 @@ public class Block {
             setIndex = 0;
             return false;
         }
-
     }
 
     /**

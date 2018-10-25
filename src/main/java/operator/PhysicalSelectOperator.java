@@ -9,6 +9,11 @@ import util.SelectExpressionVisitor;
 
 import java.util.Map;
 
+/**
+ * PhysicalSelectOperator
+ *
+ * @author Jing Guo
+ */
 public class PhysicalSelectOperator extends PhysicalOperator {
 
     private PhysicalOperator prevOp;

@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Project operator
+ * @author Jing Guo
+ */
 public class ProjectOperator extends Operator {
 
     private Operator prevOp;
