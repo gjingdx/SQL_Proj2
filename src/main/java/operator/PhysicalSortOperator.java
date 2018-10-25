@@ -32,7 +32,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     /**
      * used by physical plan builder
      * @param logSortOp
-     * @param physChildren
+     * @param child
      */
     public PhysicalSortOperator(SortOperator logSortOp, PhysicalOperator child) {
         this.order = logSortOp.getOrder();
@@ -43,7 +43,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     /**
      * used before SMJ
      * @param order
-     * @param physChildren
+     * @param child
      */
     public PhysicalSortOperator(List<OrderByElement> order, PhysicalOperator child) {
         this.physChild = child;

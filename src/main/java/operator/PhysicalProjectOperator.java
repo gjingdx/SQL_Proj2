@@ -20,7 +20,7 @@ public class PhysicalProjectOperator extends PhysicalOperator {
     /**
      * Constructor of PhysicalProjectOperator
      *
-     * @param operator    previous (child) operator
+     * @param physicalOp    previous (child) operator
      * @param plainSelect plain sql sentence
      */
     @SuppressWarnings("unchecked")
@@ -41,6 +41,11 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         }
     }
 
+    /**
+     * init PhysicalProjectOperator
+     * @param logicalProjOp
+     * @param child
+     */
     public PhysicalProjectOperator(ProjectOperator logicalProjOp, PhysicalOperator child) {
         //this.physOpChildren = physChildren;
         prevPhysicalOp = child;

@@ -43,8 +43,11 @@ public class PhysicalScanOperator extends PhysicalOperator {
         binaryTupleReader = new BinaryTupleReader(Catalog.getInstance().getDataPath(tableName));
     }
 
+    /**
+     * init PhysicalScanOperator
+     * @param logScanOp
+     */
     public PhysicalScanOperator(ScanOperator logScanOp) {
-
         this.schema = logScanOp.getSchema();
         this.binaryTupleReader = logScanOp.getBinaryTupleReader();
     }

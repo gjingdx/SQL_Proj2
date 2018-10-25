@@ -39,7 +39,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     /**
      * used by physical plan builder
      * @param logSortOp
-     * @param physChildren
+     * @param child
      */
     public PhysicalExternalSortOperator(SortOperator logSortOp, PhysicalOperator child) {
         super(logSortOp, child);
@@ -50,7 +50,7 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
     /**
      * used by smj
      * @param order
-     * @param physChildren
+     * @param child
      */
     public PhysicalExternalSortOperator(List<OrderByElement> order, PhysicalOperator child) {
         super(order, child);

@@ -32,6 +32,11 @@ public class PhysicalSelectOperator extends PhysicalOperator {
         expression = joinExpress.getExpression();
     }
 
+    /**
+     * init PhysicalSelectOperator
+     * @param logSelectOp
+     * @param child
+     */
     public PhysicalSelectOperator(SelectOperator logSelectOp, PhysicalOperator child) {
         this.prevOp = child;
         this.expression = logSelectOp.getExpression();
