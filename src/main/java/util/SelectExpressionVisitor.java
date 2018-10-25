@@ -1,14 +1,17 @@
 package util;
 
+import model.Tuple;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
-import net.sf.jsqlparser.expression.operators.conditional.*;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SubSelect;
-import model.Tuple;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Map;
 
 
 public class SelectExpressionVisitor implements ExpressionVisitor {
@@ -20,6 +23,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * Constructor of SelectExpressionVisitor
+     *
      * @param tuple
      * @param schema
      */
@@ -45,6 +49,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
      * 1. left and right sides accepts the visitor
      * 2. get the right and left results accordingly (because of stack sequence)
      * 3. push the evaluation of the expression using the results of the two sides
+     *
      * @param andExpression
      */
     @Override
@@ -61,6 +66,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
      * visit method for Column expression
      * by getting the data in the current tuple of the certain column
      * and pushing it to data stack.
+     *
      * @param column
      */
     @Override
@@ -75,6 +81,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
     /**
      * visit method for LongValue expression
      * by pushing the long value of the expression to the data stack
+     *
      * @param longValue
      */
     @Override
@@ -85,6 +92,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for EqualsTo expression
+     *
      * @param equalsTo
      */
     @Override
@@ -99,6 +107,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for NotEqualsTo expression
+     *
      * @param notEqualsTo
      */
     @Override
@@ -113,6 +122,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for GreaterThan expression
+     *
      * @param greaterThan
      */
     @Override
@@ -127,6 +137,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for GreaterThanEquals expression
+     *
      * @param greaterThanEquals
      */
     @Override
@@ -142,6 +153,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for MinorThan expression
+     *
      * @param minorThan
      */
     @Override
@@ -156,6 +168,7 @@ public class SelectExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for MinorThanEquals expression
+     *
      * @param minorThanEquals
      */
     @Override

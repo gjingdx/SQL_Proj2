@@ -1,11 +1,13 @@
 package util;
 
+import util.Constants.JoinMethod;
+import util.Constants.SortMethod;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import util.Constants.*;
 
 /**
  * Singleton class to track and record states. For the operators to get info like schemas, files etc.
@@ -29,6 +31,9 @@ public class Catalog {
     private JoinMethod joinMethod = JoinMethod.TNLJ;
     private SortMethod sortMethod = SortMethod.IN_MEMORY;
 
+    private int joinBlockSize = 0;
+    private int sortBlockSize = 0;
+
     /**
      * private constructor for singleton class
      * initialize the input and output path
@@ -43,7 +48,7 @@ public class Catalog {
             FileReader file = new FileReader(Constants.SCHEMA_PATH);
             BufferedReader br = new BufferedReader(file);
             String s = br.readLine();
-            while(s != null) {
+            while (s != null) {
                 String[] str = s.split("\\s+");
                 // initiate aliases table map
                 aliases.put(str[0], str[0]);
@@ -51,7 +56,7 @@ public class Catalog {
                 files.put(str[0], Constants.DATA_PATH + str[0]);
                 Map<String, Integer> schema = new HashMap<>();
 
-                for(int i = 1; i < str.length; ++i) {
+                for (int i = 1; i < str.length; ++i) {
                     String field = str[0];
                     schema.put(field + "." + str[i], i - 1);
                 }
@@ -71,9 +76,9 @@ public class Catalog {
      * @return singleton instance
      */
     public static Catalog getInstance() {
-        if (instance == null){
-            synchronized (Catalog.class){
-                if (instance == null){
+        if (instance == null) {
+            synchronized (Catalog.class) {
+                if (instance == null) {
                     instance = new Catalog();//instance will be created at request time
                 }
             }
@@ -90,6 +95,7 @@ public class Catalog {
 
     /**
      * move the current schema pointer
+     *
      * @param alias: change current schema to a new one
      */
     public void updateCurrentSchema(String alias) {
@@ -103,6 +109,7 @@ public class Catalog {
 
     /**
      * move the current schema pointer
+     *
      * @param schema: change current schema to a new one
      */
     public void setCurrentSchema(Map<String, Integer> schema) {
@@ -111,6 +118,7 @@ public class Catalog {
 
     /**
      * return the file's path of certain table
+     *
      * @param table
      * @return path of data file
      */
@@ -120,10 +128,20 @@ public class Catalog {
 
     /**
      * return output path
+     *
      * @return output path string
      */
     public String getOutputPath() {
         return outputPath;
+    }
+
+    /**
+     * return temp path
+     *
+     * @return temp path string
+     */
+    public String getTempPath() {
+        return Constants.TEMP_PATH;
     }
 
     /**
@@ -135,6 +153,7 @@ public class Catalog {
 
     /**
      * setter for input path
+     *
      * @param inputPath
      */
     public void setInputPath(String inputPath) {
@@ -144,6 +163,7 @@ public class Catalog {
 
     /**
      * setter for output path
+     *
      * @param outputPath
      */
     public void setOutputPath(String outputPath) {
@@ -152,6 +172,7 @@ public class Catalog {
 
     /**
      * to set aliases to deal with the occasional failure of sqlparser
+     *
      * @param str the str parsed by sqlparser
      */
     public void setAliases(String str) {
@@ -171,6 +192,7 @@ public class Catalog {
 
     /**
      * getColumnNameFromAlias
+     *
      * @param alias
      * @return
      */
@@ -180,6 +202,7 @@ public class Catalog {
 
     /**
      * get schema for a certain table
+     *
      * @param table
      * @return Map with schema
      */
@@ -190,6 +213,7 @@ public class Catalog {
 
     /**
      * get index of column
+     *
      * @param column
      * @return
      */
@@ -197,19 +221,76 @@ public class Catalog {
         return currentSchema.get(column);
     }
 
+    /**
+     * get the join method
+     *
+     * @return SMJ, TNLj, BNLJ
+     */
     public JoinMethod getJoinMethod() {
         return joinMethod;
     }
 
+    /**
+     * set the join method
+     *
+     * @param joinMethod
+     */
     public void setJoinMethod(JoinMethod joinMethod) {
         this.joinMethod = joinMethod;
     }
 
+    /**
+     * get the sort method
+     *
+     * @return IN_MEMORY, EXTERNAL
+     */
     public SortMethod getSortMethod() {
         return sortMethod;
     }
 
+    /**
+     * set the sort method
+     *
+     * @param sortMethod
+     */
     public void setSortMethod(SortMethod sortMethod) {
         this.sortMethod = sortMethod;
     }
+
+    /**
+     * get the BNLJ block size
+     *
+     * @return int
+     */
+    public int getJoinBlockSize() {
+        return this.joinBlockSize;
+    }
+
+    /**
+     * set the BNLJ block size
+     *
+     * @param joinBlockSize
+     */
+    public void setJoinBlockSize(int joinBlockSize) {
+        this.joinBlockSize = joinBlockSize;
+    }
+
+    /**
+     * get the external sort block size
+     *
+     * @return block size
+     */
+    public int getSortBlockSize() {
+        return this.sortBlockSize;
+    }
+
+    /**
+     * set the external sort block size
+     *
+     * @param sortBlockSize
+     */
+    public void setSortBlockSize(int sortBlockSize) {
+        this.sortBlockSize = sortBlockSize;
+    }
+
 }

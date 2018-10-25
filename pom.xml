@@ -2,10 +2,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sql.interpreter</groupId>
-  <artifactId>cs4321_p1</artifactId>
+  <artifactId>cs4321_p2</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>cs4321_p1</name>
+  <name>cs4321_p2</name>
   <url>http://maven.apache.org</url>
 
   <properties>

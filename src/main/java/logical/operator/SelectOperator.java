@@ -1,15 +1,13 @@
 package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
-import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import util.SelectExpressionVisitor;
 import util.JoinExpressionVisitor;
 
 import java.util.Map;
 
-public class SelectOperator extends Operator{
+public class SelectOperator extends Operator {
 
     private Operator prevOp;
     private Expression expression;
@@ -17,44 +15,18 @@ public class SelectOperator extends Operator{
 
     /**
      * Constructor of Select Operator
-     * @param operator previous (child) operator
+     *
+     * @param operator    previous (child) operator
      * @param plainSelect plain sql sentence
      */
     public SelectOperator(Operator operator, PlainSelect plainSelect) {
         this.prevOp = operator;
         this.currentSchema = operator.getSchema();
         this.expression = plainSelect.getWhere();
-        
+
         JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
         expression.accept(joinExpress);
         expression = joinExpress.getExpression();
-    }
-
-    /**
-     * @return the next tuple filtered by the Select Operator
-     */
-    @Override
-    public Tuple getNextTuple() {
-        Tuple next = prevOp.getNextTuple();
-        if (expression != null) {
-            while (next != null) {
-                SelectExpressionVisitor sv = new SelectExpressionVisitor(next, prevOp.getSchema());
-                expression.accept(sv);
-                if (sv.getResult()) {
-                    break;
-                }
-                next = prevOp.getNextTuple();
-            }
-        }
-        return next;
-    }
-
-    /**
-     * reset the select operator would be resetting the previous operator
-     */
-    @Override
-    public void reset() {
-        prevOp.reset();
     }
 
     /**
@@ -69,12 +41,11 @@ public class SelectOperator extends Operator{
      * method to get children
      */
     @Override
-    public Operator[] getChildren(){
-        if(this.prevOp == null){
+    public Operator[] getChildren() {
+        if (this.prevOp == null) {
             return null;
-        }
-        else{
-            return new Operator[] {this.prevOp};
+        } else {
+            return new Operator[]{this.prevOp};
         }
     }
 

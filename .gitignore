@@ -12,12 +12,17 @@ target/
 # itellij
 .idea/
 *.iml
+.metadata/
 
 # Compiled class file
 *.class
 
 # Output files
 Samples/samples/output/*
+Samples/samples/temp/*
+
+# Sample folder
+Samples/samples/input/plan_builder_config.txt
 
 # Log file
 *.log

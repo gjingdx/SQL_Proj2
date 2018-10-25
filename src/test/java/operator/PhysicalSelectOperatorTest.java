@@ -1,7 +1,6 @@
 package operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
-import logical.operator.Operator;
 import logical.operator.ScanOperator;
 import logical.operator.SelectOperator;
 import model.Tuple;
@@ -9,8 +8,10 @@ import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
 import java.io.StringReader;
+
+import static org.junit.Assert.assertEquals;
 
 public class PhysicalSelectOperatorTest {
 
@@ -24,10 +25,11 @@ public class PhysicalSelectOperatorTest {
         logScanOp.accept(physPB);
         //PhysicalScanOperator physScanOp = new PhysicalScanOperator(logScanOp);
         SelectOperator logSelectOp = new SelectOperator(logScanOp, plainSelect);
-        PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, physPB.getPhysOpChildren());
+        PhysicalOperator child = physPB.getPhysOpChildren().pop();
+        PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, child);
 
         Tuple tuple = physSelectOp.getNextTuple();
-        while(tuple != null){
+        while (tuple != null) {
             assertEquals(9, tuple.getDataAt(1));
             System.out.println(tuple);
             tuple = physSelectOp.getNextTuple();

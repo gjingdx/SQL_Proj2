@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import java.io.StringReader;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotSame;
 
 public class PhysicalDuplicateEliminationOperatorTest {
     @Test
@@ -28,13 +28,14 @@ public class PhysicalDuplicateEliminationOperatorTest {
         physPB.visit(logSortOp);
 
         DuplicateEliminationOperator logDupOp = new DuplicateEliminationOperator(logSortOp);
-        PhysicalOperator physDupOp = new PhysicalDuplicateEliminationOperator(logDupOp, physPB.getPhysOpChildren());
+        PhysicalOperator child = physPB.getPhysOpChildren().pop();
+        PhysicalOperator physDupOp = new PhysicalDuplicateEliminationOperator(logDupOp, child);
 
         Tuple tuple = physDupOp.getNextTuple();
         Tuple last = new Tuple(new int[0]);
-        while(tuple != null){
+        while (tuple != null) {
             assertNotSame(last, tuple);
-            System.out.println(tuple);
+            //System.out.println(tuple);
             last = tuple;
             tuple = physDupOp.getNextTuple();
         }
