@@ -131,6 +131,12 @@ public class BinaryTupleReader implements TupleReader {
         tuplePointer = (int) newTuplePointer;
     }
 
+    public void reset(int pageIndex, int tupleIndex) throws Exception {
+        int maxTupleCountPerPage = (Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (tupleSize * Constants.INT_SIZE);
+        long i = pageIndex * maxTupleCountPerPage + tupleIndex;
+        reset(i);
+    }
+
     @Override
     public void close() throws IOException {
         readerPointer.getChannel().close();
