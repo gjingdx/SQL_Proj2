@@ -19,4 +19,8 @@ class LeafNode extends TreeNode {
     public int getMinKey() {
         return dataEntries.get(0).getKey();
     }
+
+    public List<DataEntry> getDataEntries() {
+        return dataEntries;
+    }
 }

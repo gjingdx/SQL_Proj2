@@ -1,11 +1,12 @@
 package btree;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class IndexNode extends TreeNode {
-    ArrayList<Integer> keys;
-    ArrayList<Integer> children_pointers;
-    ArrayList<TreeNode> children;
+    List<Integer> keys;
+    List<Integer> childrenAddresses;
+    List<TreeNode> children;
 
     public IndexNode(int order) {
         super(order);
@@ -14,5 +15,13 @@ class IndexNode extends TreeNode {
     @Override
     public int getMinKey() {
         return keys.get(0);
+    }
+
+    public List<Integer> getChildrenAddresses() {
+        return childrenAddresses;
+    }
+
+    public List<Integer> getKeys() {
+        return keys;
     }
 }
