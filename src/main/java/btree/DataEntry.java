@@ -15,6 +15,10 @@ class DataEntry {
         return key;
     }
 
+    public ArrayList<Rid> getRids() {
+        return rids;
+    }
+
     public Rid getRidAtIndex(int index) {
         return rids.get(index);
     }

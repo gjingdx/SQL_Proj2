@@ -20,4 +20,8 @@ class IndexNode extends TreeNode {
     public List<Integer> getChildrenAddresses() {
         return childrenAddresses;
     }
+
+    public List<Integer> getKeys() {
+        return keys;
+    }
 }
