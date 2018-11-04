@@ -152,6 +152,13 @@ public class Catalog {
     }
 
     /**
+     * @return index info file path
+     */
+    public String getIndexInfoPath(){
+        return inputPath + "/db/index_info.txt";
+    }
+
+    /**
      * setter for input path
      *
      * @param inputPath
