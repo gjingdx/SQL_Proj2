@@ -41,6 +41,14 @@ public class BinaryTupleReader implements TupleReader {
                 (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize);
     }
 
+    public int getLastReadPageIndex() {
+        return (int)pageIndex - 1;
+    }
+
+    public int getLastReadTupleInPageIndex() {
+        return (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize) - 1;
+    }
+
     @Override
     public void revertToPosition() throws Exception {
         reset(recordTupleIndex);
@@ -129,6 +137,12 @@ public class BinaryTupleReader implements TupleReader {
             }
         }
         tuplePointer = (int) newTuplePointer;
+    }
+
+    public void reset(int pageIndex, int tupleIndex) throws Exception {
+        int maxTupleCountPerPage = (Constants.PAGE_SIZE - 2 * Constants.INT_SIZE) / (tupleSize * Constants.INT_SIZE);
+        long i = pageIndex * maxTupleCountPerPage + tupleIndex;
+        reset(i);
     }
 
     @Override
