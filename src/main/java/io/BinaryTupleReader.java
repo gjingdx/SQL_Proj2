@@ -41,6 +41,14 @@ public class BinaryTupleReader implements TupleReader {
                 (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize);
     }
 
+    public int getLastReadPageIndex() {
+        return (int)pageIndex - 1;
+    }
+
+    public int getLastReadTupleInPageIndex() {
+        return (tuplePointer - 2 * Constants.INT_SIZE) / (Constants.INT_SIZE * tupleSize) - 1;
+    }
+
     @Override
     public void revertToPosition() throws Exception {
         reset(recordTupleIndex);
