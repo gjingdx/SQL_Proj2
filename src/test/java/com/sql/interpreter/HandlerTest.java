@@ -9,8 +9,6 @@ import org.junit.Test;
 
 import java.io.StringReader;
 
-import com.sun.org.apache.xml.internal.resolver.Catalog;
-
 public class HandlerTest extends Handler {
 
     @Test
@@ -28,7 +26,7 @@ public class HandlerTest extends Handler {
     }
 
     @Test
-    public void parserConfigTest() {
+    public void parserConfigTest() throws Exception {
         Assert.assertTrue(parserPlanBuilderConfig());
     }
 

@@ -23,9 +23,9 @@ public class Handler {
     /**
      * initialize the file paths and directories
      */
-    public static void init(String[] args) {
+    public static void init(String[] args) throws Exception {
         String outputPath = Constants.OUTPUT_PATH;
-        if (args != null && args.length >= 2) {
+        if (args != null && args.length >= 5) {
             if (args[0].charAt(args[0].length() - 1) == '/') {
                 args[0] = args[0].substring(0, args[0].length() - 1);
             }
@@ -54,9 +54,33 @@ public class Handler {
         }
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
-        parserPlanBuilderConfig();
+
+        Catalog.getInstance().setBuildIndex(args[3]);
+        Catalog.getInstance().setEvaluateSQL(args[4]);
+
+        try {
+            parserPlanBuilderConfig();
+        } catch (Exception e) {
+            System.err.println("Plan Builder Config parse failed");
+            if (Catalog.getInstance().isEvaluateSQL()) {
+                throw e;
+            }
+        }
+        try {
+            parserIndexInfo();
+        } catch (Exception e) {
+            System.err.println("Index Info parse failed");
+            if (Catalog.getInstance().isEvaluateSQL() 
+                || Catalog.getInstance().isBuildIndex()) 
+            {
+                throw e;
+            }
+        }
     }
 
+    public static void buildIndexes() {
+        // TODO
+    }
 
     /**
      * called in main function, parse all the queries one by one
@@ -98,7 +122,7 @@ public class Handler {
      *
      * @return true for no issue
      */
-    protected static boolean parserPlanBuilderConfig() {
+    protected static boolean parserPlanBuilderConfig() throws Exception {
         int[][] ret = new int[2][2];
         File configFile = new File(Constants.CONFIG_PATH);
         try {
@@ -108,8 +132,8 @@ public class Handler {
             String btree = br.readLine();
             br.close();
 
-            if (!setConfig(ret[0], join)) return false;
-            if (!setConfig(ret[1], sort)) return false;
+            if (!setConfig(ret[0], join)) throw new IOException("Fail to read join config");;
+            if (!setConfig(ret[1], sort)) throw new IOException("Fail to read sort config");;
 
             switch (ret[0][0]) {
                 case 0:
@@ -123,7 +147,7 @@ public class Handler {
                     Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
                     break;
                 default:
-                    return false;
+                throw new IOException("Unexpected join method");
             }
 
             switch (ret[1][0]) {
@@ -135,17 +159,17 @@ public class Handler {
                     Catalog.getInstance().setSortBlockSize(ret[1][1]);
                     break;
                 default:
-                    return false;
+                    throw new IOException("Unexpected sort method");
             }
 
             Catalog.getInstance().setIndexScan(btree.equals("1"));
 
         } catch (FileNotFoundException e) {
             System.err.println("Cannot find the target config file");
-            return false;
+            throw e;
         } catch (IOException e) {
             System.err.println("Unexpected config file format");
-            return false;
+            throw e;
         }
         return true;
     }
@@ -172,7 +196,19 @@ public class Handler {
             Catalog.getInstance().setIndexConfig(config);
         }
         br.close();
-    } 
+    }
+
+    public static String[] parserInterpreterConfig(String configFile) throws Exception {
+        File file = new File(configFile);
+        int lineCount = 5;
+        String[] ret = new String[lineCount];
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        for (int i = 0; i < lineCount; i++) {
+            ret[i] = br.readLine();
+        }
+        br.close();
+        return ret;
+    }
 
     /**
      * build a logicalPlanTree then convert it to a physical plan

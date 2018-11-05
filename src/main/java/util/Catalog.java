@@ -362,4 +362,23 @@ public class Catalog {
         return indexConfigs.containsKey(tableName);
     }
 
+    private boolean buildIndex;
+    private boolean evaluateSQL;
+
+    public void setBuildIndex(String arg4) {
+        buildIndex = arg4.equals("1");
+    }
+
+    public boolean isBuildIndex() {
+        return this.buildIndex;
+    }
+
+    public void setEvaluateSQL(String arg5) {
+        evaluateSQL = arg5.equals("1");
+    }
+
+    public boolean isEvaluateSQL() {
+        return this.evaluateSQL;
+    }
+
 }
