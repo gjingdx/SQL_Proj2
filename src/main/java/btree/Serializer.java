@@ -10,9 +10,9 @@ import java.nio.channels.FileChannel;
 
 public class Serializer {
 
-    private FileChannel fc;					// The file channel for reader
-    private ByteBuffer buffer;				// The buffer page.
-    private int pageNum;					// The current page number.
+    private FileChannel fc;                    // The file channel for reader
+    private ByteBuffer buffer;                // The buffer page.
+    private int pageNum;                    // The current page number.
     private int leafCount;
 
     public Serializer(String path) {
@@ -30,51 +30,52 @@ public class Serializer {
 
 
     public int serialize(TreeNode node) {
-//        long position = Constants.PAGE_SIZE * (long) pageNum;
-//
-//        // initialize the buffer.
-//        fc.position(position);
-        bufferFlush();
-        // searilize the leaf node.
-        if (node instanceof LeafNode) {
-            leafCount++;
-            LeafNode leafNode = (LeafNode) node;
-            int numOfEntries = leafNode.getDataEntries().size();
+        long position = Constants.PAGE_SIZE * (long) pageNum;
 
-            // put leaf node flag
-            buffer.putInt(0);
-            buffer.putInt(numOfEntries);
-            for (DataEntry data : leafNode.getDataEntries()) {
-                buffer.putInt(data.getKey());
-                buffer.putInt(data.getRids().size());
-                for (Rid rid : data.getRids()) {
-                    buffer.putInt(rid.getPageId());
-                    buffer.putInt(rid.getTupleId());
+        // initialize the buffer.
+        try {
+            fc.position(position);
+            bufferFlush();
+            // searilize the leaf node.
+            if (node instanceof LeafNode) {
+                leafCount++;
+                LeafNode leafNode = (LeafNode) node;
+                int numOfEntries = leafNode.getDataEntries().size();
+
+                // put leaf node flag
+                buffer.putInt(0);
+                buffer.putInt(numOfEntries);
+                for (DataEntry data : leafNode.getDataEntries()) {
+                    buffer.putInt(data.getKey());
+                    buffer.putInt(data.getRids().size());
+                    for (Rid rid : data.getRids()) {
+                        buffer.putInt(rid.getPageId());
+                        buffer.putInt(rid.getTupleId());
+                    }
                 }
             }
-        }
 
-        if (node instanceof IndexNode) {
-            IndexNode indexNode = (IndexNode) node;
+            if (node instanceof IndexNode) {
+                IndexNode indexNode = (IndexNode) node;
 
-            // put index node flag
-            buffer.putInt(1);
-            buffer.putInt(indexNode.keys.size());
-            for (Integer key : indexNode.getKeys()) {
-                buffer.putInt(key);
+                // put index node flag
+                buffer.putInt(1);
+                buffer.putInt(indexNode.keys.size());
+                for (Integer key : indexNode.getKeys()) {
+                    buffer.putInt(key);
+                }
+                for (Integer addr : indexNode.getChildrenAddresses()) {
+                    buffer.putInt(addr);
+                }
             }
-            for (Integer addr : indexNode.getChildrenAddresses()) {
-                buffer.putInt(addr);
+
+            // finally padding zeros at the end.
+            while (buffer.hasRemaining()) {
+                buffer.putInt(0);
             }
-        }
 
-        // finally padding zeros at the end.
-        while(buffer.hasRemaining()){
-            buffer.putInt(0);
-        }
+            buffer.flip();
 
-        buffer.flip();
-        try {
             fc.write(buffer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,12 +91,12 @@ public class Serializer {
             fc.position(0);
             bufferFlush();
 
-            buffer.putInt(pageNum - 1);	// The address of the root.
-            buffer.putInt(leafCount);	// The number of leaves in the tree.
-            buffer.putInt(order);	// The order of the tree.
+            buffer.putInt(pageNum - 1);    // The address of the root.
+            buffer.putInt(leafCount);    // The number of leaves in the tree.
+            buffer.putInt(order);    // The order of the tree.
 
             // finally padding zeros at the end.
-            while(buffer.hasRemaining()){
+            while (buffer.hasRemaining()) {
                 buffer.putInt(0);
             }
             buffer.flip();
