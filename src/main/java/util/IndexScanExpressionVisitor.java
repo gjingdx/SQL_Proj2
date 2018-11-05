@@ -110,6 +110,7 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
      */
     @Override
     public void visit(EqualsTo node) {
+        // TODO
     }
 
     @Override

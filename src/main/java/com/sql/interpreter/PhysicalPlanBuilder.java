@@ -11,6 +11,7 @@ import util.SortJoinExpressionVisitor;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class PhysicalPlanBuilder {
 
@@ -31,6 +32,22 @@ public class PhysicalPlanBuilder {
      */
     public void visit(SelectOperator logSelectOp) {
         Operator[] children = logSelectOp.getChildren();
+
+        // should be a leaf operator (after scan)
+        // config index scan on
+        // has its index file
+        // high key or low key valid
+        if (children[0] instanceof ScanOperator 
+            && Catalog.getInstance().getIndexScan()
+            && logSelectOp.getSchema() != null) 
+        {
+            for (String key : logSelectOp.getSchema().keySet()) {
+                String [] keys = key.split(".");
+                String tableName = Catalog.getInstance().getTableNameFromAlias(keys[0]);
+                // TODO
+            }
+        }
+
         children[0].accept(this);
         PhysicalOperator child = physOpChildren.pop();
         PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, child);
