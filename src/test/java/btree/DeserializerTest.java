@@ -21,7 +21,7 @@ public class DeserializerTest {
         while ((rid = deser.getNextRid()) != null) {
             sailorReader.reset(rid.getPageId(), rid.getTupleId());
             Tuple tuple = sailorReader.readNextTuple();
-            Assert.assertTrue(tuple.getDataAt(1) >= lowKey && tuple.getDataAt(1) < highKey);
+            Assert.assertTrue(tuple.getDataAt(1) >= lowKey && tuple.getDataAt(1) <= highKey);
         }
     }
 }

@@ -24,6 +24,7 @@ public class Deserializer {
     private int entryNo;
     private int entryMaxCount;
 
+    // If there is no bound, set lowKey, highKey as MinInteger, MaxInteger
     public Deserializer(File file, int lowKey, int highKey) {
         this.file = file;
         this.lowKey = lowKey;
@@ -127,8 +128,7 @@ public class Deserializer {
         }
 
         if (ridNo == ridMaxCount) {
-            int readKey = bufferPage.getInt(intPointer);
-            if (bufferPage.getInt(intPointer) >= highKey) {
+            if (bufferPage.getInt(intPointer) > highKey) {
                 return null;
             }
             ridNo = 0;
