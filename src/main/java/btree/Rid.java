@@ -1,6 +1,6 @@
 package btree;
 
-class Rid {
+public class Rid {
     int pageId;
     int tupleId;
 

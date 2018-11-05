@@ -145,4 +145,10 @@ public class Deserializer {
         }
         return rid;
     }
+
+    public void reset() throws Exception {
+        this.readerPointer = new RandomAccessFile(this.file, "r");
+        readHead();
+        searchLeafNode(lowKey, rootAddress);
+    }
 }
