@@ -105,6 +105,7 @@ public class Handler {
             BufferedReader br = new BufferedReader(new FileReader(configFile));
             String join = br.readLine();
             String sort = br.readLine();
+            String btree = br.readLine();
             br.close();
 
             if (!setConfig(ret[0], join)) return false;
@@ -136,6 +137,8 @@ public class Handler {
                 default:
                     return false;
             }
+
+            Catalog.getInstance().setIndexScan(btree.equals("1"));
 
         } catch (FileNotFoundException e) {
             System.err.println("Cannot find the target config file");

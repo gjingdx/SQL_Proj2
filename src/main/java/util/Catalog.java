@@ -34,6 +34,8 @@ public class Catalog {
     private int joinBlockSize = 0;
     private int sortBlockSize = 0;
 
+    private boolean indexScan = false;
+
     /**
      * private constructor for singleton class
      * initialize the input and output path
@@ -298,6 +300,14 @@ public class Catalog {
      */
     public void setSortBlockSize(int sortBlockSize) {
         this.sortBlockSize = sortBlockSize;
+    }
+
+    public boolean getIndexScan() {
+        return this.indexScan;
+    }
+
+    public void setIndexScan(Boolean onOff) {
+        this.indexScan = onOff;
     }
 
 }
