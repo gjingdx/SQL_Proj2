@@ -15,8 +15,13 @@ public class Serializer {
     private int pageNum;					// The current page number.
     private int leafCount;
 
-    public Serializer(String path) throws IOException {
-        fc = new FileOutputStream(new File(path)).getChannel();
+    public Serializer(String path) {
+        try {
+            fc = new FileOutputStream(new File(path)).getChannel();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // allocate the buffer size for output page
         buffer = buffer.allocate(Constants.PAGE_SIZE);
         pageNum = 1;
@@ -24,7 +29,7 @@ public class Serializer {
     }
 
 
-    public int serialize(TreeNode node) throws IOException {
+    public int serialize(TreeNode node) {
 //        long position = Constants.PAGE_SIZE * (long) pageNum;
 //
 //        // initialize the buffer.
@@ -69,7 +74,12 @@ public class Serializer {
         }
 
         buffer.flip();
-        fc.write(buffer);
+        try {
+            fc.write(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return pageNum++;
     }
 
