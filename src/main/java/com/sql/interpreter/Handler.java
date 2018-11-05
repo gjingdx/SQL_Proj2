@@ -2,6 +2,7 @@ package com.sql.interpreter;
 
 import logical.interpreter.LogicalPlanBuilder;
 import logical.operator.Operator;
+import model.IndexConfig;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
@@ -14,6 +15,9 @@ import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
 import java.io.*;
+import java.util.Map;
+
+import btree.BPlusTree;
 
 /**
  * Handler class to parse SQL, construct query plan and handle initialization
@@ -42,7 +46,7 @@ public class Handler {
             Constants.OUTPUT_PATH = args[1];
             Constants.TEMP_PATH = args[2];
             Constants.SQLQURIES_PATH = Constants.inputPath + "/queries.sql";
-            Constants.CONFIG_PATH = Constants.inputPath = "/plan_builder_config.txt";
+            Constants.CONFIG_PATH = Constants.inputPath + "/plan_builder_config.txt";
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
         }
@@ -80,6 +84,17 @@ public class Handler {
 
     public static void buildIndexes() {
         // TODO
+        for (Map.Entry<String, IndexConfig> entry : Catalog.getInstance().getIndexConfigs().entrySet()) {
+            IndexConfig indexConfig = entry.getValue();
+            String tableName = indexConfig.tableName;
+            int attr = Catalog.getInstance().getTableSchema(tableName).get(indexConfig.schemaName);
+            BPlusTree bTree = new BPlusTree(
+                Catalog.getInstance().getDataPath(tableName),
+                attr,
+                indexConfig.order,
+                indexConfig.indexFile
+            );
+        }
     }
 
     /**

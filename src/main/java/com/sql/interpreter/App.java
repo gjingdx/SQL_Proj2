@@ -14,7 +14,13 @@ public class App {
      */
     public static void main(String[] args) {
         try {
-            String[] configs = Handler.parserInterpreterConfig(args[0]);
+            String[] configs;
+            if (args.length == 0) {
+                configs = Handler.parserInterpreterConfig("Samples/samples-2/interpreter_config_file.txt");
+            }
+            else{
+                configs = Handler.parserInterpreterConfig(args[0]);
+            } 
             Handler.init(configs);
             if (Catalog.getInstance().isBuildIndex()) {
                 Handler.buildIndexes();
