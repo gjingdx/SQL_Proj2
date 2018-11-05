@@ -6,12 +6,9 @@ import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -28,6 +25,8 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
     private int highKey;
     private int lowKey;
 
+    private ArrayList<Integer> equalKey;
+
     /**
      * Constructor give the schema of right and left tuple
      *
@@ -36,6 +35,7 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
     public IndexScanExpressionVisitor(String tableName, String columnName) {
         columnStack = new Stack<>();
         longStack = new Stack<>();
+        equalKey = new ArrayList<>();
         this.columnName = columnName;
         this.tableName = tableName;
         this.highKey = Integer.MIN_VALUE;
@@ -55,6 +55,9 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
      * @return a list of order. list[0] refers to the right operator, whereas list[1] to left
      */
     public int getHighKey() {
+        if (!equalKey.isEmpty()) {
+            return equalKey.get(0);
+        }
         if (highKey == Integer.MIN_VALUE) {
             return Integer.MAX_VALUE;
         }
@@ -62,6 +65,9 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
     }
 
     public int getLowKey() {
+        if (!equalKey.isEmpty()) {
+            return equalKey.get(0);
+        }
         if (lowKey == Integer.MAX_VALUE) {
             return Integer.MIN_VALUE;
         }
@@ -69,7 +75,7 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
     }
 
     public boolean isValid() {
-        return !(highKey == Integer.MIN_VALUE && lowKey == Integer.MAX_VALUE);
+        return !(highKey == Integer.MIN_VALUE && lowKey == Integer.MAX_VALUE && equalKey.isEmpty());
     }
 
     /**
@@ -110,7 +116,24 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
      */
     @Override
     public void visit(EqualsTo node) {
-        // TODO
+        node.getLeftExpression().accept(this);
+        node.getRightExpression().accept(this);
+
+        if (columnStack.size() == 2) {
+            columnStack.pop();
+            columnStack.pop();
+        }
+        else if (columnStack.size() == 1) {
+            Column c = columnStack.pop();
+            long value = longStack.pop();
+            if (isValidColumn(c)) {
+                this.equalKey.add((int) (value));
+            }
+        }
+        else {
+            longStack.pop();
+            longStack.pop();
+        }
     }
 
     @Override
