@@ -1,17 +1,18 @@
 package com.sql.interpreter;
 
 import logical.operator.*;
+import model.IndexConfig;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
+import util.IndexScanExpressionVisitor;
 import util.Constants.SortMethod;
 import util.SortJoinExpressionVisitor;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class PhysicalPlanBuilder {
 
@@ -41,13 +42,21 @@ public class PhysicalPlanBuilder {
             && Catalog.getInstance().getIndexScan()
             && logSelectOp.getSchema() != null) 
         {
-            for (String key : logSelectOp.getSchema().keySet()) {
-                String [] keys = key.split(".");
-                String tableName = Catalog.getInstance().getTableNameFromAlias(keys[0]);
-                // TODO
+            IndexConfig indexConfig = Catalog.getInstance().getIndexConfig(logSelectOp.getSchema());
+            if (indexConfig != null) {
+                IndexScanExpressionVisitor isev = new IndexScanExpressionVisitor(indexConfig.tableName, indexConfig.columnName);
+                logSelectOp.getExpression().accept(isev);
+                if (isev.isValid()) {
+                    int highKey = isev.getHighKey();
+                    int lowKey = isev.getLowKey();
+                    PhysicalOperator physIndexScanOp = new PhysicalIndexScanOperator(logSelectOp, lowKey, highKey);
+                    physOpChildren.push(physIndexScanOp);
+                    return;
+                }
             }
         }
 
+        // if unmet any of the condition, implement scan operator + select operator
         children[0].accept(this);
         PhysicalOperator child = physOpChildren.pop();
         PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, child);
