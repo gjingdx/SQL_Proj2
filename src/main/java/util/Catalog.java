@@ -322,16 +322,10 @@ public class Catalog {
 
     Map <String, IndexConfig> indexConfigs = new HashMap<>();
 
-    public void setIndexConfig(String config) {
+    public IndexConfig setIndexConfig(String config) {
         IndexConfig indexConfig = new IndexConfig(config);
         indexConfigs.put(indexConfig.schemaName, new IndexConfig(config));
-    }
-
-    public IndexConfig getIndexConfig(String schemaName) {
-        if (hasIndexConfig(schemaName)) {
-            return indexConfigs.get(schemaName);
-        }
-        return null;
+        return indexConfig;
     }
 
     public IndexConfig getIndexConfig(Map<String, Integer> schema) {
@@ -347,7 +341,7 @@ public class Catalog {
         return null;
     }
 
-    public String[] getSchemaNameFromRootSchema(Map<String, Integer> schema) {
+    private String[] getSchemaNameFromRootSchema(Map<String, Integer> schema) {
         String ret[] = new String[schema.size()];
         int i = 0;
         for (Map.Entry<String, Integer> entry : schema.entrySet()) {
@@ -362,6 +356,13 @@ public class Catalog {
         return indexConfigs.containsKey(tableName);
     }
 
+    public Map<String, IndexConfig> getIndexConfigs() {
+        return indexConfigs;
+    }
+
+    /**
+     * 
+     */
     private boolean buildIndex;
     private boolean evaluateSQL;
 
