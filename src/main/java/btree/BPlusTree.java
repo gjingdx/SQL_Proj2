@@ -1,10 +1,8 @@
 package btree;
 
-import apple.laf.JRSUIUtils;
 import io.BinaryTupleReader;
 import model.Tuple;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -75,7 +73,7 @@ public class BPlusTree {
 
         List<DataEntry> leafEntries = new ArrayList<>();
         int count = 0;
-        for (DataEntry dataEntry: dataEntries) {
+        for (DataEntry dataEntry : dataEntries) {
             if (count == 2 * order) {
                 LeafNode leafNode = new LeafNode(order, leafEntries);
                 //System.out.println(leafNode.getDataEntries().size());
@@ -94,10 +92,10 @@ public class BPlusTree {
             leafLayer.add(leafNode);
         } else {
             // remove the second last leaf node and split the entries with the last one
-            LeafNode secondLast = (LeafNode) leafLayer.remove(leafLayer.size()-1);
+            LeafNode secondLast = (LeafNode) leafLayer.remove(leafLayer.size() - 1);
 
             List<DataEntry> secondLastEntries = secondLast.getDataEntries();
-            int numEntry = (secondLastEntries.size() + leafEntries.size())/2;
+            int numEntry = (secondLastEntries.size() + leafEntries.size()) / 2;
             List<DataEntry> lastEntries = secondLastEntries.subList(numEntry, secondLastEntries.size());
             lastEntries.addAll(leafEntries);
             secondLastEntries = secondLastEntries.subList(0, numEntry);
@@ -120,7 +118,7 @@ public class BPlusTree {
         List<TreeNode> children = new ArrayList<>();
         List<Integer> childrenAddresses = new ArrayList<>();
         int count = 0;
-        for(TreeNode prevNode: prevLayer) {
+        for (TreeNode prevNode : prevLayer) {
             //System.out.println(count);
             children.add(prevNode);
             int address = serializer.serialize(prevNode);
@@ -144,35 +142,35 @@ public class BPlusTree {
             }
         }
         //System.out.println(indexLayer.size());
-        for (TreeNode node:  indexLayer) {
+        for (TreeNode node : indexLayer) {
             IndexNode inode = (IndexNode) node;
             System.out.println(inode.getKeys().size());
         }
         if (children != null) {
             if (keys.size() < order && prevLayer.size() > 2 * order) {
-                IndexNode secondLast = (IndexNode) indexLayer.remove(indexLayer.size()-1);
+                IndexNode secondLast = (IndexNode) indexLayer.remove(indexLayer.size() - 1);
                 List<Integer> secondLastKeys = secondLast.getKeys();
-                int numKey = (secondLastKeys.size() + keys.size())/2;
+                int numKey = (secondLastKeys.size() + keys.size()) / 2;
 
 
                 System.out.println("secondLastKeys.size() " + secondLastKeys.size());
                 System.out.println("numKey: " + numKey);
                 List<Integer> lastKeys = new ArrayList<>();
                 if (numKey + 1 < 2 * order) {
-                    lastKeys = secondLastKeys.subList(numKey+1, secondLastKeys.size());
+                    lastKeys = secondLastKeys.subList(numKey + 1, secondLastKeys.size());
                 }
                 lastKeys.add(children.get(0).getMinKey());
                 lastKeys.addAll(keys);
 
                 List<TreeNode> secondLastChildren = secondLast.getChildren();
-                List<TreeNode> lastChildren = secondLastChildren.subList(numKey+1, secondLastChildren.size());
+                List<TreeNode> lastChildren = secondLastChildren.subList(numKey + 1, secondLastChildren.size());
                 lastChildren.addAll(children);
-                secondLastChildren = secondLastChildren.subList(0, numKey+1);
+                secondLastChildren = secondLastChildren.subList(0, numKey + 1);
 
                 List<Integer> secondLastChildrenAddress = secondLast.getChildrenAddresses();
-                List<Integer> lastChidrenAddress = secondLastChildrenAddress.subList(numKey+1, secondLastChildrenAddress.size());
+                List<Integer> lastChidrenAddress = secondLastChildrenAddress.subList(numKey + 1, secondLastChildrenAddress.size());
                 lastChidrenAddress.addAll(childrenAddresses);
-                secondLastChildrenAddress = secondLastChildrenAddress.subList(0, numKey+1);
+                secondLastChildrenAddress = secondLastChildrenAddress.subList(0, numKey + 1);
 
 
                 indexLayer.add(new IndexNode(order, secondLastKeys, secondLastChildren, secondLastChildrenAddress));
