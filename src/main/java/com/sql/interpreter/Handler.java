@@ -54,7 +54,7 @@ public class Handler {
         }
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
-        parserConfig();
+        parserPlanBuilderConfig();
     }
 
 
@@ -98,7 +98,7 @@ public class Handler {
      *
      * @return true for no issue
      */
-    protected static boolean parserConfig() {
+    protected static boolean parserPlanBuilderConfig() {
         int[][] ret = new int[2][2];
         File configFile = new File(Constants.CONFIG_PATH);
         try {
@@ -163,6 +163,16 @@ public class Handler {
         }
         return false;
     }
+
+    public static void parserIndexInfo() throws Exception {
+        File file = new File(Catalog.getInstance().getIndexInfoPath());
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String config;
+        while ((config = br.readLine()) != null) {
+            Catalog.getInstance().setIndexConfig(config);
+        }
+        br.close();
+    } 
 
     /**
      * build a logicalPlanTree then convert it to a physical plan

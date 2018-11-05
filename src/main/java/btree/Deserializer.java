@@ -25,7 +25,7 @@ public class Deserializer {
     private int entryMaxCount;
 
     // If there is no bound, set lowKey, highKey as MinInteger, MaxInteger
-    public Deserializer(File file, int lowKey, int highKey) {
+    public Deserializer(File file, int lowKey, int highKey) throws Exception {
         this.file = file;
         this.lowKey = lowKey;
         this.highKey = highKey;
@@ -34,7 +34,7 @@ public class Deserializer {
             readHead();
             searchLeafNode(lowKey, rootAddress);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 

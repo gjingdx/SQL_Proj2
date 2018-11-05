@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import java.io.StringReader;
 
+import com.sun.org.apache.xml.internal.resolver.Catalog;
+
 public class HandlerTest extends Handler {
 
     @Test
@@ -27,7 +29,12 @@ public class HandlerTest extends Handler {
 
     @Test
     public void parserConfigTest() {
-        Assert.assertTrue(parserConfig());
+        Assert.assertTrue(parserPlanBuilderConfig());
+    }
+
+    @Test
+    public void parserIndexInfoTest() throws Exception {
+        parserIndexInfo();
     }
 }
 
