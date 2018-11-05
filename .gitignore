@@ -19,6 +19,7 @@ target/
 
 # Output files
 Samples/samples/output/*
+Samples/samples-2/output/*
 Samples/samples/temp/*
 
 # Sample folder

@@ -22,4 +22,12 @@ class DataEntry {
     public Rid getRidAtIndex(int index) {
         return rids.get(index);
     }
+
+    @Override
+    public String toString() {
+        return "DataEntry{" +
+                "key=" + key +
+                ", rids=" + rids +
+                '}';
+    }
 }
