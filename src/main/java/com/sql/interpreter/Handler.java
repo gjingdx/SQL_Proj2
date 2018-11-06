@@ -1,9 +1,12 @@
 package com.sql.interpreter;
 
+import io.*;
 import logical.interpreter.LogicalPlanBuilder;
 import logical.operator.Operator;
-import model.IndexConfig;
+import logical.operator.ScanOperator;
+import model.*;
 import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -16,6 +19,7 @@ import util.Constants.SortMethod;
 
 import java.io.*;
 import java.util.Map;
+import java.util.ArrayList;
 
 import btree.BPlusTree;
 
@@ -83,18 +87,40 @@ public class Handler {
     }
 
     public static void buildIndexes() {
-        // TODO
         for (Map.Entry<String, IndexConfig> entry : Catalog.getInstance().getIndexConfigs().entrySet()) {
             IndexConfig indexConfig = entry.getValue();
             String tableName = indexConfig.tableName;
             int attr = Catalog.getInstance().getTableSchema(tableName).get(indexConfig.schemaName);
-            BPlusTree bTree = new BPlusTree(
+            new BPlusTree(
                 Catalog.getInstance().getDataPath(tableName),
                 attr,
                 indexConfig.order,
                 indexConfig.indexFile
             );
         }
+    }
+
+    private static void sortAndReplaceTable(IndexConfig indexConfig) throws Exception{
+        String statement = "Select * From " + indexConfig.tableName 
+                + " Order By " + indexConfig.schemaName + ";";
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+        PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
+        ArrayList<Tuple> sortedResult = new ArrayList<>();
+        Tuple tuple;
+        while ((tuple = operator.getNextTuple()) != null) {
+            sortedResult.add(tuple);
+        }
+        String path = Catalog.getInstance().getDataPath(indexConfig.tableName);
+        TupleWriter tupleWriter = new BinaryTupleWriter(path, operator.getSchema().size());
+        //TupleWriter readableWriter = new ReadableTupleWriter(path+"_r1", operator.getSchema().size());
+        for (Tuple writeTuple : sortedResult) {
+            tupleWriter.writeNextTuple(writeTuple);
+            //readableWriter.writeNextTuple(writeTuple);
+        }
+        // finish
+        tupleWriter.finish();
+        //readableWriter.finish();
     }
 
     /**
@@ -208,7 +234,10 @@ public class Handler {
         BufferedReader br = new BufferedReader(new FileReader(file));
         String config;
         while ((config = br.readLine()) != null) {
-            Catalog.getInstance().setIndexConfig(config);
+            IndexConfig indexConfig = Catalog.getInstance().setIndexConfig(config);
+            if (indexConfig.isClustered) {
+                sortAndReplaceTable(indexConfig);
+            }
         }
         br.close();
     }
