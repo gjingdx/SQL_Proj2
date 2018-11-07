@@ -12,12 +12,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.sql.interpreter.Handler;
+
 import static org.junit.Assert.*;
 
 public class BPlusTreeTest {
 
     @Test
     public void bPlusTreeConstructorTest() throws Exception {
+        //String []  configs = Handler.parserInterpreterConfig("Samples/samples-2/interpreter_config_file.txt");
+        //Handler.init(configs);
+        new File("Samples/samples-2/input/indexes").mkdir();
         String relationName = "Samples/samples-2/input/db/data/Boats";
         System.out.println(relationName);
 
@@ -26,14 +31,14 @@ public class BPlusTreeTest {
         schema.put("E", 1);
         schema.put("F", 2);
         int attribute = schema.get("E");
-        String indexFile = "Samples/samples-2/output/index";
+        String indexFile = "Samples/samples-2/output/indexes";
 
         BPlusTree bPlusTree = new BPlusTree(relationName, attribute, 10, indexFile);
 
         int lowKey = 1;
         int highKey = 50;
 
-        BinaryTupleReader sailorReader = new BinaryTupleReader(Catalog.getInstance().getDataPath("Boats"));
+        BinaryTupleReader sailorReader = new BinaryTupleReader("Samples/samples-2/input/db/data/Boats");
 
         Deserializer deser = new Deserializer(new File(indexFile), lowKey, highKey);
         Rid rid;

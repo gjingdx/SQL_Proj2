@@ -1,0 +1,5 @@
+Samples/samples/input
+Samples/samples/output
+Samples/samples/temp
+1
+1
