@@ -3,7 +3,6 @@ package com.sql.interpreter;
 import io.*;
 import logical.interpreter.LogicalPlanBuilder;
 import logical.operator.Operator;
-import logical.operator.ScanOperator;
 import model.*;
 import net.sf.jsqlparser.parser.CCJSqlParser;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -88,6 +87,10 @@ public class Handler {
         }
     }
 
+    /**
+     * Build the index files according to the index config stored in Catalog
+     * 
+     */
     public static void buildIndexes() {
         new File(Catalog.getInstance().getIndexPath()).mkdirs();
         for (Map.Entry<String, IndexConfig> entry : Catalog.getInstance().getIndexConfigs().entrySet()) {
@@ -232,6 +235,11 @@ public class Handler {
         return false;
     }
 
+    /**
+     * parser the index info from disk
+     * 
+     * @throws Exception file not exists or unexpected format
+     */
     public static void parserIndexInfo() throws Exception {
         File file = new File(Catalog.getInstance().getIndexInfoPath());
         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -245,6 +253,13 @@ public class Handler {
         br.close();
     }
 
+    /**
+     * parser the interpreter config from disk
+     * 
+     * @param configFile path
+     * @return 5 lines configuration
+     * @throws Exception file not exists or unexpected format
+     */
     public static String[] parserInterpreterConfig(String configFile) throws Exception {
         File file = new File(configFile);
         int lineCount = 5;

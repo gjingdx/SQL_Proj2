@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 /**
- * This visitor help extract the left and right order
+ * This visitor help extract the low high key
  * from equaill the join condition
  *
  * @author xl664 Xinhe Li
@@ -28,9 +28,10 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
     private ArrayList<Integer> equalKey;
 
     /**
-     * Constructor give the schema of right and left tuple
+     * Constructor give the columnName and tableName
      *
-     * @param rightSchema
+     * @param tableName
+     * @param columnName
      */
     public IndexScanExpressionVisitor(String tableName, String columnName) {
         columnStack = new Stack<>();
@@ -42,6 +43,12 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
         this.lowKey = Integer.MAX_VALUE;
     }
 
+    /**
+     * judge whether a column is the index column
+     * 
+     * @param c
+     * @return boolean
+     */
     private boolean isValidColumn(Column c) {
         String cTableName = Catalog.getInstance().getTableNameFromAlias(c.getTable().toString());
         String cColumnName = c.getColumnName().toString();
@@ -50,9 +57,9 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
     }
 
     /**
-     * extract the the Orders
+     * get the high key
      *
-     * @return a list of order. list[0] refers to the right operator, whereas list[1] to left
+     * @return MAX_INT if none
      */
     public int getHighKey() {
         if (!equalKey.isEmpty()) {
@@ -64,6 +71,11 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
         return this.highKey;
     }
 
+    /**
+     * get the low key
+     * 
+     * @return MIN_INT if none
+     */
     public int getLowKey() {
         if (!equalKey.isEmpty()) {
             return equalKey.get(0);
@@ -74,13 +86,17 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
         return this.lowKey;
     }
 
+    /**
+     * whether has valid low and high key
+     * 
+     * @return boolean
+     */
     public boolean isValid() {
         return !(highKey == Integer.MIN_VALUE && lowKey == Integer.MAX_VALUE && equalKey.isEmpty());
     }
 
     /**
      * method visit the long value
-     * indicates no valid for sort element
      */
     @Override
     public void visit(LongValue node) {
@@ -89,7 +105,6 @@ public class IndexScanExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for the column node.
-     * possible as an order
      *
      * @param the expression node.
      */
