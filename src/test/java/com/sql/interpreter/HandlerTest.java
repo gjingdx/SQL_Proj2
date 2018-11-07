@@ -26,8 +26,13 @@ public class HandlerTest extends Handler {
     }
 
     @Test
-    public void parserConfigTest() {
-        Assert.assertTrue(parserConfig());
+    public void parserConfigTest() throws Exception {
+        Assert.assertTrue(parserPlanBuilderConfig());
+    }
+
+    @Test
+    public void parserIndexInfoTest() throws Exception {
+        parserIndexInfo();
     }
 }
 

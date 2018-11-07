@@ -19,7 +19,9 @@ target/
 
 # Output files
 Samples/samples/output/*
+Samples/samples-2/output/*
 Samples/samples/temp/*
+*temp*
 
 # Sample folder
 Samples/samples/input/plan_builder_config.txt

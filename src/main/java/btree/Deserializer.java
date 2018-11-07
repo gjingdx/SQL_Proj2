@@ -24,7 +24,8 @@ public class Deserializer {
     private int entryNo;
     private int entryMaxCount;
 
-    public Deserializer(File file, int lowKey, int highKey) {
+    // If there is no bound, set lowKey, highKey as MinInteger, MaxInteger
+    public Deserializer(File file, int lowKey, int highKey) throws Exception {
         this.file = file;
         this.lowKey = lowKey;
         this.highKey = highKey;
@@ -33,7 +34,7 @@ public class Deserializer {
             readHead();
             searchLeafNode(lowKey, rootAddress);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -127,8 +128,7 @@ public class Deserializer {
         }
 
         if (ridNo == ridMaxCount) {
-            int readKey = bufferPage.getInt(intPointer);
-            if (bufferPage.getInt(intPointer) >= highKey) {
+            if (bufferPage.getInt(intPointer) > highKey) {
                 return null;
             }
             ridNo = 0;
@@ -144,5 +144,11 @@ public class Deserializer {
             entryNo ++;
         }
         return rid;
+    }
+
+    public void reset() throws Exception {
+        this.readerPointer = new RandomAccessFile(this.file, "r");
+        readHead();
+        searchLeafNode(lowKey, rootAddress);
     }
 }

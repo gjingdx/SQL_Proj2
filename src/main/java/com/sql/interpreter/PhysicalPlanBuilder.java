@@ -1,10 +1,12 @@
 package com.sql.interpreter;
 
 import logical.operator.*;
+import model.IndexConfig;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
+import util.IndexScanExpressionVisitor;
 import util.Constants.SortMethod;
 import util.SortJoinExpressionVisitor;
 
@@ -31,6 +33,30 @@ public class PhysicalPlanBuilder {
      */
     public void visit(SelectOperator logSelectOp) {
         Operator[] children = logSelectOp.getChildren();
+
+        // should be a leaf operator (after scan)
+        // config index scan on
+        // has its index file
+        // high key or low key valid
+        if (children[0] instanceof ScanOperator 
+            && Catalog.getInstance().getIndexScan()
+            && logSelectOp.getSchema() != null) 
+        {
+            IndexConfig indexConfig = Catalog.getInstance().getIndexConfig(logSelectOp.getSchema());
+            if (indexConfig != null) {
+                IndexScanExpressionVisitor isev = new IndexScanExpressionVisitor(indexConfig.tableName, indexConfig.columnName);
+                logSelectOp.getExpression().accept(isev);
+                if (isev.isValid()) {
+                    int highKey = isev.getHighKey();
+                    int lowKey = isev.getLowKey();
+                    PhysicalOperator physIndexScanOp = new PhysicalIndexScanOperator(logSelectOp, lowKey, highKey);
+                    physOpChildren.push(physIndexScanOp);
+                    return;
+                }
+            }
+        }
+
+        // if unmet any of the condition, implement scan operator + select operator
         children[0].accept(this);
         PhysicalOperator child = physOpChildren.pop();
         PhysicalSelectOperator physSelectOp = new PhysicalSelectOperator(logSelectOp, child);

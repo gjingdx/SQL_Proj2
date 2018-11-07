@@ -13,8 +13,8 @@ import java.util.Map;
  * Read the table from disk and fetch a tuple
  */
 public class PhysicalScanOperator extends PhysicalOperator {
-    private BinaryTupleReader binaryTupleReader;
-    private Map<String, Integer> schema;
+    protected BinaryTupleReader binaryTupleReader;
+    protected Map<String, Integer> schema;
 
     /**
      * @param plainSelect is the statement of sql

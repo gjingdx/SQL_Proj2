@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import model.IndexConfig;
+
 /**
  * Singleton class to track and record states. For the operators to get info like schemas, files etc.
  * Created by Yufu Mo
@@ -33,6 +35,8 @@ public class Catalog {
 
     private int joinBlockSize = 0;
     private int sortBlockSize = 0;
+
+    private boolean indexScan = false;
 
     /**
      * private constructor for singleton class
@@ -126,6 +130,14 @@ public class Catalog {
         return files.get(table);
     }
 
+    public String getIndexPath() {
+        return Constants.inputPath + "/db/indexes";
+    }
+
+    public String getIndexFile(String schemaName) {
+        return getIndexPath() + "/" + schemaName;
+    }
+
     /**
      * return output path
      *
@@ -155,7 +167,7 @@ public class Catalog {
      * @return index info file path
      */
     public String getIndexInfoPath(){
-        return inputPath + "/db/index_info.txt";
+        return Constants.inputPath + "/db/index_info.txt";
     }
 
     /**
@@ -298,6 +310,76 @@ public class Catalog {
      */
     public void setSortBlockSize(int sortBlockSize) {
         this.sortBlockSize = sortBlockSize;
+    }
+
+    public boolean getIndexScan() {
+        return this.indexScan;
+    }
+
+    public void setIndexScan(Boolean onOff) {
+        this.indexScan = onOff;
+    }
+
+    Map <String, IndexConfig> indexConfigs = new HashMap<>();
+
+    public IndexConfig setIndexConfig(String config) {
+        IndexConfig indexConfig = new IndexConfig(config);
+        indexConfigs.put(indexConfig.schemaName, new IndexConfig(config));
+        return indexConfig;
+    }
+
+    public IndexConfig getIndexConfig(Map<String, Integer> schema) {
+        String[] schemaNames = getSchemaNameFromRootSchema(schema);
+        if (schemaNames == null) {
+            return null;
+        }
+        for (String schemaName : schemaNames) {
+            if (hasIndexConfig(schemaName)) {
+                return indexConfigs.get(schemaName);
+            }
+        }
+        return null;
+    }
+
+    private String[] getSchemaNameFromRootSchema(Map<String, Integer> schema) {
+        String ret[] = new String[schema.size()];
+        int i = 0;
+        for (Map.Entry<String, Integer> entry : schema.entrySet()) {
+            String[] keySplit = entry.getKey().toString().split("\\.+");
+            if (keySplit.length < 1) return null;
+            ret[i++] = getTableNameFromAlias(keySplit[0]) + "." + keySplit[1];
+        }
+        return ret;
+    }
+
+    public boolean hasIndexConfig(String tableName) {
+        return indexConfigs.containsKey(tableName);
+    }
+
+    public Map<String, IndexConfig> getIndexConfigs() {
+        return indexConfigs;
+    }
+
+    /**
+     * 
+     */
+    private boolean buildIndex;
+    private boolean evaluateSQL;
+
+    public void setBuildIndex(String arg4) {
+        buildIndex = arg4.equals("1");
+    }
+
+    public boolean isBuildIndex() {
+        return this.buildIndex;
+    }
+
+    public void setEvaluateSQL(String arg5) {
+        evaluateSQL = arg5.equals("1");
+    }
+
+    public boolean isEvaluateSQL() {
+        return this.evaluateSQL;
     }
 
 }

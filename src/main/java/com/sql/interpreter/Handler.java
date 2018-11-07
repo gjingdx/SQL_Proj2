@@ -1,8 +1,12 @@
 package com.sql.interpreter;
 
+import io.*;
 import logical.interpreter.LogicalPlanBuilder;
 import logical.operator.Operator;
+import logical.operator.ScanOperator;
+import model.*;
 import net.sf.jsqlparser.parser.CCJSqlParser;
+import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.parser.ParseException;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -14,6 +18,10 @@ import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
 import java.io.*;
+import java.util.Map;
+import java.util.ArrayList;
+
+import btree.BPlusTree;
 
 /**
  * Handler class to parse SQL, construct query plan and handle initialization
@@ -23,9 +31,9 @@ public class Handler {
     /**
      * initialize the file paths and directories
      */
-    public static void init(String[] args) {
+    public static void init(String[] args) throws Exception {
         String outputPath = Constants.OUTPUT_PATH;
-        if (args != null && args.length >= 2) {
+        if (args != null && args.length >= 5) {
             if (args[0].charAt(args[0].length() - 1) == '/') {
                 args[0] = args[0].substring(0, args[0].length() - 1);
             }
@@ -42,9 +50,12 @@ public class Handler {
             Constants.OUTPUT_PATH = args[1];
             Constants.TEMP_PATH = args[2];
             Constants.SQLQURIES_PATH = Constants.inputPath + "/queries.sql";
-            Constants.CONFIG_PATH = Constants.inputPath = "/plan_builder_config.txt";
+            Constants.CONFIG_PATH = Constants.inputPath + "/plan_builder_config.txt";
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
+
+            Catalog.getInstance().setBuildIndex(args[3]);
+            Catalog.getInstance().setEvaluateSQL(args[4]);
         }
         new File(outputPath).mkdirs();
         new File(Constants.TEMP_PATH).mkdirs();
@@ -54,9 +65,66 @@ public class Handler {
         }
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
-        parserConfig();
+
+        
+
+        try {
+            parserPlanBuilderConfig();
+        } catch (Exception e) {
+            System.err.println("Plan Builder Config parse failed");
+            if (Catalog.getInstance().isEvaluateSQL()) {
+                throw e;
+            }
+        }
+        try {
+            parserIndexInfo();
+        } catch (Exception e) {
+            System.err.println("Index Info parse failed");
+            if (Catalog.getInstance().isEvaluateSQL() 
+                || Catalog.getInstance().isBuildIndex()) 
+            {
+                throw e;
+            }
+        }
     }
 
+    public static void buildIndexes() {
+        new File(Catalog.getInstance().getIndexPath()).mkdirs();
+        for (Map.Entry<String, IndexConfig> entry : Catalog.getInstance().getIndexConfigs().entrySet()) {
+            IndexConfig indexConfig = entry.getValue();
+            String tableName = indexConfig.tableName;
+            int attr = Catalog.getInstance().getTableSchema(tableName).get(indexConfig.schemaName);
+            new BPlusTree(
+                Catalog.getInstance().getDataPath(tableName),
+                attr,
+                indexConfig.order,
+                indexConfig.indexFile
+            );
+        }
+    }
+
+    private static void sortAndReplaceTable(IndexConfig indexConfig) throws Exception{
+        String statement = "Select * From " + indexConfig.tableName 
+                + " Order By " + indexConfig.schemaName + ";";
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+        PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
+        ArrayList<Tuple> sortedResult = new ArrayList<>();
+        Tuple tuple;
+        while ((tuple = operator.getNextTuple()) != null) {
+            sortedResult.add(tuple);
+        }
+        String path = Catalog.getInstance().getDataPath(indexConfig.tableName);
+        TupleWriter tupleWriter = new BinaryTupleWriter(path, operator.getSchema().size());
+        //TupleWriter readableWriter = new ReadableTupleWriter(path+"_r1", operator.getSchema().size());
+        for (Tuple writeTuple : sortedResult) {
+            tupleWriter.writeNextTuple(writeTuple);
+            //readableWriter.writeNextTuple(writeTuple);
+        }
+        // finish
+        tupleWriter.finish();
+        //readableWriter.finish();
+    }
 
     /**
      * called in main function, parse all the queries one by one
@@ -98,17 +166,18 @@ public class Handler {
      *
      * @return true for no issue
      */
-    protected static boolean parserConfig() {
+    protected static boolean parserPlanBuilderConfig() throws Exception {
         int[][] ret = new int[2][2];
         File configFile = new File(Constants.CONFIG_PATH);
         try {
             BufferedReader br = new BufferedReader(new FileReader(configFile));
             String join = br.readLine();
             String sort = br.readLine();
+            String btree = br.readLine();
             br.close();
 
-            if (!setConfig(ret[0], join)) return false;
-            if (!setConfig(ret[1], sort)) return false;
+            if (!setConfig(ret[0], join)) throw new IOException("Fail to read join config");;
+            if (!setConfig(ret[1], sort)) throw new IOException("Fail to read sort config");;
 
             switch (ret[0][0]) {
                 case 0:
@@ -122,7 +191,7 @@ public class Handler {
                     Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
                     break;
                 default:
-                    return false;
+                throw new IOException("Unexpected join method");
             }
 
             switch (ret[1][0]) {
@@ -134,15 +203,17 @@ public class Handler {
                     Catalog.getInstance().setSortBlockSize(ret[1][1]);
                     break;
                 default:
-                    return false;
+                    throw new IOException("Unexpected sort method");
             }
+
+            Catalog.getInstance().setIndexScan(btree.equals("1"));
 
         } catch (FileNotFoundException e) {
             System.err.println("Cannot find the target config file");
-            return false;
+            throw e;
         } catch (IOException e) {
             System.err.println("Unexpected config file format");
-            return false;
+            throw e;
         }
         return true;
     }
@@ -159,6 +230,31 @@ public class Handler {
             return true;
         }
         return false;
+    }
+
+    public static void parserIndexInfo() throws Exception {
+        File file = new File(Catalog.getInstance().getIndexInfoPath());
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String config;
+        while ((config = br.readLine()) != null) {
+            IndexConfig indexConfig = Catalog.getInstance().setIndexConfig(config);
+            if (indexConfig.isClustered) {
+                sortAndReplaceTable(indexConfig);
+            }
+        }
+        br.close();
+    }
+
+    public static String[] parserInterpreterConfig(String configFile) throws Exception {
+        File file = new File(configFile);
+        int lineCount = 5;
+        String[] ret = new String[lineCount];
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        for (int i = 0; i < lineCount; i++) {
+            ret[i] = br.readLine();
+        }
+        br.close();
+        return ret;
     }
 
     /**

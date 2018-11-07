@@ -16,10 +16,15 @@ import java.util.Set;
  * Unit test for simple App.
  */
 public class AppTest {
-
+    public AppTest() throws Exception {
+        String[] configs = Handler.parserInterpreterConfig("Samples/interpreter_config_file_samples1.txt");
+        Handler.init(configs);
+        if (Catalog.getInstance().isBuildIndex()) {
+            Handler.buildIndexes();
+        }
+    }
     @Test
     public void testBNLJ_Memory() throws Exception{
-        Handler.init(new String[0]);
         Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
         Catalog.getInstance().setJoinBlockSize(2);
         Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
@@ -29,7 +34,6 @@ public class AppTest {
 
     @Test
     public void testSMJ_External() throws Exception{
-        Handler.init(new String[0]);
         Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
         Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
         Catalog.getInstance().setSortBlockSize(3);
@@ -39,7 +43,6 @@ public class AppTest {
 
     @Test
     public void testSMJ_MemorySort() throws Exception{
-        Handler.init(new String[0]);
         Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
         Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
         Catalog.getInstance().setSortBlockSize(3);
@@ -49,7 +52,6 @@ public class AppTest {
 
     @Test
     public void testTNLJ() throws Exception{
-        Handler.init(new String[0]);
         Catalog.getInstance().setJoinMethod(JoinMethod.TNLJ);
         Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
         Handler.parseSql();
