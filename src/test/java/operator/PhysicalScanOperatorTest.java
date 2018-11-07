@@ -13,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 public class PhysicalScanOperatorTest {
 
@@ -25,7 +27,7 @@ public class PhysicalScanOperatorTest {
         PhysicalOperator physScanOp = new PhysicalScanOperator(logScanOp);
 
         // read expected result from disk
-        ArrayList<String> expectedResult = new ArrayList<>();
+        Set<String> expectedResult = new HashSet<>();
         BufferedReader br = new BufferedReader(new FileReader(Constants.DATA_PATH + "Sailors_humanreadable"));
         String line;
         
@@ -34,14 +36,13 @@ public class PhysicalScanOperatorTest {
         }
         br.close();
         // get scanOperator result
-        ArrayList<String> outputResult = new ArrayList<>();
+        Set<String> outputResult = new HashSet<>();
         Tuple tuple;
-        int index = 0;
+        
         physScanOp.reset();
         while((tuple = physScanOp.getNextTuple()) != null){
-            Assert.assertEquals(expectedResult.get(index++), tuple.toString());
             outputResult.add(tuple.toString());
         }
-        //Assert.assertEquals(expectedResult, outputResult);
+        Assert.assertEquals(expectedResult, outputResult);
     }
 }

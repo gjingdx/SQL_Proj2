@@ -6,11 +6,11 @@ package util;
  * Created by Yufu Mo
  */
 public class Constants {
-    public static String inputPath = "Samples/samples-2/input";
+    public static String inputPath = "Samples/samples/input";
     public static String DATA_PATH = inputPath + "/db/data/";
     public static String SCHEMA_PATH = inputPath + "/db/schema.txt";
-    public static String OUTPUT_PATH = "Samples/samples-2/output/";
-    public static String TEMP_PATH = "Samples/samples-2/temp/";
+    public static String OUTPUT_PATH = "Samples/samples/output/";
+    public static String TEMP_PATH = "Samples/samples/temp/";
     public static String SQLQURIES_PATH = inputPath + "/queries.sql";
     public static String CONFIG_PATH = inputPath + "/plan_builder_config.txt";
     public static final int PAGE_SIZE = 4096;

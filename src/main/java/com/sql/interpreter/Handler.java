@@ -53,6 +53,9 @@ public class Handler {
             Constants.CONFIG_PATH = Constants.inputPath + "/plan_builder_config.txt";
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
+
+            Catalog.getInstance().setBuildIndex(args[3]);
+            Catalog.getInstance().setEvaluateSQL(args[4]);
         }
         new File(outputPath).mkdirs();
         new File(Constants.TEMP_PATH).mkdirs();
@@ -63,8 +66,7 @@ public class Handler {
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
 
-        Catalog.getInstance().setBuildIndex(args[3]);
-        Catalog.getInstance().setEvaluateSQL(args[4]);
+        
 
         try {
             parserPlanBuilderConfig();
@@ -87,6 +89,7 @@ public class Handler {
     }
 
     public static void buildIndexes() {
+        new File(Catalog.getInstance().getIndexPath()).mkdirs();
         for (Map.Entry<String, IndexConfig> entry : Catalog.getInstance().getIndexConfigs().entrySet()) {
             IndexConfig indexConfig = entry.getValue();
             String tableName = indexConfig.tableName;

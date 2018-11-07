@@ -15,7 +15,7 @@ public class DeserializerTest {
         int lowKey = 1;
         int highKey = 50;
         String inputFile = "Samples/samples-2/expected_indexes/Boats.E";
-        BinaryTupleReader sailorReader = new BinaryTupleReader(Catalog.getInstance().getDataPath("Boats"));
+        BinaryTupleReader sailorReader = new BinaryTupleReader("Samples/samples-2/input/db/data/Boats");
         Deserializer deser = new Deserializer(new File(inputFile), lowKey, highKey);
         Rid rid;
         while ((rid = deser.getNextRid()) != null) {
