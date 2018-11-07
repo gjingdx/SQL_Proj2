@@ -2,4 +2,4 @@ Samples/samples-2/input
 Samples/samples-2/output
 Samples/samples-2/tempdir
 1
-0
+1

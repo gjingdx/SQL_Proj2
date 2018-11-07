@@ -104,7 +104,6 @@ public class BPlusTree {
 
         // handle the case when the last leafNode is underflow
         if (leafEntries.size() >= order || leafLayer.size() == 0) {
-            System.out.println("lastleafnode");
             LeafNode leafNode = new LeafNode(order, leafEntries);
             leafLayer.add(leafNode);
         } else {
@@ -144,7 +143,6 @@ public class BPlusTree {
             }
             if (count == (2 * order + 1)) {
                 IndexNode indexNode = new IndexNode(order, keys, children, childrenAddresses);
-                System.out.println(indexNode.getKeys().size());
                 indexLayer.add(indexNode);
 
                 keys = new ArrayList<>();
