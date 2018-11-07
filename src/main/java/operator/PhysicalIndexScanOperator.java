@@ -10,6 +10,9 @@ import model.*;
 import net.sf.jsqlparser.expression.Expression;
 import util.*;
 
+/**
+ * Index Scan operator reads a index file to make scan and selection at the same time
+ */
 public class PhysicalIndexScanOperator extends PhysicalScanOperator {
     private Expression selectCondition;
     private Deserializer deserializer;
@@ -20,7 +23,13 @@ public class PhysicalIndexScanOperator extends PhysicalScanOperator {
     Rid startRid;
     Rid tempRid;
     
-
+    /**
+     * Constructor of PhysicalIndexScanOperator
+     * 
+     * @param logSelectOp related logical operator
+     * @param lowKey, if none, parser MIN_INT
+     * @param highKey, if none, parser MAX_INT
+     */
     public PhysicalIndexScanOperator(SelectOperator logSelectOp, int lowKey, int highKey){
         super((ScanOperator)logSelectOp.getChildren()[0]);
         this.indexConfig = Catalog.getInstance().getIndexConfig(schema);
@@ -60,6 +69,7 @@ public class PhysicalIndexScanOperator extends PhysicalScanOperator {
         return next;
     }
 
+    // if unclustered, get the next tuple from data entry
     private Tuple getNextTupleFromIndex() {
         if (tempRid == null) {
             return null;
