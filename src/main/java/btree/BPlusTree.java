@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+/**
+ * B+ Tree Class
+ */
 public class BPlusTree {
     private String btFile;
     private int attribute;
@@ -18,6 +21,14 @@ public class BPlusTree {
     private Serializer serializer;
 
 
+    /**
+     * B+ Tree class constructor that would creat an object
+     * when new a BPlusTree
+     * @param file
+     * @param attribute
+     * @param order
+     * @param indexFile
+     */
     public BPlusTree(String file, int attribute, int order, String indexFile) {
         this.btFile = file;
         this.attribute = attribute;
@@ -43,6 +54,9 @@ public class BPlusTree {
 
     }
 
+    /**
+     * the func generates all the data entries of a relation
+     */
     private void generateDataEntries() {
         SortedMap<Integer, DataEntry> entryMap = new TreeMap<>();
         try {
@@ -62,13 +76,16 @@ public class BPlusTree {
             }
 
             dataEntries.addAll(entryMap.values());
-            //System.out.println(dataEntries);
+
         } catch (Exception e) {
             System.err.println("Failed to read next tuple when generateDataEntry");
         }
     }
 
 
+    /**
+     * the func generates the leaf layer of the b+ tree
+     */
     private void generateLeafLayer() {
 
         List<DataEntry> leafEntries = new ArrayList<>();
@@ -76,7 +93,6 @@ public class BPlusTree {
         for (DataEntry dataEntry : dataEntries) {
             if (count == 2 * order) {
                 LeafNode leafNode = new LeafNode(order, leafEntries);
-                //System.out.println(leafNode.getDataEntries().size());
                 leafLayer.add(leafNode);
                 leafEntries = new ArrayList<>();
                 count = 0;
@@ -100,18 +116,17 @@ public class BPlusTree {
             lastEntries.addAll(leafEntries);
             secondLastEntries = secondLastEntries.subList(0, numEntry);
             // add the last two leaf nodes
-            //System.out.println(secondLastEntries.size());
-            //System.out.println(lastEntries.size());
             leafLayer.add(new LeafNode(order, secondLastEntries));
             leafLayer.add(new LeafNode(order, lastEntries));
         }
 
-//        for (TreeNode node: leafLayer) {
-//            LeafNode lnode = (LeafNode) node;
-//            System.out.println(lnode.getDataEntries().size());
-//        }
     }
 
+    /**
+     * the func generates the index layer using the previous (children) layer
+     * @param prevLayer
+     * @return
+     */
     private List<TreeNode> generateIndexLayer(List<TreeNode> prevLayer) {
         List<TreeNode> indexLayer = new ArrayList<>();
         List<Integer> keys = new ArrayList<>();
@@ -119,10 +134,8 @@ public class BPlusTree {
         List<Integer> childrenAddresses = new ArrayList<>();
         int count = 0;
         for (TreeNode prevNode : prevLayer) {
-            //System.out.println(count);
             children.add(prevNode);
             int address = serializer.serialize(prevNode);
-//            System.out.println(prevNode);
             childrenAddresses.add(address);
             count++;
             if (count > 1) {
@@ -132,7 +145,6 @@ public class BPlusTree {
                 IndexNode indexNode = new IndexNode(order, keys, children, childrenAddresses);
                 System.out.println(indexNode.getKeys().size());
                 indexLayer.add(indexNode);
-                //System.out.println(indexNode.toString());
 
                 keys = new ArrayList<>();
                 children = new ArrayList<>();
@@ -141,20 +153,13 @@ public class BPlusTree {
                 continue;
             }
         }
-        //System.out.println(indexLayer.size());
-        for (TreeNode node : indexLayer) {
-            IndexNode inode = (IndexNode) node;
-            System.out.println(inode.getKeys().size());
-        }
+
         if (children != null) {
             if (keys.size() < order && prevLayer.size() > 2 * order) {
                 IndexNode secondLast = (IndexNode) indexLayer.remove(indexLayer.size() - 1);
                 List<Integer> secondLastKeys = secondLast.getKeys();
                 int numKey = (secondLastKeys.size() + keys.size()) / 2;
 
-
-                System.out.println("secondLastKeys.size() " + secondLastKeys.size());
-                System.out.println("numKey: " + numKey);
                 List<Integer> lastKeys = new ArrayList<>();
                 if (numKey + 1 < 2 * order) {
                     lastKeys = secondLastKeys.subList(numKey + 1, secondLastKeys.size());
@@ -172,13 +177,11 @@ public class BPlusTree {
                 lastChidrenAddress.addAll(childrenAddresses);
                 secondLastChildrenAddress = secondLastChildrenAddress.subList(0, numKey + 1);
 
-
                 indexLayer.add(new IndexNode(order, secondLastKeys, secondLastChildren, secondLastChildrenAddress));
                 indexLayer.add(new IndexNode(order, lastKeys, lastChildren, lastChidrenAddress));
             } else {
                 indexLayer.add(new IndexNode(order, keys, children, childrenAddresses));
             }
-
         }
 
         return indexLayer;
