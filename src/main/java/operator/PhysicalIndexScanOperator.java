@@ -84,7 +84,7 @@ public class PhysicalIndexScanOperator extends PhysicalScanOperator {
             return null;
         }
     }
-
+    
     private Tuple nextTuple() {
         if (indexConfig.isClustered) {
             Tuple tuple = super.getNextTuple();

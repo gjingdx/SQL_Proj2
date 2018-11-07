@@ -237,6 +237,7 @@ public class Handler {
 
     /**
      * parser the index info from disk
+     * must implement before set isBuildIndex
      * 
      * @throws Exception file not exists or unexpected format
      */
@@ -247,7 +248,9 @@ public class Handler {
         while ((config = br.readLine()) != null) {
             IndexConfig indexConfig = Catalog.getInstance().setIndexConfig(config);
             if (indexConfig.isClustered) {
-                sortAndReplaceTable(indexConfig);
+                if (Catalog.getInstance().isBuildIndex()){
+                    sortAndReplaceTable(indexConfig);
+                }
             }
         }
         br.close();
