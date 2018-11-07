@@ -8,6 +8,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+/**
+ * Serializer class for b+ tree serializing and java NIO to write
+ * serialized stream to file
+ *
+ * @author Yufu Mo
+ */
 public class Serializer {
 
     private FileChannel fc;                    // The file channel for reader
@@ -29,6 +35,11 @@ public class Serializer {
     }
 
 
+    /**
+     * Serialize method
+     * @param node input node to serialize and write to buffer
+     * @return
+     */
     public int serialize(TreeNode node) {
         long position = Constants.PAGE_SIZE * (long) pageNum;
 
@@ -85,6 +96,10 @@ public class Serializer {
     }
 
 
+    /**
+     * finish method which is necessary finishing up the serializing
+     * @param order
+     */
     public void finish(int order) {
         try {
             // initialize the buffer.
