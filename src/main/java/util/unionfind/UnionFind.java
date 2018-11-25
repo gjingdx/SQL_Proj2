@@ -11,6 +11,7 @@ public class UnionFind {
     public UnionFind() {
         count = 0;
         elements = new HashMap<>();
+        father = new HashMap<>();
     }
 
     private void union(Constraints p, Constraints q) {
