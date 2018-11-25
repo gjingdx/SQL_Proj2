@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class LogicalPlanBuilderTest {
     @Test
     public void testExpression() throws Exception{
-        String statement = "SELECT * FROM Sailors, Reserves, Boats Where Boats.D = Reserves.H and Sailors.A = Reserves.G;";
+        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B Where B.D = R.H and S.A = R.G and S.A < 500 and B.D > 60;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
