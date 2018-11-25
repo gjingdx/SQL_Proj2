@@ -2,6 +2,7 @@ package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
 import io.BinaryTupleReader;
+import model.TableStat;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
 
@@ -19,6 +20,7 @@ public class ScanOperator extends Operator {
     private Operator op;
     private BinaryTupleReader binaryTupleReader;
     private Map<String, Integer> schema;
+    private TableStat tableStat;
 
     /**
      * @param plainSelect is the statement of sql
@@ -46,6 +48,9 @@ public class ScanOperator extends Operator {
         Catalog.getInstance().updateCurrentSchema(aliasName);
 
         this.schema = Catalog.getInstance().getCurrentSchema();
+
+        tableStat = new TableStat(aliasName);
+
         try {
             binaryTupleReader = new BinaryTupleReader(Catalog.getInstance().getDataPath(tableName));
         } catch (Exception e) {
@@ -77,6 +82,10 @@ public class ScanOperator extends Operator {
             children.add(this.op);
             return children;
         }
+    }
+
+    public TableStat getTableStat() {
+        return this.tableStat;
     }
 
     @Override
