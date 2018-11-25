@@ -1,11 +1,13 @@
 package logical.operator;
 
+import PlanBuilder.JoinOrder;
 import PlanBuilder.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import util.Catalog;
+import util.JoinExpressionVisitor;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * PhysicalJoinOperator
@@ -13,7 +15,6 @@ import java.util.Map;
  * then execute cross production of the two tuples
  */
 public class JoinOperator extends Operator {
-    //private Operator opLeft, opRight;
     private List<Operator> prevOps;
     private Map<String, Integer> schema;
     Expression joinCondition;
@@ -52,6 +53,44 @@ public class JoinOperator extends Operator {
     public JoinOperator(List<Operator> prevOps, PlainSelect plainSelect) {
         this.prevOps = prevOps;
         this.plainSelect = plainSelect;
+        sortPrevOps();
+
+        this.schema = new HashMap<>();
+
+        int schemaIndexBase = 0;
+        for (Operator op : this.prevOps) {
+            for (Map.Entry<String, Integer> entry : op.getSchema().entrySet()) {
+                schema.put(entry.getKey(), entry.getValue() + schemaIndexBase);
+            }
+            schemaIndexBase += op.getSchema().size();
+        }
+        Catalog.getInstance().setCurrentSchema(schema);
+
+        // get joinCondition
+        Expression expr = plainSelect.getWhere();
+        if (expr == null) {
+            this.joinCondition = null;
+        }
+        else {
+            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
+            expr.accept(joinExpressionVisitor);
+            this.joinCondition = joinExpressionVisitor.getExpression();
+        }
+    }
+
+    private List<Integer> getJoinOrder() {
+        List<Integer> joinOrder = new ArrayList<>();
+        JoinOrder jo = new JoinOrder(prevOps, plainSelect);
+        return jo.getOrder();
+    }
+
+    private void sortPrevOps() {
+        List<Integer> joinOrder = getJoinOrder();
+        List<Operator> temp = new ArrayList<>();
+        for (int i : joinOrder) {
+            temp.add(prevOps.get(i));
+        }
+        prevOps = temp;
     }
 
     /**
