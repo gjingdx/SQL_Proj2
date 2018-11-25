@@ -31,7 +31,7 @@ public class PhysicalIndexScanOperator extends PhysicalScanOperator {
      * @param highKey, if none, parser MAX_INT
      */
     public PhysicalIndexScanOperator(SelectOperator logSelectOp, int lowKey, int highKey){
-        super((ScanOperator)logSelectOp.getChildren()[0]);
+        super((ScanOperator)logSelectOp.getChildren().get(0));
         this.indexConfig = Catalog.getInstance().getIndexConfig(schema);
         this.selectCondition = logSelectOp.getExpression();
 
