@@ -6,6 +6,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import util.Constants;
 import util.JoinExpressionVisitor;
 import util.unionfind.Constraints;
 
@@ -47,22 +48,26 @@ public class SelectOperator extends Operator {
         }
     }
 
-    public SelectOperator(Operator op, String attribute, Constraints constraint, PlainSelect plainSelect) {
+    public SelectOperator(Operator op, Map<String, Constraints> constraints, PlainSelect plainSelect) {
         this.prevOp = op;
         this.currentSchema = op.getSchema();
         String fromItem = plainSelect.getFromItem().toString();
         String joinItems = plainSelect.getJoins().toString();
-        String newStatement = "Select * from " + fromItem + "," + joinItems;
+        String newStatement = "Select * from " + fromItem + ", " + joinItems + " where";
 
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect newPlainSelect = null;
-        if (constraint.getLowerBound() == null) {
-            newStatement += "where" + attribute + "<=" + constraint.getEquality().toString();
-        } else if (constraint.getUpperBound() == null) {
-            newStatement += "where" + attribute + ">=" + constraint.getEquality().toString();
-        } else {
-            newStatement += "where" + attribute + "=" + constraint.getEquality().toString();
+        for (String attribute : constraints.keySet()) {
+            Constraints constraint = constraints.get(attribute);
+            if (constraint.getLowerBound() != null) {
+                newStatement += attribute + ">=" + constraint.getLowerBound().toString() + " AND ";
+            } if (constraint.getUpperBound() != null) {
+                newStatement += attribute + " <= " + constraint.getUpperBound().toString() + " AND ";
+            } else if (constraint.getEquality() != null) {
+                newStatement += attribute + " = " + constraint.getEquality().toString() + " AND ";
+            }
         }
+        newStatement = newStatement.substring(0, newStatement.length() - 5);
         try {
             newPlainSelect = (PlainSelect) ((Select) parserManager.
                     parse(new StringReader(newStatement))).getSelectBody();
