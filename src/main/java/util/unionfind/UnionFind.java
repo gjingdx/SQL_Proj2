@@ -1,9 +1,6 @@
 package util.unionfind;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class UnionFind {
     private Map<String, Constraints> elements;
@@ -49,8 +46,6 @@ public class UnionFind {
         size++;
     }
 
-
-
     public Constraints find(String attr) {
         if (!elements.containsKey(attr)) {
             createElement(attr);
@@ -88,7 +83,13 @@ public class UnionFind {
      *
      * @return UF list.
      */
-    public Set<Constraints> parentSet() {
-        return new HashSet<>(father.values());
+    public Map<Constraints, List<String>> getUnions() {
+        Map<Constraints, List<String>> map = new HashMap<>();
+        for (String attr : elements.keySet()) {
+            Constraints parent = father.get(elements.get(attr));
+            map.computeIfAbsent(parent, a -> new ArrayList<>());
+            map.get(parent).add(attr);
+        }
+        return map;
     }
 }
