@@ -50,10 +50,10 @@ public class JoinOperator extends Operator {
 //        }
 //    }
 
-    public JoinOperator(List<Operator> prevOps, PlainSelect plainSelect) {
+    public JoinOperator(List<Operator> prevOps, PlainSelect plainSelect, boolean orderFlag) {
         this.prevOps = prevOps;
         this.plainSelect = plainSelect;
-        sortPrevOps();
+        if (orderFlag) { sortPrevOps(); }
 
         this.schema = new HashMap<>();
 

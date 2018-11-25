@@ -19,7 +19,7 @@ public class JoinPlanBuilderHelper {
             List<Operator> ops = new ArrayList<>();
             ops.add(opLeft);
             ops.add(opRight);
-            opLeft = new JoinOperator(ops, op.getPlainSelect());
+            opLeft = new JoinOperator(ops, op.getPlainSelect(), false);
         }
         return (JoinOperator)opLeft;
     }

@@ -68,7 +68,7 @@ public class LogicalPlanBuilder {
 
         Operator logicOp;
         if (selectOps.size() > 1) {
-            logicOp = new JoinOperator(selectOps, plainSelect);
+            logicOp = new JoinOperator(selectOps, plainSelect, true);
         } else {
             logicOp = selectOps.get(0);
         }
