@@ -50,11 +50,11 @@ public class SelectOperator extends Operator {
 
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect newPlainSelect = null;
-        if (constraint.getLowerBound() == null) {
-            newStatement += "where" + attribute + "<=" + constraint.getEquality().toString();
-        } else if (constraint.getUpperBound() == null) {
+        if (constraint.getLowerBound() != null) {
             newStatement += "where" + attribute + ">=" + constraint.getEquality().toString();
-        } else {
+        } else if (constraint.getUpperBound() != null) {
+            newStatement += "where" + attribute + "<=" + constraint.getEquality().toString();
+        } else if (constraint.getEquality() != null) {
             newStatement += "where" + attribute + "=" + constraint.getEquality().toString();
         }
         try {

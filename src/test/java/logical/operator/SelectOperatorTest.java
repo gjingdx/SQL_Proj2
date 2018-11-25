@@ -28,7 +28,7 @@ public class SelectOperatorTest {
 
     @Test
     public void getChildrenTest() {
-        Assert.assertEquals("Children: ", 1, selectOp.getChildren().length);
+        Assert.assertEquals("Children: ", 1, selectOp.getChildren().size());
     }
 
     @Test

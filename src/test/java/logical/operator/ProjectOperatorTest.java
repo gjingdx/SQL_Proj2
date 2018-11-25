@@ -25,7 +25,7 @@ public class ProjectOperatorTest {
 
     @Test
     public void getChildrenTest() {
-        Assert.assertEquals("Children: ", 1, op.getChildren().length);
+        Assert.assertEquals("Children: ", 1, op.getChildren().size());
     }
 
     @Test

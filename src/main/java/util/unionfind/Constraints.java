@@ -82,4 +82,8 @@ public class Constraints {
         setUpperBound(that.getUpperBound());
         setEquality(that.getEquality());
     }
+
+    public boolean isNull() {
+        return upperBound == null && lowerBound == null && equality == null;
+    }
 }
