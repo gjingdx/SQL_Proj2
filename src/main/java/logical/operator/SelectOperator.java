@@ -53,7 +53,8 @@ public class SelectOperator extends Operator {
         this.currentSchema = op.getSchema();
         String fromItem = plainSelect.getFromItem().toString();
         String joinItems = plainSelect.getJoins().toString();
-        String newStatement = "Select * from " + fromItem + ", " + joinItems + " where";
+        joinItems = joinItems.substring(1, joinItems.length() - 1);
+        String newStatement = "Select * from " + fromItem + ", " + joinItems + " where ";
 
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect newPlainSelect = null;
@@ -61,13 +62,16 @@ public class SelectOperator extends Operator {
             Constraints constraint = constraints.get(attribute);
             if (constraint.getLowerBound() != null) {
                 newStatement += attribute + ">=" + constraint.getLowerBound().toString() + " AND ";
-            } if (constraint.getUpperBound() != null) {
+            }
+            if (constraint.getUpperBound() != null) {
                 newStatement += attribute + " <= " + constraint.getUpperBound().toString() + " AND ";
-            } else if (constraint.getEquality() != null) {
+            }
+            if (constraint.getEquality() != null) {
                 newStatement += attribute + " = " + constraint.getEquality().toString() + " AND ";
             }
         }
         newStatement = newStatement.substring(0, newStatement.length() - 5);
+        System.out.println(newStatement);
         try {
             newPlainSelect = (PlainSelect) ((Select) parserManager.
                     parse(new StringReader(newStatement))).getSelectBody();
