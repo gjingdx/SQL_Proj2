@@ -16,7 +16,7 @@ public class UnionFindTest {
         unionFind.createElement("E");
         unionFind.find("A").setLowerBound(100);
         unionFind.find("B").setLowerBound(150);
-        unionFind.find("C").setUpperBound(100);
+        unionFind.find("C").setUpperBound(200);
         unionFind.find("D").setEquality(100);
         unionFind.find("E").setLowerBound(100);
         unionFind.union("A", "B");
@@ -34,7 +34,7 @@ public class UnionFindTest {
         unionFind.createElement("E");
         unionFind.find("A").setLowerBound(100);
         unionFind.find("B").setLowerBound(150);
-        unionFind.find("C").setUpperBound(100);
+        unionFind.find("C").setUpperBound(200);
         unionFind.find("D").setEquality(100);
         unionFind.find("E").setLowerBound(100);
         unionFind.union("A", "B");
@@ -43,6 +43,22 @@ public class UnionFindTest {
 
     @Test
     public void connected() throws Exception {
+        UnionFind unionFind = new UnionFind();
+        unionFind.createElement("A");
+        unionFind.createElement("B");
+        unionFind.createElement("C");
+        unionFind.createElement("D");
+        unionFind.createElement("E");
+        unionFind.find("A").setLowerBound(100);
+        unionFind.find("B").setLowerBound(150);
+        unionFind.find("C").setUpperBound(200);
+        unionFind.find("D").setEquality(100);
+        unionFind.find("E").setLowerBound(100);
+        unionFind.union("A", "B");
+        assertEquals(unionFind.connected("A", "B"), true);
+        assertEquals(unionFind.connected("A", "C"), false);
+        unionFind.union("A", "C");
+        assertEquals(unionFind.connected("C", "B"), true);
     }
 
     @Test
