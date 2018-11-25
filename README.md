@@ -18,131 +18,40 @@
     ```
 ## Implement
 -  **Top-level class** is ```com.sql.interpreter.App```
--  **Physical operators** lays in ```operator/```, all classes are prefixed with physical.
--  **Logical operators** lays in ```logical/operator/``` 
 -  The runnable jar could be run in cmd 
 
-    ```java -jar cs4321 p1.jar $<inputdir> $<outputdir> $<tempdir>```
+    ```java -jar cs4321_p3.jar $<interpreter_config_file>```
 ## Details
-**1. Logical Query Plan(Operator Tree)**  
-```logical/interpreter/LogicalPlanBuilder```
-  
-- After each scan operation, we implement a select operation if there exists related expression in where section.
-- Then we implement join operation if exists. The detailed join operation will be illustrated below.
-- After all tables are joined, we implement the projection, sort and distinct operation in order if they exist in the query statement.
+### Index Scan Operator
+1. Where the ```lowkey``` and ```highkey``` are set  
+In fact, ```lowkey``` and ```highkey``` are extracted in physical plan builder, and be parsered into the operator via constructor. The tool to extract them is ```IndexScanExpressionVisitor```, which might be detailed illustrated in ```doc\ExpressionVisitor.md``` or the related _Java doc_.  
+Briefly speaking, we extract the lowKey and highKey from the select condition, with the following rules:
+    - If thereis no high bound or low bound, ```highKey``` will be set ```MAX_INT``` or ```lowKey``` to be ```MIN_INT```. If both unavailable, we will not implement Index Scan Operator.
+    - Since we have assumed all tuple are Integer, we let the key be the involved.   
+        e.g. ```S.A < 50``` -> ```highKey = 49```
+    - If there exists valid equal condition, e.g ```S.A = 50```, we will set both ```highKey``` and ```lowKey``` _50_.
 
-    e.g.
-    ```
-    SELECT DISTINCT S.A, B.D 
-    FROM Sailors As S, Reserves As R, Boats As B 
-    WHERE R.H = B.D and S.A = R.G and B.D = 101 
-    ORDER BY S.A
-
-                                 Distinct
-                                    |
-                                  Order
-                                    |
-                                 Project
-                                    |
-                                Join with B
-                    (R.H = B.D and S.A = R.G and B.D = 101)
-                                /        \
-                            Join S, R    select
-                           (S.A = R.G)   (B.D = 101)
-                           /        \       |
-                        Scan S    Scan R   scan B
-                                      
-    ```
-    When join with B, we take the whole expression as the join condition, instead of ```S.A = R.G```, since there will be no difference to I/Os.
-
-**2. Physical Plan Builder**  
-```com/sql/interpreter/PhysicalPlanBuilder```  
-  
-  The Physical Plan Builder is the class that builds a physical operator tree using the logical operator tree via visitor pattern. 
-    The Physical PB Class has 6 visit field functions that each has a type of logical operator as the parameter. Correspondingly, 
-    each logical operator has an accept function with a Physical Plan Builder instance as the parameter and inside the accept function, 
-    the physical plan builder visits the operator.  
-      
-   The visit functions traverse the logical operator tree recursively in a way the depth-first search traverses a tree. 
-    In each visit function, the child or children of the parameter logical operator will be visited in the way that the logical operator accepts the Physical Plan Builder instance it self;
-    then a instance of the physical operator corresponding to the logical operator will be created using its physical operator child/children created before and stored in a stack (Deque in Java).
-     The physical operator instance would then be pushed into the stack. In this way, the physical operator tree is built. 
+2. Difference in clustered vs. unclustered  
+    We will load the Index Config according to the table name and column name.  
+    You can find the related code in ```operator.PhysicalIndexScanOperator.nextTuple```
+    - If clustered:  
+        After we get the first Rid and reset the tuple reader according to the Rid. Then we directly implement ```getNextTuple``` of the tuple reader. Read sequently until it exceeds ```highKey```.
+    - If unclustered:  
+        Each time we get the next Rid via ```deserializer``` and reset the tuple reader to read the tuple in the table.  
     
-**3. SMJ**  
-```operator/PhysicalSortMergeJoinOperator```
-- **Partition reset**  
-    In TupleReader, we set interfaces ```recordPosition```, ```revertToPosition```, ```moveBack```, and ```reset(i)```.  
-    1. ```reset(i)``` will reset the tuple reader to the position before the _ith_ tuple. First, we calculate which page the tuple lies in and set the filechannel to this position. Then read the page and set the tuple pointer to the position of the tuple in this page. This method is only used by revertToPostion. For requirement in instruction, we made it public.  
-    2. ```moveBack``` only go back one tuple length step in tuple reader. It is used in External Sort operation. When merging sort, we read all the first tuple in the blocks but only extracted the minimum one. To leave the remain still be the next tuple to read, we let these tuple readers move back one step. Fortunately, this action will actually reload any byte-buffer.
-    3. ```recordPosition``` and ```revertToPosition``` exist because we think the method of ```reset(i)``` seems inharmony with ```readNextTuple```, where the former only need record the index of tuple, while the other does not. So we make the method ```recordPosition``` to record the position of last inequal tuple in right table. Then, when need to reset, we only need to refer to ```revertToPosition``` to set back to the record position.
-    4. Distinct will not have such reset problem, since we sort the tuple not only by the order element but also the rest columns.
-- **Unbouded State**  
-    1. SMJ  
-        SMJ will inherit two sort operations as left and right operation. The memory used to sort is only allocated in the construction of sort operation. The sorted tuple list will be stored in a temp file then. Thus, the memory used for SMJ is at most two pages for reading these two temp files (smaller than minimum block size of external sort).
-    2. External Sort  
-        External Sort will store each run of each pass into an independent temp file. When implementing merge sort, we only need #(block-1) tuple readers to read these runs, and one single page(tuple writer) to write out the minimum tuple among these buffered runs. Thus, the memory will be contrained in #block pages. 
-    3. Distinct
-        Whatever if there exists sort in the sql statement or not, we will implement sort operations before distinct. Thus, we do not need any memory in distinct.  
+3. How preform the root-ro-leaf tree descent  
+    The deserializer first searches for the starting node via the ```lowKey```. It works via ```btree.Deserializer.searchLeafNode``` recursively.  
+    Each time it reach an index node, we will get the next node address via ``lowKey` until we reach an entry node.     
+4. How decides which nodes to be deserialized   
+   After we reach the first leaf node, we only need to sequently scan the node address by address. The deserialization will end until exceed ```highKey``` or meet unexpected format node (end of entry node).
+### Physical Plan Builder
+#### Judge whether or not the selection operator to be handled via Index
+_There are four conditions to make the judgement:_  
+1. The third line of ```plan_builder_config``` is set _1_
+2. The child logical operator is scan operator(leaf operator).
+3. We can find at least one Index Config accroding to the schema key
+4. The ```highKey``` and ```lowKey``` extracted from the join condition is not ```MAX_INT``` and ```MIN_KEY``` at the same time.
 
-**4. Join Expression Visitor**
-- **How to evaluate a Join condition**
-    1. Extract the related expression (Join condition), according to the current schema. We will demonstrate how to do this and some examples as below.
-    2. Use the refined expression to accept the SelectExpressionVisitor to make the evaluation.
-   
-   Thus, the Join Expression Visitor only targets to realize step 1.
 
-- **Rules**  
-    1. We call an expression valid as they only use the column appeared in the current schema.
-    2. For a ```AndExpression```:  
-     If both the right and left expressions in stack are valid, ```left and right``` will be seem as valid.   
-     If only either one is valid, we will return this valid expression to the parent node via keep it in stack.    
-     If none valid, return back null.
-    3. For a ``OrExpression`:   
-     If either one of left or right expression is valid, returns back null(replace the stack by null)   
-     Otherwise, return the ```left or right```
-    4. ```LongValue``` is valid. The ```colume``` will be judged valid when the column is appeared in schema.
-    5. For ```comparasion``` expression, it is similar as ```OrExpression```.
-- **Examples**  
-  current schema only contains table S and R, without B.  
-  ```
-  S.A = B.C                             -> null
-  S.A = B.C or XXX                      -> null
-  S.A > 3 and B.C = R.G and R.G < S.A   -> S.A > 3 and R.G < S.A
-  ```
-- **Java doc**  
-__*JoinExpressionVisitor*__ lays in ```src/main/java/util/```, so does __*SelectExpressionVisitor*__.  
-The related comments are added on the related functions.
-
-**5. Select Expression Visitor**
-- **Principles**  
-If we see select expressions as a tree, then they need to be evaluated 
-from the bottom layer up to top, which means previous result would be used 
-in later expressions. Thus, we use stacks to store the results. 
-Since each expression has two sides, left and right. We need to 
-store both left and right results accordingly into the stack. 
-Since results can be int type or boolean type, we have two kind of stacks:
-the first which is int type stores results in data form and the second 
-stores results in boolean form. 
-
-- **Implementation**  
-This is implemented by a Deque<Long> and a Deque<Boolean> in Java.  
-  
-  Using the visitor pattern, 9 visitor methods are overridden which have parameter 
-in AndExpression, Column, LongValue, EqualsTo, NotEqualsTo, GreaterThan, GreaterThanEquals, 
-MinorThan, MinorThanEquals respectively.
-  1. Implementation of visit method for Column Expression:  
-get the data in the current tuple of the certain column and push it to data stack.
-  2. Implementation of visit method for Long Expression:  
-just push the long value of the expression to the data stack.
-
-  3. Implementation of Each visit method except for Column and Long expression:  
-  1 the left side of the expression accepts the visitor  
-  2 the right side of expression accepts the visitor  
-  3 get the right result by pop the stack  
-  4 get the left result by pop the stack  
-  5 push the evaluation of the expression using results of both sides into stack.
-
-- **Java doc**  
-__*SelectExpressionVisitor*__ lays in ```src/main/java/util/```.
-The related Java docs are added on the related functions.
-
+## Posible Bugs:
+Some tests cannot run, since the ambiguous usage of ```samples``` and ```samples-2```. But it does not affect the jar functions.
