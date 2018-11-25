@@ -34,40 +34,6 @@ public class LogicalPlanBuilder {
     * @return
     */
     public static Operator constructLogicalPlanTree(PlainSelect plainSelect) {
-        // old constructLogicalPlanTree
-//        int tableCount;
-//        Operator opLeft;
-//        if (plainSelect.getJoins() == null) {
-//            tableCount = 1;
-//        } else {
-//            tableCount = 1 + plainSelect.getJoins().size();
-//        }
-//
-//        opLeft = new ScanOperator(plainSelect, 0);
-//        if (hasRelatedExpression(opLeft.getSchema(), plainSelect)) {
-//            opLeft = new SelectOperator(opLeft, plainSelect);
-//        }
-//
-//        for (int i = 1; i < tableCount; ++i) {
-//            Operator opRight = new ScanOperator(plainSelect, i);
-//            if (hasRelatedExpression(opRight.getSchema(), plainSelect)) {
-//                opRight = new SelectOperator(opRight, plainSelect);
-//            }
-//            opLeft = new JoinOperator(opLeft, opRight, plainSelect);
-//        }
-//        if (plainSelect.getSelectItems() != null
-//                && plainSelect.getSelectItems().size() > 0
-//                && plainSelect.getSelectItems().get(0).toString() != "*")
-//            opLeft = new ProjectOperator(opLeft, plainSelect);
-//        if (plainSelect.getDistinct() != null) {
-//            opLeft = new SortOperator(opLeft, plainSelect);
-//            opLeft = new DuplicateEliminationOperator(opLeft);
-//        } else {
-//            if (plainSelect.getOrderByElements() != null)
-//                opLeft = new SortOperator(opLeft, plainSelect);
-//        }
-//        return opLeft;
-
         // get number of tables used in total which is num of scanOp
         int numTable;
         if (plainSelect.getJoins() == null) {

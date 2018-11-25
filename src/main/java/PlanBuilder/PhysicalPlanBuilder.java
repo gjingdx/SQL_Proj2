@@ -67,7 +67,9 @@ public class PhysicalPlanBuilder {
      * @param logicalJoinOp
      */
     public void visit(JoinOperator logicalJoinOp) {
-        List<Operator> children = logicalJoinOp.getChildren();
+        JoinOperator newLogicalJoinOp = new JoinPlanBuilderHelper(logicalJoinOp).rebuildLogicalTree();
+        List<Operator> children = newLogicalJoinOp.getChildren();
+
         children.get(0).accept(this);
         children.get(1).accept(this);
         PhysicalOperator rightChild = physOpChildren.pop();
@@ -75,16 +77,16 @@ public class PhysicalPlanBuilder {
         PhysicalOperator physJoinOp;
         switch (Catalog.getInstance().getJoinMethod()) {
             case TNLJ:
-                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, leftChild, rightChild);
+                physJoinOp = new PhysicalTupleJoinOperator(newLogicalJoinOp, leftChild, rightChild);
                 physOpChildren.push(physJoinOp);
                 break;
             case BNLJ:
-                physJoinOp = new PhysicalBlockJoinOperator(logicalJoinOp, leftChild, rightChild,
+                physJoinOp = new PhysicalBlockJoinOperator(newLogicalJoinOp, leftChild, rightChild,
                         Catalog.getInstance().getJoinBlockSize());
                 physOpChildren.push(physJoinOp);
                 break;
             case SMJ:
-                Expression joinCondition = logicalJoinOp.getJoinCondition();
+                Expression joinCondition = newLogicalJoinOp.getJoinCondition();
                 // if there is no join condition, there will be no SMJ implements. 
                 // So does no order extracted from join condition
                 if (joinCondition != null) {
@@ -100,13 +102,13 @@ public class PhysicalPlanBuilder {
                             rightSort = new PhysicalMemorySortOperator(orders.get(0), rightChild);
                             leftSort = new PhysicalMemorySortOperator(orders.get(1), leftChild);
                         }
-                        physJoinOp = new PhysicalSortMergeJoinOperator(logicalJoinOp, leftSort, rightSort);
+                        physJoinOp = new PhysicalSortMergeJoinOperator(newLogicalJoinOp, leftSort, rightSort);
                         physOpChildren.push(physJoinOp);
                         break;
                     }
                 }
             default:
-                physJoinOp = new PhysicalTupleJoinOperator(logicalJoinOp, leftChild, rightChild);
+                physJoinOp = new PhysicalTupleJoinOperator(newLogicalJoinOp, leftChild, rightChild);
                 physOpChildren.push(physJoinOp);
         }
 
