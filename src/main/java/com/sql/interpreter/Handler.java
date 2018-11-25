@@ -1,7 +1,8 @@
 package com.sql.interpreter;
 
+import PlanBuilder.PhysicalPlanBuilder;
 import io.*;
-import logical.interpreter.LogicalPlanBuilder;
+import PlanBuilder.LogicalPlanBuilder;
 import logical.operator.Operator;
 import model.*;
 import net.sf.jsqlparser.parser.CCJSqlParser;

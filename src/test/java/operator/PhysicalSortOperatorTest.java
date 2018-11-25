@@ -1,7 +1,7 @@
 package operator;
 
 import com.sql.interpreter.Handler;
-import com.sql.interpreter.PhysicalPlanBuilder;
+import PlanBuilder.PhysicalPlanBuilder;
 import logical.operator.ScanOperator;
 import logical.operator.SortOperator;
 import model.Tuple;
