@@ -27,6 +27,7 @@ public class SelectOperator extends Operator {
     private Expression expression;
     private Map<String, Integer> currentSchema;
     private TableStat tableStat;
+    private Map<String, Constraints> constraintsMap;
 
     /**
      * Constructor of Select Operator
@@ -51,6 +52,7 @@ public class SelectOperator extends Operator {
     public SelectOperator(Operator op, Map<String, Constraints> constraints, PlainSelect plainSelect) {
         this.prevOp = op;
         this.currentSchema = op.getSchema();
+        this.constraintsMap = constraints;
         String fromItem = plainSelect.getFromItem().toString();
         String joinItems = plainSelect.getJoins().toString();
         joinItems = joinItems.substring(1, joinItems.length() - 1);
@@ -106,6 +108,10 @@ public class SelectOperator extends Operator {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public Map<String, Constraints> getConstraints() {
+        return constraintsMap;
     }
 
     @Override
