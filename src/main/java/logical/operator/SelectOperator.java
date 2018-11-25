@@ -1,12 +1,11 @@
 package logical.operator;
 
-import com.sql.interpreter.PhysicalPlanBuilder;
+import PlanBuilder.PhysicalPlanBuilder;
 import model.TableStat;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import util.Constants;
 import util.JoinExpressionVisitor;
 import util.unionfind.Constraints;
 
@@ -129,10 +128,6 @@ public class SelectOperator extends Operator {
         }
     }
 
-    public TableStat getTableStat() {
-        return this.tableStat;
-    }
-
     public Expression getExpression() {
         return expression;
     }
@@ -144,5 +139,15 @@ public class SelectOperator extends Operator {
     @Override
     public void accept(PhysicalPlanBuilder visitor) {
         visitor.visit(this);
+    }
+
+    public TableStat getTableStat() {
+        return this.tableStat;
+    }
+
+    public Map<String, Integer> getColumnNameToTableId() {
+        if (!(prevOp instanceof ScanOperator))
+            return null;
+        return ((ScanOperator) prevOp).getColumnNameToTableId();
     }
 }

@@ -1,16 +1,6 @@
 package operator;
 
-import com.sql.interpreter.PhysicalPlanBuilder;
-import logical.operator.JoinOperator;
-import logical.operator.ScanOperator;
-import model.Tuple;
-import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
-
-import java.io.StringReader;
-import java.util.ArrayList;
 
 public class PhysicalJoinOperatorTest {
     @Test

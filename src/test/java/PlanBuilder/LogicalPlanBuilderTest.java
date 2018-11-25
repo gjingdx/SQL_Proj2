@@ -1,5 +1,6 @@
-package logical.interpreter;
+package PlanBuilder;
 
+import PlanBuilder.JoinOrder;
 import logical.operator.Operator;
 import logical.operator.ScanOperator;
 import logical.operator.SelectOperator;
@@ -14,7 +15,7 @@ import util.unionfind.UnionFind;
 import java.io.StringReader;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static PlanBuilder.LogicalPlanBuilder.constructLogicalPlanTree;
 
 public class LogicalPlanBuilderTest {
     @Test
@@ -62,5 +63,21 @@ public class LogicalPlanBuilderTest {
         }
 
 
+    }
+
+    @Test
+    public void testJoinOrder() throws Exception{
+        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B Where B.D = R.H and S.A = R.G and S.A < 10 and B.D > 60;";
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
+                parse(new StringReader(statement))).getSelectBody();
+
+
+
+        // get number of tables used in total which is num of scanOp
+        Operator op = constructLogicalPlanTree(plainSelect);
+        JoinOrder jo = new JoinOrder(op.getChildren(), plainSelect);
+        List<Integer> aa = jo.getOrder();
+        int a = 1;
     }
 }

@@ -1,13 +1,13 @@
 package logical.operator;
 
-import com.sql.interpreter.PhysicalPlanBuilder;
+import PlanBuilder.PhysicalPlanBuilder;
 import io.BinaryTupleReader;
 import model.TableStat;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +21,7 @@ public class ScanOperator extends Operator {
     private BinaryTupleReader binaryTupleReader;
     private Map<String, Integer> schema;
     private TableStat tableStat;
+    private int tableIndex;
 
     /**
      * @param plainSelect is the statement of sql
@@ -28,7 +29,7 @@ public class ScanOperator extends Operator {
      */
     public ScanOperator(PlainSelect plainSelect, int tableIndex) {
         this.op = null;
-
+        this.tableIndex = tableIndex;
         String item;
         if (tableIndex == 0) {
             item = plainSelect.getFromItem().toString();
@@ -85,12 +86,20 @@ public class ScanOperator extends Operator {
         }
     }
 
+    @Override
+    public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
+
     public TableStat getTableStat() {
         return this.tableStat;
     }
 
-    @Override
-    public void accept(PhysicalPlanBuilder visitor) {
-        visitor.visit(this);
+    public Map<String, Integer> getColumnNameToTableId() {
+        Map<String, Integer> map = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : this.schema.entrySet()) {
+            map.put(entry.getKey(), tableIndex);
+        }
+        return map;
     }
 }

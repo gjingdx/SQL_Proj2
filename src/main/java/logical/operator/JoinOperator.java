@@ -1,12 +1,9 @@
 package logical.operator;
 
-import com.sql.interpreter.PhysicalPlanBuilder;
+import PlanBuilder.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import util.Catalog;
-import util.JoinExpressionVisitor;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
