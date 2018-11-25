@@ -82,4 +82,13 @@ public class Constraints {
         setUpperBound(that.getUpperBound());
         setEquality(that.getEquality());
     }
+
+    public boolean isNull() {
+        return upperBound == null && lowerBound == null && equality == null;
+    }
+
+    public String toString() {
+        return "Lower: " + this.lowerBound + " upper: " + this.getUpperBound()
+                + " equality: " + this.getEquality();
+    }
 }

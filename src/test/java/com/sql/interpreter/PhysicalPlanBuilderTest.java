@@ -78,26 +78,26 @@ public class PhysicalPlanBuilderTest {
     /**
      * test visit(JoinOperator logicalJoinOp)
      */
-    @Test
-    public void visit2() throws Exception {
-        String statement = "SELECT * FROM Sailors, Reserves, Boats Where Boats.D = Reserves.H and Sailors.A = Reserves.G;";
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        ScanOperator op1 = new ScanOperator(plainSelect, 0);
-        ScanOperator op2 = new ScanOperator(plainSelect, 1);
-        JoinOperator logJoinOp = new JoinOperator(op1, op2, plainSelect);
-
-        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
-        physPB.visit(logJoinOp);
-        PhysicalOperator physJoinOp = physPB.getPhysOpChildren().peek();
-        Tuple tuple;
-        ArrayList<String> outputStrings = new ArrayList<>();
-        while ((tuple = physJoinOp.getNextTuple()) != null) {
-            outputStrings.add(tuple.toString());
-        }
-        System.out.println(outputStrings);
-        //ssertEquals(expectedResult, outputStrings);
-    }
+//    @Test
+//    public void visit2() throws Exception {
+//        String statement = "SELECT * FROM Sailors, Reserves, Boats Where Boats.D = Reserves.H and Sailors.A = Reserves.G;";
+//        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+//        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+//        ScanOperator op1 = new ScanOperator(plainSelect, 0);
+//        ScanOperator op2 = new ScanOperator(plainSelect, 1);
+//        JoinOperator logJoinOp = new JoinOperator(op1, op2, plainSelect);
+//
+//        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+//        physPB.visit(logJoinOp);
+//        PhysicalOperator physJoinOp = physPB.getPhysOpChildren().peek();
+//        Tuple tuple;
+//        ArrayList<String> outputStrings = new ArrayList<>();
+//        while ((tuple = physJoinOp.getNextTuple()) != null) {
+//            outputStrings.add(tuple.toString());
+//        }
+//        System.out.println(outputStrings);
+//        //ssertEquals(expectedResult, outputStrings);
+//    }
 
     /**
      * visit(ProjectOperator logicalProjOp)

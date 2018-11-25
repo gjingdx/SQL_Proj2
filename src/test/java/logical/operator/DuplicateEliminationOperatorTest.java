@@ -20,7 +20,7 @@ public class DuplicateEliminationOperatorTest {
         Operator sortOp = new SortOperator(op, plainSelect);
         DuplicateEliminationOperator dupOp = new DuplicateEliminationOperator(sortOp);
 
-        Assert.assertEquals(1, dupOp.getChildren().length);
+        Assert.assertEquals(1, dupOp.getChildren().size());
     }
 
 }

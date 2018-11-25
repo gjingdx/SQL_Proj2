@@ -5,12 +5,10 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.JoinExpressionVisitor;
 import util.UnionFindExpressionVisitor;
+import util.unionfind.Constraints;
 import util.unionfind.UnionFind;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Handler class to parse SQL, construct query plan and handle initialization
@@ -78,8 +76,6 @@ public class LogicalPlanBuilder {
             numTable = 1 + plainSelect.getJoins().size();
         }
 
-
-
         //List<Operator> scanOps = new ArrayList<>(); // list of scan Ops
         // list of select Ops or scan Op that pass to JoinOp
         List<Operator> selectOps = new ArrayList<>();
@@ -92,10 +88,14 @@ public class LogicalPlanBuilder {
         for (int i = 0; i < numTable; i++) {
             Operator logicOp = new ScanOperator(plainSelect, i);
             //scanOps.add(scan);
+            Map<String, Constraints> constraints = new HashMap<>();
             for (String attribute : attributes) {
-                if (logicOp.getSchema().containsKey(attribute)) {
-                    logicOp = new SelectOperator(logicOp, attribute, unionFind.find(attribute), plainSelect);
+                if (logicOp.getSchema().containsKey(attribute) && !unionFind.find(attribute).isNull()) {
+                    constraints.put(attribute, unionFind.find(attribute));
                 }
+            }
+            if (!constraints.isEmpty()) {
+                logicOp = new SelectOperator(logicOp, constraints, plainSelect);
             }
             selectOps.add(logicOp);
         }

@@ -29,7 +29,7 @@ public class SortOperatorTest {
 
     @Test
     public void getChildrenTest() {
-        Assert.assertEquals("Children: ", 1, sortOp.getChildren().length);
+        Assert.assertEquals("Children: ", 1, sortOp.getChildren().size());
     }
 
     @Test
