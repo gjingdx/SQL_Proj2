@@ -4,7 +4,6 @@ import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -70,7 +69,6 @@ public class Catalog {
             }
             br.close();
 
-            parserStats();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Files not found!");
@@ -384,33 +382,4 @@ public class Catalog {
         return this.evaluateSQL;
     }
 
-    // Table Stats data
-    public String getStatsPath() { return Constants.inputPath + "/db/stats.txt"; }
-
-    private Map<String, String> originTableStats = new HashMap<>();
-
-    public void putStats(String config) {
-        String splits[] = config.split("\\s+");
-        if (splits.length < 2) {
-            throw new IllegalArgumentException("Unexpected Stat.txt format");
-        }
-        originTableStats.put(splits[0], config);
-    }
-
-    public String getStatsConfig(String tableName) {
-        if (!originTableStats.containsKey(tableName)) {
-            return null;
-        }
-        return originTableStats.get(tableName);
-    }
-
-    public void parserStats() throws IOException {
-        File file = new File(Constants.inputPath + "/db/stats.txt");
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String config;
-        while ((config = br.readLine()) != null) {
-            putStats(config);
-        }
-        br.close();
-    }
 }

@@ -41,9 +41,4 @@ public class CatalogTest {
         assertEquals("Samples/samples/input/db/data/Sailors", instance.getDataPath("Sailors"));
     }
 
-    @Test
-    public void testStatsParser() throws Exception {
-        Catalog.getInstance().parserStats();
-    }
-
 }
