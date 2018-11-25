@@ -27,6 +27,7 @@ public class SelectOperator extends Operator {
     private Expression expression;
     private Map<String, Integer> currentSchema;
     private TableStat tableStat;
+    private Map<String, Constraints> constraintsMap;
 
     /**
      * Constructor of Select Operator
@@ -51,9 +52,11 @@ public class SelectOperator extends Operator {
     public SelectOperator(Operator op, Map<String, Constraints> constraints, PlainSelect plainSelect) {
         this.prevOp = op;
         this.currentSchema = op.getSchema();
+        this.constraintsMap = constraints;
         String fromItem = plainSelect.getFromItem().toString();
         String joinItems = plainSelect.getJoins().toString();
-        String newStatement = "Select * from " + fromItem + ", " + joinItems + " where";
+        joinItems = joinItems.substring(1, joinItems.length() - 1);
+        String newStatement = "Select * from " + fromItem + ", " + joinItems + " where ";
 
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect newPlainSelect = null;
@@ -61,13 +64,16 @@ public class SelectOperator extends Operator {
             Constraints constraint = constraints.get(attribute);
             if (constraint.getLowerBound() != null) {
                 newStatement += attribute + ">=" + constraint.getLowerBound().toString() + " AND ";
-            } if (constraint.getUpperBound() != null) {
+            }
+            if (constraint.getUpperBound() != null) {
                 newStatement += attribute + " <= " + constraint.getUpperBound().toString() + " AND ";
-            } else if (constraint.getEquality() != null) {
+            }
+            if (constraint.getEquality() != null) {
                 newStatement += attribute + " = " + constraint.getEquality().toString() + " AND ";
             }
         }
         newStatement = newStatement.substring(0, newStatement.length() - 5);
+        System.out.println(newStatement);
         try {
             newPlainSelect = (PlainSelect) ((Select) parserManager.
                     parse(new StringReader(newStatement))).getSelectBody();
@@ -106,6 +112,10 @@ public class SelectOperator extends Operator {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public Map<String, Constraints> getConstraints() {
+        return constraintsMap;
     }
 
     @Override
