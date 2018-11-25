@@ -95,6 +95,10 @@ public class SelectOperator extends Operator {
         }
     }
 
+    public TableStat getTableStat() {
+        return this.tableStat;
+    }
+
     public Expression getExpression() {
         return expression;
     }
