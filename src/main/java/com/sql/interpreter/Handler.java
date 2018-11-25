@@ -65,7 +65,7 @@ public class Handler {
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
 
-        
+        parserStats();
 
         try {
             parserPlanBuilderConfig();
@@ -306,5 +306,15 @@ public class Handler {
                 throw new Exception("Fail to delete temp file: " + file.getName());
             }
         }
+    }
+
+    private static void parserStats() throws Exception {
+        File file = new File(Catalog.getInstance().getStatsPath());
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String config;
+        while ((config = br.readLine()) != null) {
+            Catalog.getInstance().putStats(config);
+        }
+        br.close();
     }
 }
