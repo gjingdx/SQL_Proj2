@@ -2,6 +2,7 @@ package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +19,7 @@ public abstract class Operator {
     /**
      * @return an list of children operation
      */
-    public abstract Operator[] getChildren();
+    public abstract List<Operator> getChildren();
 
 
     /**

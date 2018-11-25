@@ -5,6 +5,9 @@ import io.BinaryTupleReader;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -66,11 +69,13 @@ public class ScanOperator extends Operator {
      * method to get children
      */
     @Override
-    public Operator[] getChildren() {
+    public List<Operator> getChildren() {
         if (this.op == null) {
             return null;
         } else {
-            return new Operator[]{this.op};
+            List<Operator> children= new ArrayList<>();
+            children.add(this.op);
+            return children;
         }
     }
 

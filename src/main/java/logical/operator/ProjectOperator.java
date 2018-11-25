@@ -4,6 +4,7 @@ import com.sql.interpreter.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +55,13 @@ public class ProjectOperator extends Operator {
      * method to get children
      */
     @Override
-    public Operator[] getChildren() {
+    public List<Operator> getChildren() {
         if (this.prevOp == null) {
             return null;
         } else {
-            return new Operator[]{this.prevOp};
+            List<Operator> children= new ArrayList<>();
+            children.add(this.prevOp);
+            return children;
         }
     }
 

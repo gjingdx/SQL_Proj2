@@ -2,6 +2,8 @@ package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,11 +39,13 @@ public class DuplicateEliminationOperator extends Operator {
      * method to get children
      */
     @Override
-    public Operator[] getChildren() {
+    public List<Operator> getChildren() {
         if (this.op == null) {
             return null;
         } else {
-            return new Operator[]{this.op};
+            List<Operator> children= new ArrayList<>();
+            children.add(this.op);
+            return children;
         }
     }
 
