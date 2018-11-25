@@ -1,6 +1,7 @@
 package logical.operator;
 
 import com.sql.interpreter.PhysicalPlanBuilder;
+import model.TableStat;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -24,6 +25,7 @@ public class SelectOperator extends Operator {
     private Operator prevOp;
     private Expression expression;
     private Map<String, Integer> currentSchema;
+    private TableStat tableStat;
 
     /**
      * Constructor of Select Operator
@@ -39,6 +41,10 @@ public class SelectOperator extends Operator {
         JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
         expression.accept(joinExpress);
         expression = joinExpress.getExpression();
+
+        if (operator instanceof ScanOperator) {
+            tableStat = ((ScanOperator) operator).getTableStat();
+        }
     }
 
     public SelectOperator(Operator op, String attribute, Constraints constraint, PlainSelect plainSelect) {
