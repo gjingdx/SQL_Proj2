@@ -26,11 +26,6 @@ public class JoinOrderTest {
 
         // get number of tables used in total which is num of scanOp
         Operator op = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
-        JoinOrder jo = new JoinOrder(op.getChildren(), plainSelect);
-        List<Integer> order = jo.getOrder();
-        List<Integer> expectedOrder  = new ArrayList<>();
-        expectedOrder.add(1);
-        expectedOrder.add(0);
-        expectedOrder.add(2);
+
     }
 }
