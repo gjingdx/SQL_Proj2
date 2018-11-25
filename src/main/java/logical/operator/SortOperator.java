@@ -4,6 +4,7 @@ import com.sql.interpreter.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,11 +54,13 @@ public class SortOperator extends Operator {
      * method to get children
      */
     @Override
-    public Operator[] getChildren() {
+    public List<Operator> getChildren() {
         if (this.operator == null) {
             return null;
         } else {
-            return new Operator[]{this.operator};
+            List<Operator> children= new ArrayList<>();
+            children.add(this.operator);
+            return children;
         }
     }
 
