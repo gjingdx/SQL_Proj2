@@ -50,7 +50,6 @@ public class ScanOperator extends Operator {
         this.schema = Catalog.getInstance().getCurrentSchema();
 
         tableStat = new TableStat(aliasName);
-        tableStat.paserFromStatString(Catalog.getInstance().getStatsConfig(tableName));
 
         try {
             binaryTupleReader = new BinaryTupleReader(Catalog.getInstance().getDataPath(tableName));
