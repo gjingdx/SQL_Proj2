@@ -38,7 +38,7 @@ public class UnionFind {
     }
 
     // helper method for creating new element.
-    private void createElement(String attr) {
+    public void createElement(String attr) {
         Constraints ele = new Constraints(count);
         elements.put(attr, ele);
         father.put(ele, ele);
@@ -59,7 +59,7 @@ public class UnionFind {
         return e;
     }
 
-    public int unionCount() {
+    public int getUnionCount() {
         return size;
     }
 
@@ -74,7 +74,7 @@ public class UnionFind {
      * Returns the set of all attributes in this union-find.
      * @return set of all attributes in the union-find.
      */
-    public Set<String> attributeSet() {
+    public Set<String> getAttributeSet() {
         return elements.keySet();
     }
 
