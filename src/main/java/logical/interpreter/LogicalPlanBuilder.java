@@ -4,6 +4,7 @@ import logical.operator.*;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.JoinExpressionVisitor;
+import util.UnionFindExpressionVisitor;
 import util.unionfind.UnionFind;
 
 import java.util.ArrayList;
@@ -70,18 +71,23 @@ public class LogicalPlanBuilder {
 //        return opLeft;
 
         // get number of tables used in total which is num of scanOp
-        int numTable = 0;
+        int numTable;
         if (plainSelect.getJoins() == null) {
             numTable = 1;
         } else {
             numTable = 1 + plainSelect.getJoins().size();
         }
 
+
+
         //List<Operator> scanOps = new ArrayList<>(); // list of scan Ops
         // list of select Ops or scan Op that pass to JoinOp
         List<Operator> selectOps = new ArrayList<>();
 
         UnionFind unionFind = new UnionFind();
+        UnionFindExpressionVisitor ufVisitor = new UnionFindExpressionVisitor(unionFind);
+        plainSelect.getWhere().accept(ufVisitor);
+        unionFind = ufVisitor.getUnionFind();
         Set<String> attributes = unionFind.getAttributeSet();
         for (int i = 0; i < numTable; i++) {
             Operator logicOp = new ScanOperator(plainSelect, i);
