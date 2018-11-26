@@ -16,7 +16,7 @@ public class App {
         try {
             String[] configs;
             if (args.length == 0) {
-                configs = Handler.parserInterpreterConfig("Samples/samples-2/interpreter_config_file.txt");
+                configs = Handler.parserInterpreterConfig("../project5/interpreter_config_file.txt"/*"Samples/samples-2/interpreter_config_file.txt"*/);
             }
             else{
                 configs = Handler.parserInterpreterConfig(args[0]);
