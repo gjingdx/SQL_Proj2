@@ -1,6 +1,7 @@
 package PlanBuilder;
 
 import PlanBuilder.PhysicalPlanBuilder;
+import com.sql.interpreter.Handler;
 import logical.operator.*;
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -8,6 +9,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import operator.PhysicalOperator;
 import org.junit.Test;
+import util.Catalog;
 import util.Constants;
 
 import java.io.BufferedReader;
