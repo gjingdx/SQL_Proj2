@@ -1,5 +1,7 @@
 package util.unionfind;
 
+import util.Constants;
+
 import java.util.*;
 
 public class UnionFind {
@@ -129,5 +131,12 @@ public class UnionFind {
         }
 
         return result;
+    }
+
+    public void setAttr(String attr, Constraints constraints) {
+        find(attr).setLowerBound(constraints.getLowerBound());
+        find(attr).setUpperBound(constraints.getUpperBound());
+        find(attr).setEquality(constraints.getEquality());
+        find(attr).setId(constraints.getId());
     }
 }

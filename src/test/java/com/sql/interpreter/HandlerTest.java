@@ -24,12 +24,13 @@ public class HandlerTest extends Handler {
 
     @Test
     public void constructQueryPlan() throws Exception {
+        Handler.init(new String[0]);
         String statement = "SELECT S.A, S.B, Reserves.G, Boats.D FROM Sailors AS S, Reserves, Boats WHERE Reserves.H = Boats.D And S.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
         PhysicalOperator op = Handler.constructPhysicalQueryPlan(plainSelect);
-        op.dump(1);
+        //op.dump(1);
     }
 
     @Test

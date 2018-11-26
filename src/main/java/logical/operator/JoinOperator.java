@@ -6,6 +6,8 @@ import PlanBuilder.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
+import util.ExpressionBuilder;
+import util.JoinConditionExpressionVisitor;
 import util.JoinExpressionVisitor;
 import util.unionfind.UnionFind;
 
@@ -21,36 +23,6 @@ public class JoinOperator extends Operator {
     private Map<String, Integer> schema;
     Expression joinCondition;
     private PlainSelect plainSelect;
-
-//    /**
-//     * Init the schema of PhysicalJoinOperator
-//     *
-//     * @param opLeft      last operator of outer tuple
-//     * @param opRight     last operator of inner tuple
-//     * @param plainSelect unused temporally
-//     */
-//    public JoinOperator(Operator opLeft, Operator opRight, PlainSelect plainSelect) {
-//        this.opLeft = opLeft;
-//        this.opRight = opRight;
-//        this.schema = new HashMap<>();
-//        schema.putAll(opLeft.getSchema());
-//        for (Map.Entry<String, Integer> entry : opRight.getSchema().entrySet()) {
-//            schema.put(entry.getKey(), entry.getValue() + opLeft.getSchema().size());
-//        }
-//        Catalog.getInstance().setCurrentSchema(schema);
-//
-//        Expression expr = plainSelect.getWhere();
-//        // return cross product if there's no selection
-//        if (expr == null) {
-//            this.joinCondition = null;
-//        }
-//        // join by join condition
-//        else {
-//            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
-//            expr.accept(joinExpressionVisitor);
-//            this.joinCondition = joinExpressionVisitor.getExpression();
-//        }
-//    }
 
     public JoinOperator(List<Operator> prevOps, PlainSelect plainSelect, boolean orderFlag) {
         this.prevOps = prevOps;
@@ -70,12 +42,17 @@ public class JoinOperator extends Operator {
 
         // get joinCondition
         Expression expr = plainSelect.getWhere();
+
         if (expr == null) {
             this.joinCondition = null;
         } else {
-            JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
+            JoinConditionExpressionVisitor joinExpressionVisitor = new JoinConditionExpressionVisitor(this.schema);
             expr.accept(joinExpressionVisitor);
             this.joinCondition = joinExpressionVisitor.getExpression();
+        }
+
+        if (!orderFlag) {
+            joinCondition = ExpressionBuilder.buildExpressionFromTwoChildrenLogicalJoin(this);
         }
     }
 
