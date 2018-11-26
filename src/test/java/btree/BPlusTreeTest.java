@@ -23,6 +23,7 @@ public class BPlusTreeTest {
         //String []  configs = Handler.parserInterpreterConfig("Samples/samples-2/interpreter_config_file.txt");
         //Handler.init(configs);
         new File("Samples/samples-2/input/indexes").mkdir();
+        new File("Samples/samples-2/output").mkdir();
         String relationName = "Samples/samples-2/input/db/data/Boats";
         System.out.println(relationName);
 
@@ -32,6 +33,7 @@ public class BPlusTreeTest {
         schema.put("F", 2);
         int attribute = schema.get("E");
         String indexFile = "Samples/samples-2/output/indexes";
+
 
         BPlusTree bPlusTree = new BPlusTree(relationName, attribute, 10, indexFile);
 

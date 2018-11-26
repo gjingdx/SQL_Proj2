@@ -87,7 +87,7 @@ public class JoinOperator extends Operator {
 
     public UnionFind getUnionFind () {
         if (plainSelect.getWhere() == null) {
-            return null;
+            return new UnionFind();
         }
         return new JoinOrder(getChildren(), plainSelect).getUnionFindFromExpression(plainSelect.getWhere());
     }
