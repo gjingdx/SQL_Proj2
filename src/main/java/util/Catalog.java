@@ -74,7 +74,6 @@ public class Catalog {
             }
             br.close();
 
-            parserStats();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Files not found!");
@@ -187,6 +186,14 @@ public class Catalog {
 
     public String getIndexFile(String schemaName) {
         return getIndexPath() + "/" + schemaName;
+    }
+
+    public Map<String, String> getTablePaths() {
+        return files;
+    }
+
+    public Map<String, Map<String, Integer>> getSchemas() {
+        return schemas;
     }
 
     /**

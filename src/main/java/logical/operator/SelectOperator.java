@@ -97,8 +97,8 @@ public class SelectOperator extends Operator {
                     newStatement += attribute + " = " + constraint.getEquality().toString() + " AND ";
                 }
 
-                rate *= (double)(tableStat.getStat(attribute).maxValue - tableStat.getStat(attribute).minValue)
-                        / (double)(originMax - originMin);
+                rate *= (double)(tableStat.getStat(attribute).maxValue - tableStat.getStat(attribute).minValue + 1)
+                        / (double)(originMax - originMin + 1);
             }
             newStatement = newStatement.substring(0, newStatement.length() - 5);
             System.out.println("newStatement: " + newStatement);
