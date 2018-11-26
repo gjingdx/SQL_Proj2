@@ -115,7 +115,7 @@ public class Catalog {
                 attributeOrder.add(selectItem.toString());
             }
         }
-        System.out.println("attributeOrder: " + attributeOrder.toString());
+        //System.out.println("attributeOrder: " + attributeOrder.toString());
     }
 
 
