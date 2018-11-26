@@ -67,42 +67,54 @@ public class SelectOperator extends Operator {
         double rate = 1.0; // used to update tableStat count
 
         String fromItem = plainSelect.getFromItem().toString();
-        String joinItems = plainSelect.getJoins().toString();
-        joinItems = joinItems.substring(1, joinItems.length() - 1);
-        String newStatement = "Select * from " + fromItem + ", " + joinItems + " where ";
-
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect newPlainSelect = null;
-        for (String attribute : constraints.keySet()) {
-            int originMin = tableStat.getStat(attribute).minValue;
-            int originMax = tableStat.getStat(attribute).maxValue;
-
-            Constraints constraint = constraints.get(attribute);
-            if (constraint.getLowerBound() != null) {
-                newStatement += attribute + ">=" + constraint.getLowerBound().toString() + " AND ";
-                tableStat.getStat(attribute).minValue = Math.max(originMin, constraint.getLowerBound());
-            }
-            if (constraint.getUpperBound() != null) {
-                newStatement += attribute + " <= " + constraint.getUpperBound().toString() + " AND ";
-                tableStat.getStat(attribute).maxValue = Math.min(originMax, constraint.getUpperBound());
-            }
-            if (constraint.getEquality() != null) {
-                newStatement += attribute + " = " + constraint.getEquality().toString() + " AND ";
-            }
-
-            rate *= (double)(tableStat.getStat(attribute).maxValue - tableStat.getStat(attribute).minValue)
-                    / (double)(originMax - originMin);
+        String joinItems = "";
+        if (plainSelect.getJoins() != null) {
+            joinItems = plainSelect.getJoins().toString();
+            joinItems = joinItems.substring(1, joinItems.length() - 1);
+            joinItems = "," + joinItems;
         }
-        newStatement = newStatement.substring(0, newStatement.length() - 5);
-        System.out.println("newStatement: " + newStatement);
-        try {
-            newPlainSelect = (PlainSelect) ((Select) parserManager.
-                    parse(new StringReader(newStatement))).getSelectBody();
-        } catch (Exception e ) {
-            e.printStackTrace();
+
+        if (!constraints.isEmpty()) {
+            System.out.println(constraints.toString());
+            String newStatement = "Select * from " + fromItem + joinItems + " where ";
+
+            CCJSqlParserManager parserManager = new CCJSqlParserManager();
+            PlainSelect newPlainSelect = null;
+            for (String attribute : constraints.keySet()) {
+                int originMin = tableStat.getStat(attribute).minValue;
+                int originMax = tableStat.getStat(attribute).maxValue;
+
+                Constraints constraint = constraints.get(attribute);
+                if (constraint.getLowerBound() != null) {
+                    newStatement += attribute + ">=" + constraint.getLowerBound().toString() + " AND ";
+                    tableStat.getStat(attribute).minValue = Math.max(originMin, constraint.getLowerBound());
+                }
+                if (constraint.getUpperBound() != null) {
+                    newStatement += attribute + " <= " + constraint.getUpperBound().toString() + " AND ";
+                    tableStat.getStat(attribute).maxValue = Math.min(originMax, constraint.getUpperBound());
+                }
+                if (constraint.getEquality() != null) {
+                    newStatement += attribute + " = " + constraint.getEquality().toString() + " AND ";
+                }
+
+                rate *= (double)(tableStat.getStat(attribute).maxValue - tableStat.getStat(attribute).minValue)
+                        / (double)(originMax - originMin);
+            }
+            newStatement = newStatement.substring(0, newStatement.length() - 5);
+            System.out.println("newStatement: " + newStatement);
+            try {
+                newPlainSelect = (PlainSelect) ((Select) parserManager.
+                        parse(new StringReader(newStatement))).getSelectBody();
+            } catch (Exception e ) {
+                e.printStackTrace();
+            }
+            this.expression = newPlainSelect.getWhere();
+            System.out.println("Expression: " + this.expression.toString());
+        } else if (plainSelect.getWhere() != null) {
+            this.expression = plainSelect.getWhere();
+            System.out.println("Expression: " + this.expression.toString());
         }
-        this.expression = newPlainSelect.getWhere();
-        System.out.println("Expression: " + this.expression.toString());
+
         tableStat.setCount((int)Math.ceil(tableStat.getCount() * rate));
     }
 
