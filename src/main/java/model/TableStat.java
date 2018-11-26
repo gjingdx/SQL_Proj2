@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class TableStat {
     private String alias;
-    private int count;
+    private long count;
     Map<String, ColumnStat> fieldStatSchema;
 
     public TableStat(String alias) {
@@ -18,11 +18,11 @@ public class TableStat {
         return this.alias;
     }
 
-    public void setCount(int count) {
+    public void setCount(long count) {
         this.count = count;
     }
 
-    public int getCount() {
+    public long getCount() {
         return this.count;
     }
 

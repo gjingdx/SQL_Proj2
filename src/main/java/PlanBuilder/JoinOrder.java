@@ -24,6 +24,8 @@ public class JoinOrder {
     Map<String, Integer> columnToTableId;
     UnionFind unionFind;
 
+    Map<Set<Integer>, Long> storeProduce = new HashMap<>();
+
     public JoinOrder(List<Operator> joinChildren, PlainSelect plainSelect) {
         this.joinChildren = new ArrayList<>(joinChildren);
         this.plainSelect = plainSelect;
@@ -67,7 +69,7 @@ public class JoinOrder {
         return cs.maxValue - cs.minValue + 1;
     }
 
-    public int getProducedCount (Set<Integer> set) {
+    public long getProducedCount (Set<Integer> set) {
         double numerator = 1.0;
         for (int i : set) {
             numerator *= tableStats.get(i).getCount();
@@ -90,7 +92,11 @@ public class JoinOrder {
                 denominator *= decial;
             }
         }
-        return (int)Math.ceil(numerator / denominator);
+        if (set.size() == 5) {
+            int b = 2;
+        }
+        storeProduce.put(new HashSet<>(set), (long)Math.ceil(numerator / denominator));
+        return (long)Math.ceil(numerator / denominator);
         //return (t1.count * t2.count) / Math.max(getV(t1), getV(t2));
     }
 
@@ -109,7 +115,7 @@ public class JoinOrder {
             // remove one of them as the last to join
             set.remove(content.get(i));
             OrderInfo temp = helper(set);
-            int producedCount = getProducedCount(set);
+            long producedCount = getProducedCount(set);
             if (ret.cost > temp.cost + producedCount) {
                 ret.cost = temp.cost + producedCount;
                 ret.order = new ArrayList<>(temp.order);
@@ -123,9 +129,9 @@ public class JoinOrder {
     }
 
     public class OrderInfo {
-        public int cost;
+        public long cost;
         public ArrayList<Integer> order;
-        public OrderInfo(int cost, ArrayList<Integer> order) {
+        public OrderInfo(long cost, ArrayList<Integer> order) {
             this.cost = cost;
             this.order = new ArrayList<>(order);
         }
