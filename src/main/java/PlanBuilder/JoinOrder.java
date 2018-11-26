@@ -22,10 +22,16 @@ public class JoinOrder {
     PlainSelect plainSelect;
     List<TableStat> tableStats;
     Map<String, Integer> columnToTableId;
+    UnionFind unionFind;
 
     public JoinOrder(List<Operator> joinChildren, PlainSelect plainSelect) {
         this.joinChildren = new ArrayList<>(joinChildren);
         this.plainSelect = plainSelect;
+        if (plainSelect.getWhere() == null) {
+            unionFind = new UnionFind();
+        } else {
+          unionFind = getUnionFindFromExpression(plainSelect.getWhere());
+        }
         this.childrenSchemaKeys = new ArrayList<>();
         for (Operator op : joinChildren) {
             childrenSchemaKeys.add(op.getSchema().keySet());
@@ -71,12 +77,8 @@ public class JoinOrder {
         if (plainSelect.getWhere() == null) {
             return (int)numerator;
         }
-        Expression expression = getRelatedExpression(set, plainSelect.getWhere());
-        if (expression == null) {
-            return (int)numerator;
-        }
-        UnionFind unionFind = getUnionFindFromExpression(expression);
-        for(Map.Entry<Constraints, List<String>> entry : unionFind.getUnions().entrySet()) {
+        UnionFind tempUnionFind = refineUnionFind(set);
+        for(Map.Entry<Constraints, List<String>> entry : tempUnionFind.getUnions().entrySet()) {
             List<String> columnList = entry.getValue();
             Constraints constraints = entry.getKey();
             double decial = 1.0;
@@ -160,4 +162,27 @@ public class JoinOrder {
         unionFind = ufVisitor.getUnionFind();
         return unionFind;
     }
+
+    private UnionFind refineUnionFind(Set<Integer> set) {
+        UnionFind ret = new UnionFind();
+        Map<String, Integer> schema = mergeSchema(set);
+        for(Map.Entry<Constraints, List<String>> entry : unionFind.getUnions().entrySet()) {
+            List<String> newElements = new ArrayList<>();
+            for (String attr : entry.getValue()) {
+                if (schema.containsKey(attr)) {
+                    newElements.add(attr);
+                }
+            }
+            if (newElements.size() == 0) continue;
+            for (String attr : newElements) {
+                ret.createElement(attr);
+                ret.setAttr(attr, entry.getKey());
+            }
+            for (int i = 1; i < newElements.size(); i++) {
+                ret.union(newElements.get(0), newElements.get(i));
+            }
+        }
+        return ret;
+    }
+
 }

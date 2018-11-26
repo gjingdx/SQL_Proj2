@@ -1,6 +1,7 @@
 package PlanBuilder;
 
 import PlanBuilder.JoinOrder;
+import com.sql.interpreter.Handler;
 import logical.operator.Operator;
 import logical.operator.ScanOperator;
 import logical.operator.SelectOperator;
@@ -19,6 +20,7 @@ import java.util.*;
 public class JoinOrderTest {
     @Test
     public void testJoinOrder() throws Exception {
+        Handler.init(new String[0]);
         String statement = "SELECT * FROM Sailors S, Reserves R, Boats B Where B.D = R.H and S.A = R.G and S.A < 10 and B.D > 60;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.

@@ -49,10 +49,6 @@ public class PhysicalSelectOperator extends PhysicalOperator {
         this.prevOp = child;
         this.expression = logSelectOp.getExpression();
         this.currentSchema = logSelectOp.getSchema();
-
-        JoinExpressionVisitor joinExpress = new JoinExpressionVisitor(this.currentSchema);
-        expression.accept(joinExpress);
-        expression = joinExpress.getExpression();
     }
 
     public Expression getExpression() {
