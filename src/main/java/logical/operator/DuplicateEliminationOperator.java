@@ -1,5 +1,6 @@
 package logical.operator;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 
 import java.util.ArrayList;
@@ -51,6 +52,11 @@ public class DuplicateEliminationOperator extends Operator {
 
     @Override
     public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void accept(LogicalOperatorVisitor visitor) {
         visitor.visit(this);
     }
 

@@ -150,7 +150,7 @@ public class JoinOrder {
         return jVisitor.getExpression();
     }
 
-    private UnionFind getUnionFindFromExpression(Expression expression) {
+    public UnionFind getUnionFindFromExpression(Expression expression) {
         UnionFind unionFind = new UnionFind();
         UnionFindExpressionVisitor ufVisitor = new UnionFindExpressionVisitor(unionFind);
         expression.accept(ufVisitor);

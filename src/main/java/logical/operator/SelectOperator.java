@@ -1,5 +1,6 @@
 package logical.operator;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import model.TableStat;
 import net.sf.jsqlparser.expression.Expression;
@@ -162,5 +163,10 @@ public class SelectOperator extends Operator {
         if (!(prevOp instanceof ScanOperator))
             return null;
         return ((ScanOperator) prevOp).getColumnNameToTableId();
+    }
+
+    @Override
+    public void accept(LogicalOperatorVisitor visitor) {
+        visitor.visit(this);
     }
 }
