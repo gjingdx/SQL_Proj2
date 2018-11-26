@@ -2,6 +2,7 @@ package PlanBuilder;
 
 import logical.operator.Operator;
 import operator.*;
+import util.Catalog;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -28,7 +29,9 @@ public class PhysicalOperatorVisitor {
         }
         phPBTree.append("ExternalSort[");
         // get sort by attribute
-        phPBTree.append(phExternalSortOp.getOrder().get(0));
+        if (phExternalSortOp.getOrder() != null) {
+            phPBTree.append(phExternalSortOp.getOrder().get(0));
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : phExternalSortOp.getChildren()) {
             child.accept(this, level + 1);
@@ -54,7 +57,9 @@ public class PhysicalOperatorVisitor {
             phPBTree.append("-");
         }
         phPBTree.append("Project[");
-        phPBTree.append(phProjOp.getSelectItems().toString());
+        if (phProjOp.getSelectItems() != null) {
+            phPBTree.append(phProjOp.getSelectItems().toString());
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : phProjOp.getChildren()) {
             child.accept(this, level + 1);
@@ -66,7 +71,9 @@ public class PhysicalOperatorVisitor {
             phPBTree.append("-");
         }
         phPBTree.append("SMJ[");
-        phPBTree.append(sMJOp.getJoinCondition().toString());
+        if (sMJOp.getJoinCondition() != null) {
+            phPBTree.append(sMJOp.getJoinCondition().toString());
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : sMJOp.getChildren()) {
             child.accept(this, level + 1);
@@ -78,7 +85,9 @@ public class PhysicalOperatorVisitor {
             phPBTree.append("-");
         }
         phPBTree.append("BNLJ[");
-        phPBTree.append(blockJoinOp.getJoinCondition().toString());
+        if (blockJoinOp.getJoinCondition() != null) {
+            phPBTree.append(blockJoinOp.getJoinCondition().toString());
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : blockJoinOp.getChildren()) {
             child.accept(this, level + 1);
@@ -90,7 +99,9 @@ public class PhysicalOperatorVisitor {
             phPBTree.append("-");
         }
         phPBTree.append("TNLJ[");
-        phPBTree.append(tupleJoinOp.getJoinCondition().toString());
+        if (tupleJoinOp.getJoinCondition() != null) {
+            phPBTree.append(tupleJoinOp.getJoinCondition().toString());
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : tupleJoinOp.getChildren()) {
             child.accept(this, level + 1);
@@ -102,7 +113,9 @@ public class PhysicalOperatorVisitor {
             phPBTree.append("-");
         }
         phPBTree.append("Select[");
-        phPBTree.append(phSelectOp.getExpression().toString());
+        if (phSelectOp.getExpression() != null) {
+            phPBTree.append(phSelectOp.getExpression().toString());
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : phSelectOp.getChildren()) {
             child.accept(this, level + 1);
