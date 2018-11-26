@@ -23,4 +23,20 @@ public class JoinPlanBuilderHelper {
         }
         return (JoinOperator)opLeft;
     }
+
+    public JoinOperator seperateLastTable () {
+        if (op.getChildren().size() == 2) {
+            return new JoinOperator(op.getChildren(), op.getPlainSelect(), false);
+        }
+
+        Operator opRight = op.getChildren().get(op.getChildren().size() - 1);
+        List<Operator> ops = new ArrayList<>(op.getChildren());
+        ops.remove(ops.size() - 1);
+        Operator opLeft = new JoinOperator(ops, op.getPlainSelect(), false);
+
+        List<Operator> retOps = new ArrayList<>();
+        retOps.add(opLeft);
+        retOps.add(opRight);
+        return new JoinOperator(retOps, op.getPlainSelect(), false);
+    }
 }

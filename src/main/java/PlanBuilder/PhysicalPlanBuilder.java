@@ -67,7 +67,7 @@ public class PhysicalPlanBuilder {
      * @param logicalJoinOp
      */
     public void visit(JoinOperator logicalJoinOp) {
-        JoinOperator newLogicalJoinOp = new JoinPlanBuilderHelper(logicalJoinOp).rebuildLogicalTree();
+        JoinOperator newLogicalJoinOp = new JoinPlanBuilderHelper(logicalJoinOp).seperateLastTable();
         List<Operator> children = newLogicalJoinOp.getChildren();
 
         children.get(0).accept(this);
