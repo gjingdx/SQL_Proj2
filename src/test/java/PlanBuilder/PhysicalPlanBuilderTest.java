@@ -1,6 +1,7 @@
 package PlanBuilder;
 
 import PlanBuilder.PhysicalPlanBuilder;
+import com.sql.interpreter.Handler;
 import logical.operator.*;
 import model.Tuple;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -8,6 +9,7 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import operator.PhysicalOperator;
 import org.junit.Test;
+import util.Catalog;
 import util.Constants;
 
 import java.io.BufferedReader;
@@ -176,7 +178,8 @@ public class PhysicalPlanBuilderTest {
 
     @Test
     public void testPhysicalPlanBuilder() throws Exception {
-        String statement = "SELECT * FROM Sailors, Reserves, Boats WHERE Sailors.A = Reserves.G;";
+        Handler.init(new String [0]);
+        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B WHERE S.A = R.G AND R.H = B.D ORDER BY S.C;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
 

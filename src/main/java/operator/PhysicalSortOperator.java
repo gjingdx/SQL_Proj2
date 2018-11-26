@@ -4,6 +4,7 @@ import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import util.Catalog;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -111,10 +112,11 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
             // for tie breaker
             // sort tuples by the order of columns.
             for (int i = 0; i < schema.size(); i++) {
-                if (t1.getDataAt(i) > t2.getDataAt(i)) {
+                int index = getSchema().get(Catalog.getInstance().getAttributeOrder().get(i));
+                if (t1.getDataAt(index) > t2.getDataAt(index)) {
                     return 1;
                 }
-                if (t1.getDataAt(i) < t2.getDataAt(i)) {
+                if (t1.getDataAt(index) < t2.getDataAt(index)) {
                     return -1;
                 }
             }

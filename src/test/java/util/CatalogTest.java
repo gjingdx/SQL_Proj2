@@ -1,6 +1,11 @@
 package util;
 
+import net.sf.jsqlparser.parser.CCJSqlParserManager;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
+
+import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -44,6 +49,16 @@ public class CatalogTest {
     @Test
     public void testStatsParser() throws Exception {
         Catalog.getInstance().parserStats();
+    }
+
+    @Test
+    public void testSetAttributeOrder() throws Exception {
+        String statement = "SELECT S.A, S.B, R.G FROM Sailors S, Reserves WHERE S.A = R.G and S.A < 100;";
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
+                parse(new StringReader(statement))).getSelectBody();
+
+        Catalog.getInstance().setAttributeOrder(plainSelect);
     }
 
 }

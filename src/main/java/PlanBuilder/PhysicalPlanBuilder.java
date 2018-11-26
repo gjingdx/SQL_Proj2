@@ -1,11 +1,14 @@
 package PlanBuilder;
 
 import logical.operator.*;
+import model.ColumnStat;
 import model.IndexConfig;
+import model.TableStat;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import operator.*;
 import util.Catalog;
+import util.Constants;
 import util.IndexScanExpressionVisitor;
 import util.Constants.SortMethod;
 import util.SortJoinExpressionVisitor;
@@ -49,9 +52,11 @@ public class PhysicalPlanBuilder {
                 if (isev.isValid()) {
                     int highKey = isev.getHighKey();
                     int lowKey = isev.getLowKey();
-                    PhysicalOperator physIndexScanOp = new PhysicalIndexScanOperator(logSelectOp, lowKey, highKey);
-                    physOpChildren.push(physIndexScanOp);
-                    return;
+                    if (useIndexScan(logSelectOp, indexConfig, highKey, lowKey)){
+                        PhysicalOperator physIndexScanOp = new PhysicalIndexScanOperator(logSelectOp, lowKey, highKey);
+                        physOpChildren.push(physIndexScanOp);
+                        return;
+                    }
                 }
             }
         }
@@ -165,5 +170,18 @@ public class PhysicalPlanBuilder {
      */
     public Deque<PhysicalOperator> getPhysOpChildren() {
         return physOpChildren;
+    }
+
+    private boolean useIndexScan(SelectOperator logSelectOp, IndexConfig indexConfig, int highKey, int lowKey) {
+        if (indexConfig.isClustered){
+            return true;
+        }
+        TableStat tableStat = new TableStat(indexConfig.tableName);
+        tableStat.paserFromStatString(Catalog.getInstance().getStatsConfig(indexConfig.tableName));//logSelectOp.getTableStat();
+        int tupleSize = logSelectOp.getSchema().size();
+        int pageToRead = (int)Math.ceil((double)tableStat.getCount() / (double)Constants.PAGE_SIZE * (double)Constants.INT_SIZE * (double)tupleSize );
+        ColumnStat columnStat = tableStat.getStat(indexConfig.tableName + "." + indexConfig.columnName);
+        int indexPageToRead = (highKey - lowKey + 1) * (int)Math.ceil((double)tableStat.getCount() / (double)(columnStat.maxValue - columnStat.minValue + 1));
+        return indexPageToRead < pageToRead;
     }
 }

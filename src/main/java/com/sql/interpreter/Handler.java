@@ -169,6 +169,7 @@ public class Handler {
                 + " Order By " + indexConfig.schemaName + ";";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+        Catalog.getInstance().setAttributeOrder(plainSelect);
         PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
         ArrayList<Tuple> sortedResult = new ArrayList<>();
         Tuple tuple;
@@ -204,6 +205,7 @@ public class Handler {
                 System.out.println("Read statement: " + statement);
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+                Catalog.getInstance().setAttributeOrder(plainSelect);
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
                 operator.dump(ind);
                 ind++;
