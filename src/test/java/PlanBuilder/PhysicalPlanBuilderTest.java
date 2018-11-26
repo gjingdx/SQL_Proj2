@@ -178,7 +178,8 @@ public class PhysicalPlanBuilderTest {
 
     @Test
     public void testPhysicalPlanBuilder() throws Exception {
-        String statement = "SELECT * FROM Sailors, Reserves, Boats WHERE Sailors.A = Reserves.G;";
+        Handler.init(new String [0]);
+        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B WHERE S.A = R.G AND R.H = B.D ORDER BY S.C;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
 
