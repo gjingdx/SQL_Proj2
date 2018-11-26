@@ -48,8 +48,10 @@ public class LogicalPlanBuilder {
 
         UnionFind unionFind = new UnionFind();
         UnionFindExpressionVisitor ufVisitor = new UnionFindExpressionVisitor(unionFind);
-        plainSelect.getWhere().accept(ufVisitor);
-        unionFind = ufVisitor.getUnionFind();
+        if (plainSelect.getWhere() != null) {
+            plainSelect.getWhere().accept(ufVisitor);
+            unionFind = ufVisitor.getUnionFind();
+        }
         Set<String> attributes = unionFind.getAttributeSet();
         for (int i = 0; i < numTable; i++) {
             Operator logicOp = new ScanOperator(plainSelect, i);

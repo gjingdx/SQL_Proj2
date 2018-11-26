@@ -20,7 +20,7 @@ import static PlanBuilder.LogicalPlanBuilder.constructLogicalPlanTree;
 public class LogicalPlanBuilderTest {
     @Test
     public void testExpression() throws Exception{
-        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B Where B.D = R.H and S.A = R.G and S.A < 500 and B.D > 60;";
+        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B where S.A < 500 and S.A > 100;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
                 parse(new StringReader(statement))).getSelectBody();
@@ -42,8 +42,10 @@ public class LogicalPlanBuilderTest {
 
         UnionFind unionFind = new UnionFind();
         UnionFindExpressionVisitor ufVisitor = new UnionFindExpressionVisitor(unionFind);
-        plainSelect.getWhere().accept(ufVisitor);
-        unionFind = ufVisitor.getUnionFind();
+        if (plainSelect.getWhere() != null) {
+            plainSelect.getWhere().accept(ufVisitor);
+            unionFind = ufVisitor.getUnionFind();
+        }
         Set<String> attributes = unionFind.getAttributeSet();
         System.out.println("attributes: " + attributes.toString());
         for (int i = 0; i < numTable; i++) {
