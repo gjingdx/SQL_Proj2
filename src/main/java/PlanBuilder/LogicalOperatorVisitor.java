@@ -109,7 +109,7 @@ public class LogicalOperatorVisitor {
         for (int i = 0; i < level; i++) {
             sb.append('-');
         }
-        sb.append("Project[");
+        sb.append("Sort[");
         if (logSortOp.getOrder() != null) {
             sb.append(logSortOp.getOrder().toString());
         }
