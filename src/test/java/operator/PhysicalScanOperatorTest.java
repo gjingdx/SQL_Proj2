@@ -1,5 +1,6 @@
 package operator;
 
+import com.sql.interpreter.Handler;
 import junit.framework.Assert;
 import logical.operator.ScanOperator;
 import model.Tuple;
@@ -20,6 +21,7 @@ public class PhysicalScanOperatorTest {
 
     @Test
     public void testReadFile() throws Exception{
+        Handler.init(new String[0]);
         String statement = "SELECT * FROM Sailors, Reserves WHERE Sailors.A = Reserves.G;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();

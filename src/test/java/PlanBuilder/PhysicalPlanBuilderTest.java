@@ -128,58 +128,10 @@ public class PhysicalPlanBuilderTest {
         }
     }
 
-    /**
-     * visit(SortOperator logSortOp)
-     */
-    @Test
-    public void visit4() throws Exception {
-        String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator logScanOp = new ScanOperator(plainSelect, 0);
-
-        SortOperator logSortOp = new SortOperator(logScanOp, plainSelect);
-        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
-        physPB.visit(logSortOp);
-        PhysicalOperator physSortOp = physPB.getPhysOpChildren().peek();
-        Tuple tuple = physSortOp.getNextTuple();
-        long last = Long.MIN_VALUE;
-        while (tuple != null) {
-            long cur = tuple.getDataAt(2);
-            assertEquals(true, last <= cur);
-            tuple = physSortOp.getNextTuple();
-        }
-    }
-
-    /**
-     * visit(DuplicateEliminationOperator logDupElimOp)
-     */
-    @Test
-    public void visit5() throws Exception {
-        String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
-        CCJSqlParserManager parserManager = new CCJSqlParserManager();
-        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
-        Operator logScanOp = new ScanOperator(plainSelect, 0);
-        Operator logSortOp = new SortOperator(logScanOp, plainSelect);
-        DuplicateEliminationOperator logDupOp = new DuplicateEliminationOperator(logSortOp);
-        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
-        physPB.visit(logDupOp);
-        PhysicalOperator physDupOp = physPB.getPhysOpChildren().peek();
-
-        Tuple tuple = physDupOp.getNextTuple();
-        Tuple last = new Tuple(new int[0]);
-        while (tuple != null) {
-            assertNotSame(last, tuple);
-            //System.out.println(tuple);
-            last = tuple;
-            tuple = physDupOp.getNextTuple();
-        }
-    }
-
     @Test
     public void testPhysicalPlanBuilder() throws Exception {
         Handler.init(new String [0]);
-        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B WHERE S.A = R.G AND R.H = B.D ORDER BY S.C;";
+        String statement = "SELECT * FROM Sailors S, Reserves R, Boats B WHERE S.A = R.G AND R.H = B.D";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
 

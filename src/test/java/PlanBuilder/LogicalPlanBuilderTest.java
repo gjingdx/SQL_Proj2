@@ -1,6 +1,7 @@
 package PlanBuilder;
 
 import PlanBuilder.JoinOrder;
+import com.sql.interpreter.Handler;
 import logical.operator.*;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -18,6 +19,7 @@ import static PlanBuilder.LogicalPlanBuilder.constructLogicalPlanTree;
 public class LogicalPlanBuilderTest {
     @Test
     public void testExpression() throws Exception{
+        Handler.init(new String[0]);
         String statement = "SELECT * FROM Sailors, Reserves WHERE Sailors.A = Reserves.G and Sailors.A < 100;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
@@ -82,6 +84,7 @@ public class LogicalPlanBuilderTest {
 
     @Test
     public void testJoinOrder() throws Exception{
+        Handler.init(new String[0]);
         String statement = "SELECT * FROM Sailors S, Reserves R, Boats B Where B.D = R.H and S.A = R.G and S.A < 10 and B.D > 60;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.
@@ -91,8 +94,6 @@ public class LogicalPlanBuilderTest {
 
         // get number of tables used in total which is num of scanOp
         Operator op = constructLogicalPlanTree(plainSelect);
-        JoinOrder jo = new JoinOrder(op.getChildren(), plainSelect);
-        List<Integer> aa = jo.getOrder();
         int a = 1;
     }
 }

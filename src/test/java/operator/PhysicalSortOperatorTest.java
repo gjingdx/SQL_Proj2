@@ -9,6 +9,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.Test;
+import util.Catalog;
 
 import java.io.StringReader;
 
@@ -18,9 +19,13 @@ import static org.junit.Assert.assertEquals;
 public class PhysicalSortOperatorTest {
     @Test
     public void getNextTuple() throws Exception {
+        Handler.init(new String[0]);
         String statement = "SELECT * FROM Boats AS BT ORDER BY BT.F;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+
+        Catalog.getInstance().setAttributeOrder(plainSelect);
+
         ScanOperator logScanOp = new ScanOperator(plainSelect, 0);
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         physPB.visit(logScanOp);
@@ -42,6 +47,7 @@ public class PhysicalSortOperatorTest {
         Handler.init(new String[0]);
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+        Catalog.getInstance().setAttributeOrder(plainSelect);
         PhysicalOperator op = new PhysicalScanOperator(plainSelect, 0);
         PhysicalOperator sortOp = new PhysicalMemorySortOperator(op, plainSelect);
         sortOp.dump(0);

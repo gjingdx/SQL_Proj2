@@ -68,6 +68,9 @@ public class JoinOrder {
         }
 
         double denominator = 1.0;
+        if (plainSelect.getWhere() == null) {
+            return (int)numerator;
+        }
         Expression expression = getRelatedExpression(set, plainSelect.getWhere());
         if (expression == null) {
             return (int)numerator;
