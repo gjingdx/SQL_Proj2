@@ -147,6 +147,7 @@ public class Handler {
                 System.out.println("Read statement: " + statement);
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+                Catalog.getInstance().setAttributeOrder(plainSelect);
                 PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
                 operator.dump(ind);
                 ind++;

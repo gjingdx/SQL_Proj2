@@ -1,5 +1,6 @@
 package util;
 
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
@@ -7,7 +8,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import model.IndexConfig;
@@ -38,6 +41,10 @@ public class Catalog {
     private int sortBlockSize = 0;
 
     private boolean indexScan = false;
+
+    // column order of the output tuple
+    private List<String> attributeOrder;
+
 
     /**
      * private constructor for singleton class
@@ -76,6 +83,34 @@ public class Catalog {
             System.out.println("Files not found!");
         }
 
+    }
+
+
+    /**
+     * store the
+     */
+    public void setAttributeOrder(PlainSelect plainSelect) {
+        this.attributeOrder = new ArrayList<>();
+        if (plainSelect.getSelectItems().get(0).toString() == "*") {
+            List<String> tableList = new ArrayList<>();
+            tableList.add(plainSelect.getFromItem().toString());
+            tableList.addAll(plainSelect.getJoins());
+            System.out.println(tableList);
+            for (Object table : tableList) {
+                attributeOrder.addAll(schemas.get(table.toString()).keySet());
+            }
+        } else {
+            attributeOrder.addAll(plainSelect.getSelectItems());
+        }
+        System.out.println(attributeOrder.toString());
+    }
+
+
+    /**
+     * @return attributeOrder which is the column order of the output tuple
+     */
+    public List<String> getAttributeOrder() {
+        return attributeOrder;
     }
 
     /**
