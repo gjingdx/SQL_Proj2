@@ -94,7 +94,7 @@ public class SelectOperator extends Operator {
                     / (double)(originMax - originMin);
         }
         newStatement = newStatement.substring(0, newStatement.length() - 5);
-        System.out.println(newStatement);
+        System.out.println("newStatement: " + newStatement);
         try {
             newPlainSelect = (PlainSelect) ((Select) parserManager.
                     parse(new StringReader(newStatement))).getSelectBody();
@@ -102,6 +102,7 @@ public class SelectOperator extends Operator {
             e.printStackTrace();
         }
         this.expression = newPlainSelect.getWhere();
+        System.out.println("Expression: " + this.expression.toString());
         tableStat.setCount((int)Math.ceil(tableStat.getCount() * rate));
     }
 
