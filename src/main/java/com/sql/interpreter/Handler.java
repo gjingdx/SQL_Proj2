@@ -88,6 +88,10 @@ public class Handler {
         }
     }
 
+    public static void createStats() {
+        Catalog.getInstance();
+    }
+
     /**
      * Build the index files according to the index config stored in Catalog
      * 
