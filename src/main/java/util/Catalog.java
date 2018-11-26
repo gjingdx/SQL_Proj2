@@ -8,10 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import model.IndexConfig;
 
@@ -94,15 +91,32 @@ public class Catalog {
         if (plainSelect.getSelectItems().get(0).toString() == "*") {
             List<String> tableList = new ArrayList<>();
             tableList.add(plainSelect.getFromItem().toString());
-            tableList.addAll(plainSelect.getJoins());
+            if (plainSelect.getJoins() != null) {
+                for (Object join : plainSelect.getJoins())
+                tableList.add(join.toString());
+            }
             System.out.println(tableList);
-            for (Object table : tableList) {
-                attributeOrder.addAll(schemas.get(table.toString()).keySet());
+            System.out.println(schemas);
+            for (String table : tableList) {
+                String[] tableNames = table.split(" ");
+                if (table.split(" ").length > 1) {
+                    String tableName = tableNames[0];
+                    String alias = tableNames[tableNames.length-1];
+                    TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(tableName));
+                    for (String str : orderedSchema.keySet()) {
+                        attributeOrder.add(alias + "." + str.split("\\.")[1]);
+                    }
+                } else {
+                    TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(table));
+                    attributeOrder.addAll(orderedSchema.keySet());
+                }
             }
         } else {
-            attributeOrder.addAll(plainSelect.getSelectItems());
+            for (Object selectItem : plainSelect.getSelectItems()) {
+                attributeOrder.add(selectItem.toString());
+            }
         }
-        System.out.println(attributeOrder.toString());
+        System.out.println("attributeOrder: " + attributeOrder.toString());
     }
 
 
