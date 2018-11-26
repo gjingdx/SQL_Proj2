@@ -22,6 +22,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     protected Map<String, Integer> schema;
     protected PhysicalOperator physChild;
     protected List<OrderByElement> order;
+    private boolean isSMJChild = false;
 
     /**
      * used for simply test skipping the logical plan tree
@@ -56,6 +57,7 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
         this.physChild = child;
         this.schema = physChild.getSchema();
         this.order = order;
+        this.isSMJChild = true;
     }
 
     /**
@@ -111,15 +113,28 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
 
             // for tie breaker
             // sort tuples by the order of columns.
-            for (int i = 0; i < schema.size(); i++) {
-                int index = getSchema().get(Catalog.getInstance().getAttributeOrder().get(i));
-                if (t1.getDataAt(index) > t2.getDataAt(index)) {
-                    return 1;
-                }
-                if (t1.getDataAt(index) < t2.getDataAt(index)) {
-                    return -1;
+            if (!isSMJChild) {
+                for (int i = 0; i < schema.size(); i++) {
+                    int index = getSchema().get(Catalog.getInstance().getAttributeOrder().get(i));
+                    if (t1.getDataAt(index) > t2.getDataAt(index)) {
+                        return 1;
+                    }
+                    if (t1.getDataAt(index) < t2.getDataAt(index)) {
+                        return -1;
+                    }
                 }
             }
+            else {
+                for (int i = 0; i < schema.size(); i++) {
+                    if (t1.getDataAt(i) > t2.getDataAt(i)) {
+                        return 1;
+                    }
+                    if (t1.getDataAt(i) < t2.getDataAt(i)) {
+                        return -1;
+                    }
+                }
+            }
+
             return 0;
         }
     }

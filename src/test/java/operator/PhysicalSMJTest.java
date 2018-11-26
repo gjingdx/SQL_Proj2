@@ -17,7 +17,8 @@ import static org.junit.Assert.assertEquals;
 
 public class PhysicalSMJTest {
 
-    public PhysicalSMJTest() {
+    public PhysicalSMJTest() throws Exception {
+        Handler.init(new String[0]);
         Catalog.getInstance().setSortBlockSize(50);
         Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
         Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
@@ -33,9 +34,9 @@ public class PhysicalSMJTest {
         Tuple tuple = op.getNextTuple();
         long last = Long.MIN_VALUE;
         while (tuple != null) {
-            long cur = tuple.getDataAt(2);
+            long cur = tuple.getDataAt(op.getSchema().get("R.G"));
             assertEquals(true, last <= cur);
-            assertEquals(tuple.getDataAt(0), tuple.getDataAt(2));
+            assertEquals(tuple.getDataAt(op.getSchema().get("R.G")), tuple.getDataAt(op.getSchema().get("S.A")));
             last = cur;
             tuple = op.getNextTuple();
         }
