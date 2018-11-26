@@ -1,11 +1,13 @@
 package logical.operator;
 
 import PlanBuilder.JoinOrder;
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
 import util.JoinExpressionVisitor;
+import util.unionfind.UnionFind;
 
 import java.util.*;
 
@@ -84,6 +86,13 @@ public class JoinOperator extends Operator {
         return jo.getOrder();
     }
 
+    public UnionFind getUnionFind () {
+        if (plainSelect.getWhere() == null) {
+            return null;
+        }
+        return new JoinOrder(getChildren(), plainSelect).getUnionFindFromExpression(plainSelect.getWhere());
+    }
+
     private void sortPrevOps() {
         List<Integer> joinOrder = getJoinOrder();
         List<Operator> temp = new ArrayList<>();
@@ -131,4 +140,8 @@ public class JoinOperator extends Operator {
         visitor.visit(this);
     }
 
+    @Override
+    public void accept(LogicalOperatorVisitor visitor) {
+        visitor.visit(this);
+    }
 }

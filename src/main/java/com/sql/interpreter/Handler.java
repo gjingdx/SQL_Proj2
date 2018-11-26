@@ -1,5 +1,6 @@
 package com.sql.interpreter;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import io.*;
 import PlanBuilder.LogicalPlanBuilder;
@@ -30,6 +31,9 @@ import btree.BPlusTree;
  * Created by Yufu Mo
  */
 public class Handler {
+
+
+
     /**
      * initialize the file paths and directories
      */
@@ -340,6 +344,11 @@ public class Handler {
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         logicalOperator.accept(physPB);
         PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
+        LogicalOperatorVisitor logicalOperatorVisitor = new LogicalOperatorVisitor();
+        logicalOperator.accept(logicalOperatorVisitor);
+        for (String s : logicalOperatorVisitor.getOutput()) {
+            System.out.println(s);
+        }
         return physicalOperator;
     }
 

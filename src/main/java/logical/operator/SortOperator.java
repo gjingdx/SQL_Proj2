@@ -1,5 +1,6 @@
 package logical.operator;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -66,6 +67,11 @@ public class SortOperator extends Operator {
 
     @Override
     public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void accept(LogicalOperatorVisitor visitor) {
         visitor.visit(this);
     }
 
