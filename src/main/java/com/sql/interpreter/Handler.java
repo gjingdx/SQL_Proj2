@@ -18,6 +18,8 @@ import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -65,8 +67,7 @@ public class Handler {
         }
         outputPath += "query";
         Catalog.getInstance().setOutputPath(outputPath);
-
-        parserStats();
+        createStats();
 
         try {
             parserPlanBuilderConfig();
@@ -80,21 +81,69 @@ public class Handler {
             parserIndexInfo();
         } catch (Exception e) {
             System.err.println("Index Info parse failed");
-            if (Catalog.getInstance().isEvaluateSQL() 
-                || Catalog.getInstance().isBuildIndex()) 
+            if (Catalog.getInstance().isEvaluateSQL()
+                || Catalog.getInstance().isBuildIndex())
             {
                 throw e;
             }
         }
     }
 
-    public static void createStats() {
-        Catalog.getInstance();
+    public static void createStats() throws Exception {
+        String statsPath = Catalog.getInstance().getStatsPath();
+//        File fout = new File(statsPath);
+//        FileOutputStream fos = new FileOutputStream(fout);
+        PrintWriter writer = new PrintWriter(statsPath, "UTF-8");
+
+//        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+
+        Map<String, String> files = Catalog.getInstance().getTablePaths();
+        Map<String, Map<String, Integer>> schemas = Catalog.getInstance().getSchemas();
+        for (String table : files.keySet()) {
+            TupleReader reader = new BinaryTupleReader(files.get(table));
+            int size = schemas.get(table).size();
+            String[] schema = new String[size];
+            int[] maxArray = new int[size];
+            int[] minArray = new int[size];
+            Arrays.fill(maxArray, Integer.MIN_VALUE);
+            Arrays.fill(minArray, Integer.MAX_VALUE);
+            int count = 0;
+            for (String col : schemas.get(table).keySet()) {
+                schema[schemas.get(table).get(col)] = col.split("\\.")[1];
+            }
+            Tuple tuple = reader.readNextTuple();
+            while (tuple != null) {
+                count++;
+                for (int i = 0; i < size; i++) {
+                    int data = tuple.getDataAt(i);
+                    maxArray[i] = Math.max(maxArray[i], data);
+                    minArray[i] = Math.min(minArray[i], data);
+                }
+                tuple = reader.readNextTuple();
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(table);
+            sb.append(' ');
+            sb.append(count);
+            for (int i = 0; i < size; i++) {
+                sb.append(' ');
+                sb.append(schema[i]);
+                sb.append(',');
+                sb.append(minArray[i]);
+                sb.append(',');
+                sb.append(maxArray[i]);
+            }
+            writer.println(sb.toString());
+
+        }
+        writer.close();
+
+        Catalog.getInstance().parserStats();
     }
 
     /**
      * Build the index files according to the index config stored in Catalog
-     * 
+     *
      */
     public static void buildIndexes() {
         new File(Catalog.getInstance().getIndexPath()).mkdirs();
@@ -112,7 +161,7 @@ public class Handler {
     }
 
     private static void sortAndReplaceTable(IndexConfig indexConfig) throws Exception{
-        String statement = "Select * From " + indexConfig.tableName 
+        String statement = "Select * From " + indexConfig.tableName
                 + " Order By " + indexConfig.schemaName + ";";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
@@ -244,7 +293,7 @@ public class Handler {
     /**
      * parser the index info from disk
      * must implement before set isBuildIndex
-     * 
+     *
      * @throws Exception file not exists or unexpected format
      */
     public static void parserIndexInfo() throws Exception {
@@ -264,7 +313,7 @@ public class Handler {
 
     /**
      * parser the interpreter config from disk
-     * 
+     *
      * @param configFile path
      * @return 5 lines configuration
      * @throws Exception file not exists or unexpected format

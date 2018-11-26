@@ -36,10 +36,11 @@ public class TableStat {
             throw new IllegalArgumentException();
         }
         this.count = Integer.valueOf(splits[1]);
-        for (int i = 2; i< splits.length; i+=3) {
-            String schemaKey = alias + "." + splits[i];
-            int minValue = Integer.valueOf(splits[i+1]);
-            int maxValue = Integer.valueOf(splits[i+2]);
+        for (int i = 2; i< splits.length; i++) {
+            String [] info = splits[i].split(",");
+            String schemaKey = alias + "." + info[0];
+            int minValue = Integer.valueOf(info[1]);
+            int maxValue = Integer.valueOf(info[2]);
             fieldStatSchema.put(schemaKey, new ColumnStat(minValue, maxValue));
         }
     }
