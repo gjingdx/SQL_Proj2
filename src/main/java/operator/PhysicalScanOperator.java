@@ -1,11 +1,14 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import io.BinaryTupleReader;
 import logical.operator.ScanOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.Catalog;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -84,5 +87,15 @@ public class PhysicalScanOperator extends PhysicalOperator {
     @Override
     public Map<String, Integer> getSchema() {
         return this.schema;
+    }
+
+    @Override
+    public List<PhysicalOperator> getChildren() {
+        return null;
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 }

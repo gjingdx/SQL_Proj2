@@ -1,8 +1,10 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.DuplicateEliminationOperator;
 import model.Tuple;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +76,18 @@ public class PhysicalDuplicateEliminationOperator extends PhysicalOperator {
     @Override
     public Map<String, Integer> getSchema() {
         return this.schema;
+    }
+
+    @Override
+    public List<PhysicalOperator> getChildren() {
+        List<PhysicalOperator> children = new ArrayList<>();
+        children.add(physChild);
+        return children;
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 
 

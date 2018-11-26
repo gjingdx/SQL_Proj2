@@ -1,5 +1,6 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
@@ -105,6 +106,11 @@ public class PhysicalMemorySortOperator extends PhysicalSortOperator {
     @Override
     public void reset() {
         currentIndex = 0;
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 
     /**

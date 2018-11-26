@@ -1,5 +1,6 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.SelectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.expression.Expression;
@@ -7,6 +8,8 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import util.JoinExpressionVisitor;
 import util.SelectExpressionVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +55,10 @@ public class PhysicalSelectOperator extends PhysicalOperator {
         expression = joinExpress.getExpression();
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     /**
      * @return the next tuple filtered by the Select PhysicalOperator
      */
@@ -85,5 +92,17 @@ public class PhysicalSelectOperator extends PhysicalOperator {
     @Override
     public Map<String, Integer> getSchema() {
         return currentSchema;
+    }
+
+    @Override
+    public List<PhysicalOperator> getChildren() {
+        List<PhysicalOperator> children = new ArrayList<>();
+        children.add(prevOp);
+        return children;
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 }

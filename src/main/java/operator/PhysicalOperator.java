@@ -1,11 +1,13 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import io.BinaryTupleWriter;
 import io.TupleWriter;
 import model.Tuple;
 import util.Catalog;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +36,9 @@ public abstract class PhysicalOperator {
      */
     public abstract Map<String, Integer> getSchema();
 
+    public abstract List<PhysicalOperator> getChildren();
+
+    public abstract void accept(PhysicalOperatorVisitor phOpVisitor, int level);
 
     public void dump(int i) {
         String path = Catalog.getInstance().getOutputPath() + i;
