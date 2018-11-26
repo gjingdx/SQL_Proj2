@@ -1,5 +1,6 @@
 package logical.operator;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 
 import java.util.List;
@@ -29,4 +30,12 @@ public abstract class Operator {
      * @param visitor PhysicalPlanBuilder visitor to be accepted.
      */
     public abstract void accept(PhysicalPlanBuilder visitor);
+
+    /**
+     * Abstract method for accepting LogicalOperatorVisitor visitor,
+     * in which the visitor would visit the operator
+     *
+     * @param visitor LogicalOperatorVisitor visitor to be accepted.
+     */
+    public abstract void accept(LogicalOperatorVisitor visitor);
 }

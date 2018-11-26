@@ -1,5 +1,6 @@
 package logical.operator;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import io.BinaryTupleReader;
 import model.TableStat;
@@ -21,7 +22,9 @@ public class ScanOperator extends Operator {
     private BinaryTupleReader binaryTupleReader;
     private Map<String, Integer> schema;
     private TableStat tableStat;
+    private String table;
     private int tableIndex;
+
 
     /**
      * @param plainSelect is the statement of sql
@@ -43,6 +46,8 @@ public class ScanOperator extends Operator {
             return;
         }
         String tableName = strs[0];
+        table = tableName;
+
         String aliasName = strs[strs.length - 1];
 
         Catalog.getInstance().setAliases(item);
@@ -72,6 +77,10 @@ public class ScanOperator extends Operator {
         return binaryTupleReader;
     }
 
+    public String getTable() {
+        return table;
+    }
+
     /**
      * method to get children
      */
@@ -88,6 +97,11 @@ public class ScanOperator extends Operator {
 
     @Override
     public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void accept(LogicalOperatorVisitor visitor) {
         visitor.visit(this);
     }
 

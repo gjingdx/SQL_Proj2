@@ -1,5 +1,6 @@
 package logical.operator;
 
+import PlanBuilder.LogicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
@@ -76,6 +77,11 @@ public class ProjectOperator extends Operator {
      * @param visitor PhysicalPlanBuilder visitor to be accepted.
      */
     public void accept(PhysicalPlanBuilder visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public void accept(LogicalOperatorVisitor visitor) {
         visitor.visit(this);
     }
 }

@@ -93,4 +93,41 @@ public class UnionFind {
         }
         return map;
     }
+
+
+    /**
+     * returns the list of information of each connected components in the
+     * format of string.
+     * @return list of string
+     */
+    public List<String> printUnions() {
+        List<String> result = new ArrayList<>();
+        Map<Constraints, List<String>> parentMap = new HashMap<>();
+        for (String attr : getAttributeSet()) {
+            Constraints curr = find(attr);
+            if (!parentMap.containsKey(curr)) {
+                parentMap.put(curr, new ArrayList<>());
+            }
+            parentMap.get(curr).add(attr);
+        }
+
+        for (Constraints e : parentMap.keySet()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[[");
+            for (String attr : parentMap.get(e)) {
+                sb.append(attr + ", ");
+            }
+            sb.setLength(sb.length() - 2);
+            sb.append("], equals ");
+            sb.append(e.getEquality());
+            sb.append(", min ");
+            sb.append(e.getLowerBound());
+            sb.append(", max ");
+            sb.append(e.getUpperBound());
+            sb.append("]");
+            result.add(sb.toString());
+        }
+
+        return result;
+    }
 }
