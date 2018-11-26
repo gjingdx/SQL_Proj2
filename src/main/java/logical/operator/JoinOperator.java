@@ -70,8 +70,7 @@ public class JoinOperator extends Operator {
         Expression expr = plainSelect.getWhere();
         if (expr == null) {
             this.joinCondition = null;
-        }
-        else {
+        } else {
             JoinExpressionVisitor joinExpressionVisitor = new JoinExpressionVisitor(this.schema);
             expr.accept(joinExpressionVisitor);
             this.joinCondition = joinExpressionVisitor.getExpression();
