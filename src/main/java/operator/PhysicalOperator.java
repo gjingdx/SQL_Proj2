@@ -62,7 +62,7 @@ public abstract class PhysicalOperator {
         }
         for (String att : getSchema().keySet()) {
             if (!attributeSet.contains(att)) {
-                System.out.println("^^^^^^^^^^^^^^&&&&&&&");
+                //System.out.println("^^^^^^^^^^^^^^&&&&&&&");
                 data[ind] = tuple.getDataAt(getSchema().get(att));
                 ind++;
             }
