@@ -336,15 +336,19 @@ public class Handler {
      * @return the root physical operator
      */
     public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect) {
+        System.out.println("Constructing logical plan");
         Operator logicalOperator = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
-        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
-        logicalOperator.accept(physPB);
-        PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
+
         LogicalOperatorVisitor logicalOperatorVisitor = new LogicalOperatorVisitor();
         logicalOperator.accept(logicalOperatorVisitor);
         for (String s : logicalOperatorVisitor.getOutput()) {
             System.out.println(s);
         }
+
+        System.out.println("Constructing physical plan");
+        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+        logicalOperator.accept(physPB);
+        PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
 
         PhysicalOperatorVisitor phOpVisitor = new PhysicalOperatorVisitor();
         physicalOperator.accept(phOpVisitor, 0);
