@@ -1,9 +1,11 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.JoinOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +99,11 @@ public class PhysicalSortMergeJoinOperator extends PhysicalJoinOperator {
     @Override
     public Map<String, Integer> getSchema() {
         return this.schema;
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 
     /**

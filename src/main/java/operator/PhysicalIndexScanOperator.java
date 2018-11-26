@@ -103,6 +103,18 @@ public class PhysicalIndexScanOperator extends PhysicalScanOperator {
         }
     }
 
+    public int getLowKey() {
+        return lowKey;
+    }
+
+    public int getHighKey() {
+        return highKey;
+    }
+
+    public IndexConfig getIndexConfig() {
+        return indexConfig;
+    }
+
     @Override
     public void reset(){
         try {

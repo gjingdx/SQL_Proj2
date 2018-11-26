@@ -1,5 +1,6 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.JoinOperator;
 import model.Block;
 import model.Tuple;
@@ -84,4 +85,8 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator {
         }
     }
 
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
+    }
 }

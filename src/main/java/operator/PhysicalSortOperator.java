@@ -1,5 +1,6 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.SortOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
@@ -78,6 +79,13 @@ public abstract class PhysicalSortOperator extends PhysicalOperator {
     @Override
     public Map<String, Integer> getSchema() {
         return this.schema;
+    }
+
+    @Override
+    public List<PhysicalOperator> getChildren() {
+        List<PhysicalOperator> children = new ArrayList<>();
+        children.add(physChild);
+        return children;
     }
 
     /**

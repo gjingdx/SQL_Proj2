@@ -8,7 +8,9 @@ import util.Catalog;
 import util.JoinExpressionVisitor;
 import util.SelectExpressionVisitor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -134,6 +136,14 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         return this.schema;
     }
 
+    @Override
+    public List<PhysicalOperator> getChildren() {
+        List<PhysicalOperator> children = new ArrayList<>();
+        children.add(opLeft);
+        children.add(opRight);
+        return children;
+    }
+
     /**
      * implement cross production
      *
@@ -156,4 +166,7 @@ public abstract class PhysicalJoinOperator extends PhysicalOperator {
         return tuple;
     }
 
+    public Expression getJoinCondition() {
+        return joinCondition;
+    }
 }

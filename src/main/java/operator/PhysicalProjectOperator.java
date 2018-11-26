@@ -1,10 +1,12 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.ProjectOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,9 @@ public class PhysicalProjectOperator extends PhysicalOperator {
         }
     }
 
+    public List<SelectItem> getSelectItems() {
+        return selectItems;
+    }
 
     /**
      * @return the next tuple selected by the project operator
@@ -99,6 +104,18 @@ public class PhysicalProjectOperator extends PhysicalOperator {
     @Override
     public Map<String, Integer> getSchema() {
         return currentSchema;
+    }
+
+    @Override
+    public List<PhysicalOperator> getChildren() {
+        List<PhysicalOperator> children = new ArrayList<>();
+        children.add(prevPhysicalOp);
+        return children;
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 
 }

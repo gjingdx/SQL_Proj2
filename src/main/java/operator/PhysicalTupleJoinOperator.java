@@ -1,5 +1,6 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import logical.operator.JoinOperator;
 import model.Tuple;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -61,4 +62,8 @@ public class PhysicalTupleJoinOperator extends PhysicalJoinOperator {
         return joinTuple(outerTuple, innerTuple);
     }
 
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
+    }
 }

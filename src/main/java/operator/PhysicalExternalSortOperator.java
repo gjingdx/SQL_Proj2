@@ -1,5 +1,6 @@
 package operator;
 
+import PlanBuilder.PhysicalOperatorVisitor;
 import io.BinaryTupleReader;
 import io.BinaryTupleWriter;
 import io.TupleReader;
@@ -201,6 +202,11 @@ public class PhysicalExternalSortOperator extends PhysicalSortOperator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
+        phOpVisitor.visit(this, level);
     }
 
     /**
