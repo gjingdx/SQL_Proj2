@@ -336,7 +336,7 @@ public class Handler {
      * @return the root physical operator
      */
     public static PhysicalOperator constructPhysicalQueryPlan(PlainSelect plainSelect) {
-        System.out.println("Constructing logical plan");
+        System.out.println("###### Constructing Logical Plan ######");
         Operator logicalOperator = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
 
         LogicalOperatorVisitor logicalOperatorVisitor = new LogicalOperatorVisitor();
@@ -345,7 +345,7 @@ public class Handler {
             System.out.println(s);
         }
 
-        System.out.println("Constructing physical plan");
+        System.out.println("###### Constructing Physical Plan ######");
         PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
         logicalOperator.accept(physPB);
         PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
@@ -390,7 +390,7 @@ public class Handler {
         Catalog.getInstance().setIndexScan(true);
         Catalog.getInstance().setJoinBlockSize(5);
         Catalog.getInstance().setSortBlockSize(5);
-        Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
+        Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
         Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
     }
 }
