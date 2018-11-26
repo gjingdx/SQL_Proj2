@@ -173,4 +173,16 @@ public class PhysicalPlanBuilderTest {
             tuple = physDupOp.getNextTuple();
         }
     }
+
+    @Test
+    public void testPhysicalPlanBuilder() throws Exception {
+        String statement = "SELECT * FROM Sailors, Reserves, Boats WHERE Sailors.A = Reserves.G;";
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        PlainSelect plainSelect = (PlainSelect) ((Select) parserManager.parse(new StringReader(statement))).getSelectBody();
+
+        Operator logicalOp = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
+        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+        logicalOp.accept(physPB);
+        PhysicalOperator op = physPB.getPhysOpChildren().peek();
+    }
 }
