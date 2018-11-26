@@ -40,7 +40,9 @@ public class PhysicalOperatorVisitor {
             phPBTree.append("-");
         }
         phPBTree.append("MemorySort[");
-        phPBTree.append(memorySortOp.getOrder().get(0));
+        if (memorySortOp.getOrder() != null) {
+            phPBTree.append(memorySortOp.getOrder().get(0));
+        }
         phPBTree.append("]\n");
         for (PhysicalOperator child : memorySortOp.getChildren()) {
             child.accept(this, level + 1);
@@ -106,12 +108,30 @@ public class PhysicalOperatorVisitor {
             child.accept(this, level + 1);
         }
     }
+
     public void visit(PhysicalScanOperator phScanOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
         }
-        phPBTree.append("Select[");
-        //phPBTree.append(phScanOp.getExpression().toString());
+        phPBTree.append("TableScan[");
+        phPBTree.append(phScanOp.getTableName());
         phPBTree.append("]\n");
+    }
+
+    public void visit(PhysicalIndexScanOperator indexScanOp, int level) {
+        for (int i = 0; i< level; i++) {
+            phPBTree.append("-");
+        }
+        phPBTree.append("IndexScan[");
+        phPBTree.append(indexScanOp.getTableName() + ",");
+        //get index attribute
+        phPBTree.append(indexScanOp.getIndexConfig().columnName + ",");
+        phPBTree.append(indexScanOp.getLowKey() + ",");
+        phPBTree.append(indexScanOp.getHighKey());
+        phPBTree.append("]\n");
+    }
+
+    public StringBuilder getPhPBTree() {
+        return phPBTree;
     }
 }

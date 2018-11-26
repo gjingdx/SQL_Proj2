@@ -1,6 +1,7 @@
 package com.sql.interpreter;
 
 import PlanBuilder.LogicalOperatorVisitor;
+import PlanBuilder.PhysicalOperatorVisitor;
 import PlanBuilder.PhysicalPlanBuilder;
 import io.*;
 import PlanBuilder.LogicalPlanBuilder;
@@ -351,6 +352,11 @@ public class Handler {
         for (String s : logicalOperatorVisitor.getOutput()) {
             System.out.println(s);
         }
+
+        PhysicalOperatorVisitor phOpVisitor = new PhysicalOperatorVisitor();
+        physicalOperator.accept(phOpVisitor, 0);
+        System.out.println(phOpVisitor.getPhPBTree().toString());
+
         return physicalOperator;
     }
 

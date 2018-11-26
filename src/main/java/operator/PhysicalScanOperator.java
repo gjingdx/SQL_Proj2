@@ -18,6 +18,7 @@ import java.util.Map;
 public class PhysicalScanOperator extends PhysicalOperator {
     protected BinaryTupleReader binaryTupleReader;
     protected Map<String, Integer> schema;
+    private String tableName;
 
     /**
      * @param plainSelect is the statement of sql
@@ -54,6 +55,11 @@ public class PhysicalScanOperator extends PhysicalOperator {
     public PhysicalScanOperator(ScanOperator logScanOp) {
         this.schema = logScanOp.getSchema();
         this.binaryTupleReader = logScanOp.getBinaryTupleReader();
+        this.tableName = logScanOp.getTable();
+    }
+
+    public String getTableName() {
+        return tableName;
     }
 
     /**
