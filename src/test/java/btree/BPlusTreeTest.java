@@ -32,6 +32,7 @@ public class BPlusTreeTest {
         schema.put("F", 2);
         int attribute = schema.get("E");
         String indexFile = "Samples/samples-2/output/indexes";
+        new File(indexFile).mkdir();
 
         BPlusTree bPlusTree = new BPlusTree(relationName, attribute, 10, indexFile);
 
