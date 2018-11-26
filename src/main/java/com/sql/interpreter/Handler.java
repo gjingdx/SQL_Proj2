@@ -74,14 +74,7 @@ public class Handler {
         Catalog.getInstance().setOutputPath(outputPath);
         createStats();
 
-        try {
-            parserPlanBuilderConfig();
-        } catch (Exception e) {
-            System.err.println("Plan Builder Config parse failed");
-            if (Catalog.getInstance().isEvaluateSQL()) {
-                throw e;
-            }
-        }
+        setConfigs();
         try {
             parserIndexInfo();
         } catch (Exception e) {
@@ -387,5 +380,13 @@ public class Handler {
             Catalog.getInstance().putStats(config);
         }
         br.close();
+    }
+
+    private static void setConfigs() {
+        Catalog.getInstance().setIndexScan(true);
+        Catalog.getInstance().setJoinBlockSize(5);
+        Catalog.getInstance().setSortBlockSize(5);
+        Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
+        Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
     }
 }

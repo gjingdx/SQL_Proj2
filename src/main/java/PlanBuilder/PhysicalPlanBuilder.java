@@ -113,7 +113,8 @@ public class PhysicalPlanBuilder {
                     }
                 }
             default:
-                physJoinOp = new PhysicalTupleJoinOperator(newLogicalJoinOp, leftChild, rightChild);
+                physJoinOp = new PhysicalBlockJoinOperator(newLogicalJoinOp, leftChild, rightChild,
+                        Catalog.getInstance().getJoinBlockSize());
                 physOpChildren.push(physJoinOp);
         }
 
