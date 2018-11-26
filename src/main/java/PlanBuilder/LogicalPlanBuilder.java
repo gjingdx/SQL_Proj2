@@ -64,6 +64,8 @@ public class LogicalPlanBuilder {
             }
             if (!constraints.isEmpty()) {
                 logicOp = new SelectOperator(logicOp, constraints, plainSelect);
+            } else if (numTable == 1 && plainSelect.getWhere() != null) {
+                logicOp = new SelectOperator(logicOp, constraints, plainSelect);
             }
             selectOps.add(logicOp);
         }
