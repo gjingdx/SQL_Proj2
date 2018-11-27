@@ -23,10 +23,8 @@ public class LogicalPlanBuilder {
     *             sort
     *              |
     *             join
-    *           /      \
-    *         join    scan
-    *        /    \
-    *   select   select
+    *        /     |     \
+    *   select   select   scan
     *      |       |
     *    scan     scan
     *

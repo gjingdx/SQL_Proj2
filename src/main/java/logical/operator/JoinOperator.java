@@ -24,6 +24,12 @@ public class JoinOperator extends Operator {
     Expression joinCondition;
     private PlainSelect plainSelect;
 
+    /**
+     *
+     * @param prevOps children
+     * @param plainSelect statement
+     * @param orderFlag to decide whether it is a logical plan operator or just an intermediate operator
+     */
     public JoinOperator(List<Operator> prevOps, PlainSelect plainSelect, boolean orderFlag) {
         this.prevOps = prevOps;
         this.plainSelect = plainSelect;

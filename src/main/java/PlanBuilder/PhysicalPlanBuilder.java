@@ -69,6 +69,8 @@ public class PhysicalPlanBuilder {
     }
 
     /**
+     * Firstly consider implement SMJ
+     * if no equality join condition, implements BNLJ
      * @param logicalJoinOp
      */
     public void visit(JoinOperator logicalJoinOp) {
@@ -90,18 +92,14 @@ public class PhysicalPlanBuilder {
             List<List<OrderByElement>> orders = sj.getOrders();
             if (orders.get(0).size() != 0) {
                 PhysicalSortOperator rightSort, leftSort;
-                if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL) {
-                    rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
-                    leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
-                } else {
-                    rightSort = new PhysicalMemorySortOperator(orders.get(0), rightChild);
-                    leftSort = new PhysicalMemorySortOperator(orders.get(1), leftChild);
-                }
+                rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
+                leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
                 physJoinOp = new PhysicalSortMergeJoinOperator(newLogicalJoinOp, leftSort, rightSort);
                 physOpChildren.push(physJoinOp);
                 return;
             }
         }
+        // cannot implement SMJ
         physJoinOp = new PhysicalBlockJoinOperator(newLogicalJoinOp, leftChild, rightChild,
                 Catalog.getInstance().getJoinBlockSize());
         physOpChildren.push(physJoinOp);
@@ -120,6 +118,7 @@ public class PhysicalPlanBuilder {
     }
 
     /**
+     * Only run external sort
      * @param logSortOp
      */
     public void visit(SortOperator logSortOp) {

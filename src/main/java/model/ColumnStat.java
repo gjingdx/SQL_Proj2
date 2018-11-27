@@ -1,8 +1,11 @@
 package model;
 
+/**
+ * ColumnStat record the range of certain column
+ */
 public class ColumnStat {
-    public Integer maxValue;
-    public Integer minValue;
+    public Integer maxValue; // upper bound
+    public Integer minValue; // lower bound
 
     public ColumnStat() {
         maxValue = null;

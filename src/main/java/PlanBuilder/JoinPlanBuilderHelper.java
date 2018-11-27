@@ -6,12 +6,19 @@ import logical.operator.Operator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An intermediate logical plan tree, where all join operators have only two children
+ */
 public class JoinPlanBuilderHelper {
     JoinOperator op;
     public JoinPlanBuilderHelper (JoinOperator op) {
         this.op = op;
     }
 
+    /**
+     * directly rebuild the logical tree
+     * @return
+     */
     public JoinOperator rebuildLogicalTree() {
         Operator opLeft =  op.getChildren().get(0);
         for (int i = 1; i < op.getChildren().size(); i++) {
@@ -24,6 +31,10 @@ public class JoinPlanBuilderHelper {
         return (JoinOperator)opLeft;
     }
 
+    /**
+     * only rebuild the logical tree by one step
+     * @return
+     */
     public JoinOperator seperateLastTable () {
         if (op.getChildren().size() == 2) {
             return new JoinOperator(op.getChildren(), op.getPlainSelect(), false);

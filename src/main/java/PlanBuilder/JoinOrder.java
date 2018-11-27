@@ -15,6 +15,9 @@ import util.unionfind.UnionFind;
 import java.lang.reflect.Array;
 import java.util.*;
 
+/**
+ * A tool to get optimal join order
+ */
 public class JoinOrder {
     List<Operator> joinChildren;
     Map<Set<Integer>, OrderInfo> store;
@@ -55,6 +58,10 @@ public class JoinOrder {
         }
     }
 
+    /**
+     * predict an optimal left deep join order
+     * @return
+     */
     public List<Integer> getOrder() {
         Set finalSet = new HashSet<>();
         for (int i = 0; i < joinChildren.size(); i++) {
@@ -69,6 +76,11 @@ public class JoinOrder {
         return cs.maxValue - cs.minValue + 1;
     }
 
+    /**
+     * calculate the count of tuple after the join of several tables
+     * @param set
+     * @return
+     */
     public long getProducedCount (Set<Integer> set) {
         double numerator = 1.0;
         for (int i : set) {
@@ -100,6 +112,11 @@ public class JoinOrder {
         //return (t1.count * t2.count) / Math.max(getV(t1), getV(t2));
     }
 
+    /**
+     * dynamic programming method recursive helper
+     * @param originSet
+     * @return
+     */
     private OrderInfo helper(Set<Integer> originSet) {
         Set<Integer> set = new HashSet<>(originSet);
         if (store.containsKey(set)) {
@@ -128,6 +145,9 @@ public class JoinOrder {
         return ret;
     }
 
+    /**
+     * used to record the cost and order solution
+     */
     public class OrderInfo {
         public long cost;
         public ArrayList<Integer> order;
@@ -146,6 +166,11 @@ public class JoinOrder {
         return schema;
     }
 
+    /**
+     * get the overall schema related to the set
+     * @param set
+     * @return
+     */
     private Map<String, Integer> mergeSchema(Set<Integer> set) {
         Map <String, Integer> schema = new HashMap<>();
         for (int i : set) {
@@ -161,6 +186,11 @@ public class JoinOrder {
         return jVisitor.getExpression();
     }
 
+    /**
+     * extract the union find from an expression
+     * @param expression
+     * @return UnionFind
+     */
     public UnionFind getUnionFindFromExpression(Expression expression) {
         UnionFind unionFind = new UnionFind();
         UnionFindExpressionVisitor ufVisitor = new UnionFindExpressionVisitor(unionFind);
@@ -169,6 +199,10 @@ public class JoinOrder {
         return unionFind;
     }
 
+    /**
+     * given a set of table indexes
+     * refine the UnionFind to only related columns
+     */
     private UnionFind refineUnionFind(Set<Integer> set) {
         UnionFind ret = new UnionFind();
         Map<String, Integer> schema = mergeSchema(set);

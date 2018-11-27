@@ -2,6 +2,9 @@ package model;
 
 import util.Catalog;
 
+/**
+ * IndexConfig records some basic index config info
+ */
 public class IndexConfig {
     public boolean isClustered; // is a clustered index
     public String indexFile; // index file location

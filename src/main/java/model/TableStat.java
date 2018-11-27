@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * TableStat record some basic stats of a table
+ */
 public class TableStat {
-    private String alias;
-    private long count;
-    Map<String, ColumnStat> fieldStatSchema;
+    private String alias; // alias of the table
+    private long count; // count of tuple
+    Map<String, ColumnStat> fieldStatSchema; // a map to store column info
 
     public TableStat(String alias) {
         this.alias = alias;
@@ -30,6 +33,10 @@ public class TableStat {
         fieldStatSchema.put(schemaKey, columnStat);
     }
 
+    /**
+     * set the tableStat from config
+     * @param data specific format of string from Stats.txt
+     */
     public void paserFromStatString (String data) {
         String [] splits = data.split("\\s+");
         if (splits.length < 2) {
