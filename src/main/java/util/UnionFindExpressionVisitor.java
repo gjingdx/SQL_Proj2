@@ -1,6 +1,5 @@
 package util;
 
-import model.Tuple;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -12,9 +11,15 @@ import util.unionfind.UnionFind;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Map;
 
 
+/**
+ * An implementation of ExpressionVisitor
+ * traverse the expression tree, union two columns when encountering
+ * equalto, update Constraints when encountering = <= >= > <
+ *
+ * @author Yufu Mo ym445
+ */
 public class UnionFindExpressionVisitor implements ExpressionVisitor {
 
     private Deque<Object> stack;
@@ -68,7 +73,7 @@ public class UnionFindExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for EqualsTo expression
-     *
+     * Union the left and right column or update the equality constraints
      * @param equalsTo
      */
     @Override
@@ -102,6 +107,7 @@ public class UnionFindExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for GreaterThan expression
+     * update the constraints
      *
      * @param greaterThan
      */
@@ -121,6 +127,7 @@ public class UnionFindExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for GreaterThanEquals expression
+     * update the constraints
      *
      * @param greaterThanEquals
      */
@@ -141,6 +148,7 @@ public class UnionFindExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for MinorThan expression
+     * update the constraints
      *
      * @param minorThan
      */
@@ -160,6 +168,7 @@ public class UnionFindExpressionVisitor implements ExpressionVisitor {
 
     /**
      * visit method for MinorThanEquals expression
+     * update the constraints
      *
      * @param minorThanEquals
      */

@@ -87,6 +87,11 @@ public class Handler {
         }
     }
 
+    /**
+     * create stats.txt file by going through the tables
+     *
+     * @throws Exception
+     */
     public static void createStats() throws Exception {
         String statsPath = Catalog.getInstance().getStatsPath();
 //        File fout = new File(statsPath);
