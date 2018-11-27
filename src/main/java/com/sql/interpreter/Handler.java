@@ -371,7 +371,9 @@ public class Handler {
 
         LogicalOperatorVisitor logicalOperatorVisitor = new LogicalOperatorVisitor();
         logicalOperator.accept(logicalOperatorVisitor);
-
+        for (String s : logicalOperatorVisitor.getOutput()) {
+            System.out.println(s);
+        }
 
 
         System.out.println("###### Constructing Physical Plan ######");
@@ -381,6 +383,7 @@ public class Handler {
 
         PhysicalOperatorVisitor phOpVisitor = new PhysicalOperatorVisitor();
         physicalOperator.accept(phOpVisitor, 0);
+        System.out.println(phOpVisitor.getPhPBTree().toString());
         try {
             // write logical plan
             File logicalout = new File(logicalPath);
