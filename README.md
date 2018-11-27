@@ -30,18 +30,6 @@ The UnionFind class contains two important methods: ```find``` and ```union```. 
 1. ```find``` takes in a column and returns the corresponding Constraints object. It finds the root constraints according to a father map of union find class. Once the root is found, update the roots of all the visited nodes to the same Constraints object.
 2. ```union``` takes two columns and merge them together. The corresponding two sets will be merged after this when the ```find``` method is used on these columns.  
 
-### Query Plan Print
-#### Logical Query Plan Print
-The logical query plan is printed by traversing all the logical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order. The union find information will be printed with the help of union find getOutput() method.
-Possible differences from expected output:
-1. No project operator if the query is "SELECT * From ....."
-2. For Join operator, conditions like S.A < R.E will not create new elements in union find.
-3. Order of leaves and union elements.
-
-#### Physical Query Plan Print
-The physical query plan is printed by traversing all the physical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order.
-
-
 ### Join Order
 ```PlanBuilder.JoinOrder```  
 - Considering our schema stradegy, we have to calculate the join order during the logcial plan builder, in logical operator exactly.
@@ -53,3 +41,18 @@ SMJ runs much faster than BNLJ, so I implement all joins as SMJ where possible. 
 apply to joins that have other-than-equality comparisons or to pure cross-products, so those are
 implemented using BNLJ.  
 When implementing samples in the server, although BNLJ takes the lower I/Os, SMJ runs 120 times faster than BNLJ under the same block size.
+
+### Query Plan Print
+#### Logical Query Plan Print and __Potential Issues__
+The logical query plan is printed by traversing all the logical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order. The union find information will be printed with the help of union find getOutput() method.
+Possible differences from expected output:
+1. No project operator if the query is "SELECT * From ....."
+2. For Join operator, conditions like S.A < R.E will not create new elements in union find.
+3. Order of leaves and union elements.
+
+#### Physical Query Plan Print and __Potential Issues__
+The physical query plan is printed by traversing all the physical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order.
+There might be some difference between the printed expected physical query plan and ours and the following is our explanation to the difference:
+1. The difference of the join order. According to our calculation, we think that our join order should be more time efficient than or same time efficient as the expect join order. 
+2. The difference between the chosen join methods. According to our test, we find our physical plan is much more time efficient than the expected physical plan. 
+3. Difference between Join condition. We have some redundant join conditions printed that inherited from its child join operator. This does not affect the behavior of our query plan but we did not fix the bug in the print process.
