@@ -7,11 +7,22 @@ import util.Catalog;
 import java.util.Deque;
 import java.util.LinkedList;
 
+/**
+ * print all the physical query Plan
+ * Class PhysicalOperatorVisitor
+ *
+ * @author jg2273
+ */
 public class PhysicalOperatorVisitor {
 
     private Deque<PhysicalOperator> physOpChildren = new LinkedList<>();
     private StringBuilder phPBTree = new StringBuilder();
 
+    /**
+     * visit (print) PhysicalDuplicateEliminationOperator
+     * @param phDupElimOp
+     * @param level
+     */
     public void visit(PhysicalDuplicateEliminationOperator phDupElimOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -23,6 +34,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalExternalSortOperator
+     * @param phExternalSortOp
+     * @param level
+     */
     public void visit(PhysicalExternalSortOperator phExternalSortOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -38,6 +54,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalMemorySortOperator
+     * @param memorySortOp
+     * @param level
+     */
     public void visit(PhysicalMemorySortOperator memorySortOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -52,6 +73,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalProjectOperator
+     * @param phProjOp
+     * @param level
+     */
     public void visit(PhysicalProjectOperator phProjOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -68,6 +94,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalSortMergeJoinOperator
+     * @param sMJOp
+     * @param level
+     */
     public void visit(PhysicalSortMergeJoinOperator sMJOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -82,6 +113,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalBlockJoinOperator
+     * @param blockJoinOp
+     * @param level
+     */
     public void visit(PhysicalBlockJoinOperator blockJoinOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -96,6 +132,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalTupleJoinOperator
+     * @param tupleJoinOp
+     * @param level
+     */
     public void visit(PhysicalTupleJoinOperator tupleJoinOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -110,6 +151,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalSelectOperator
+     * @param phSelectOp
+     * @param level
+     */
     public void visit(PhysicalSelectOperator phSelectOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -124,6 +170,11 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+    /**
+     * visit (print) PhysicalScanOperator
+     * @param phScanOp
+     * @param level
+     */
     public void visit(PhysicalScanOperator phScanOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
@@ -133,6 +184,11 @@ public class PhysicalOperatorVisitor {
         phPBTree.append("]\n");
     }
 
+    /**
+     * visit (print) PhysicalIndexScanOperator
+     * @param indexScanOp
+     * @param level
+     */
     public void visit(PhysicalIndexScanOperator indexScanOp, int level) {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");

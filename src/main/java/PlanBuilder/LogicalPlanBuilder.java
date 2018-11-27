@@ -46,6 +46,7 @@ public class LogicalPlanBuilder {
         // list of select Ops or scan Op that pass to JoinOp
         List<Operator> selectOps = new ArrayList<>();
 
+        // create ScanOps and create SelectOps with pushing selections
         UnionFind unionFind = new UnionFind();
         UnionFindExpressionVisitor ufVisitor = new UnionFindExpressionVisitor(unionFind);
         if (plainSelect.getWhere() != null) {
