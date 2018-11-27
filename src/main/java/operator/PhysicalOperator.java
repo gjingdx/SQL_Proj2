@@ -44,7 +44,7 @@ public abstract class PhysicalOperator {
         String path = Catalog.getInstance().getOutputPath() + i;
         TupleWriter tupleWriter = new BinaryTupleWriter(path, getSchema().size());
         Tuple tuple = getNextTuple();
-        System.out.println("operator schema:" + getSchema());
+        //System.out.println("operator schema:" + getSchema());
         while (tuple != null) {
             tupleWriter.writeNextTuple(reorderTuple(tuple));
             tuple = getNextTuple();
