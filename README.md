@@ -38,36 +38,14 @@ The logical query plan is printed by traversing all the logical operators in the
 The physical query plan is printed by traversing all the physical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order.
 
 
-### Index Scan Operator
-1. Where the ```lowkey``` and ```highkey``` are set  
-In fact, ```lowkey``` and ```highkey``` are extracted in physical plan builder, and be parsered into the operator via constructor. The tool to extract them is ```IndexScanExpressionVisitor```, which might be detailed illustrated in ```doc\ExpressionVisitor.md``` or the related _Java doc_.  
-Briefly speaking, we extract the lowKey and highKey from the select condition, with the following rules:
-    - If thereis no high bound or low bound, ```highKey``` will be set ```MAX_INT``` or ```lowKey``` to be ```MIN_INT```. If both unavailable, we will not implement Index Scan Operator.
-    - Since we have assumed all tuple are Integer, we let the key be the involved.   
-        e.g. ```S.A < 50``` -> ```highKey = 49```
-    - If there exists valid equal condition, e.g ```S.A = 50```, we will set both ```highKey``` and ```lowKey``` _50_.
+### Join Order
+```PlanBuilder.JoinOrder```  
+- Considering our schema stradegy, we have to calculate the join order during the logcial plan builder, in logical operator exactly.
+- The optimal order is obtained via dynamic programming. We recursively traverse the subset and record the optimal solution locally to avoid repeated computing.
 
-2. Difference in clustered vs. unclustered  
-    We will load the Index Config according to the table name and column name.  
-    You can find the related code in ```operator.PhysicalIndexScanOperator.nextTuple```
-    - If clustered:  
-        After we get the first Rid and reset the tuple reader according to the Rid. Then we directly implement ```getNextTuple``` of the tuple reader. Read sequently until it exceeds ```highKey```.
-    - If unclustered:  
-        Each time we get the next Rid via ```deserializer``` and reset the tuple reader to read the tuple in the table.  
-    
-3. How preform the root-ro-leaf tree descent  
-    The deserializer first searches for the starting node via the ```lowKey```. It works via ```btree.Deserializer.searchLeafNode``` recursively.  
-    Each time it reach an index node, we will get the next node address via ``lowKey` until we reach an entry node.     
-4. How decides which nodes to be deserialized   
-   After we reach the first leaf node, we only need to sequently scan the node address by address. The deserialization will end until exceed ```highKey``` or meet unexpected format node (end of entry node).
-### Physical Plan Builder
-#### Judge whether or not the selection operator to be handled via Index
-_There are four conditions to make the judgement:_  
-1. The third line of ```plan_builder_config``` is set _1_
-2. The child logical operator is scan operator(leaf operator).
-3. We can find at least one Index Config accroding to the schema key
-4. The ```highKey``` and ```lowKey``` extracted from the join condition is not ```MAX_INT``` and ```MIN_KEY``` at the same time.
-
-
-## Posible Bugs:
-Some tests cannot run, since the ambiguous usage of ```samples``` and ```samples-2```. But it does not affect the jar functions.
+### Join Implement
+In my Project 2 benchmarking, I noticed that
+SMJ runs much faster than BNLJ, so I implement all joins as SMJ where possible. However, SMJ does not
+apply to joins that have other-than-equality comparisons or to pure cross-products, so those are
+implemented using BNLJ.  
+When implementing samples in the server, although BNLJ takes the lower I/Os, SMJ runs 120 times faster than BNLJ under the same block size.
