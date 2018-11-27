@@ -205,7 +205,7 @@ public class Handler {
                 Select select = (Select) statement;
                 PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
                 Catalog.getInstance().setAttributeOrder(plainSelect);
-                PhysicalOperator operator = constructPhysicalQueryPlan(plainSelect);
+                PhysicalOperator operator = constructAndPrintQueryPlan(plainSelect, ind);
                 operator.dump(ind);
                 ind++;
 
@@ -358,6 +358,49 @@ public class Handler {
         PhysicalOperatorVisitor phOpVisitor = new PhysicalOperatorVisitor();
         physicalOperator.accept(phOpVisitor, 0);
         System.out.println(phOpVisitor.getPhPBTree().toString());
+
+        return physicalOperator;
+    }
+
+    public static PhysicalOperator constructAndPrintQueryPlan(PlainSelect plainSelect, int i) {
+        String physicalPath = Catalog.getInstance().getOutputPath() + i + "_physicalplan";
+        String logicalPath = Catalog.getInstance().getOutputPath() + i + "_logicalplan";
+
+        System.out.println("###### Constructing Logical Plan ######");
+        Operator logicalOperator = LogicalPlanBuilder.constructLogicalPlanTree(plainSelect);
+
+        LogicalOperatorVisitor logicalOperatorVisitor = new LogicalOperatorVisitor();
+        logicalOperator.accept(logicalOperatorVisitor);
+
+
+
+        System.out.println("###### Constructing Physical Plan ######");
+        PhysicalPlanBuilder physPB = new PhysicalPlanBuilder();
+        logicalOperator.accept(physPB);
+        PhysicalOperator physicalOperator = physPB.getPhysOpChildren().peek();
+
+        PhysicalOperatorVisitor phOpVisitor = new PhysicalOperatorVisitor();
+        physicalOperator.accept(phOpVisitor, 0);
+        try {
+            // write logical plan
+            File logicalout = new File(logicalPath);
+            FileOutputStream fos1 = new FileOutputStream(logicalout);
+            BufferedWriter lbw = new BufferedWriter(new OutputStreamWriter(fos1));
+            for (String s : logicalOperatorVisitor.getOutput()) {
+                lbw.write(s);
+                lbw.newLine();
+            }
+            lbw.close();
+            // write physical plan
+            File physicalout = new File(physicalPath);
+            FileOutputStream fos2 = new FileOutputStream(physicalout);
+            BufferedWriter pbw = new BufferedWriter(new OutputStreamWriter(fos2));
+            pbw.write(phOpVisitor.getPhPBTree().toString());
+            pbw.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return physicalOperator;
     }
