@@ -56,11 +56,13 @@ public class PhysicalOperatorVisitor {
         for (int i = 0; i< level; i++) {
             phPBTree.append("-");
         }
-        phPBTree.append("Project[");
+        phPBTree.append("Project");
         if (phProjOp.getSelectItems() != null) {
             phPBTree.append(phProjOp.getSelectItems().toString());
+        } else {
+            phPBTree.append("[]");
         }
-        phPBTree.append("]\n");
+        phPBTree.append("\n");
         for (PhysicalOperator child : phProjOp.getChildren()) {
             child.accept(this, level + 1);
         }
