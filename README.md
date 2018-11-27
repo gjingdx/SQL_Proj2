@@ -22,6 +22,12 @@
 
     ```java -jar cs4321_p3.jar $<interpreter_config_file>```
 ## Details
+### Selection Pushing
+#### Union Find
+The UnionFind class contains two important methods: ```find``` and ```union```. It unions elements together creating separate sets. If two elements in two different sets union, these two sets will merge together. All the elements in a set have the same attributes.
+1. ```find``` takes in a column and returns the corresponding Constraints object. It finds the root constraints according to a father map of union find class. Once the root is found, update the roots of all the visited nodes to the same Constraints object.
+2. ```union``` takes two columns and merge them together. The corresponding two sets will be merged after this when the ```find``` method is used on these columns.  
+
 ### Index Scan Operator
 1. Where the ```lowkey``` and ```highkey``` are set  
 In fact, ```lowkey``` and ```highkey``` are extracted in physical plan builder, and be parsered into the operator via constructor. The tool to extract them is ```IndexScanExpressionVisitor```, which might be detailed illustrated in ```doc\ExpressionVisitor.md``` or the related _Java doc_.  

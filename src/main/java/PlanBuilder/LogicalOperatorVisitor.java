@@ -102,11 +102,10 @@ public class LogicalOperatorVisitor {
         for (int i = 0; i < level; i++) {
             sb.append('-');
         }
-        sb.append("Project[");
+        sb.append("Project");
         if (logicalProjOp.getSelectItems() != null) {
             sb.append(logicalProjOp.getSelectItems().toString());
         }
-        sb.append(']');
         hierarchy.add(sb.toString());
         for (Operator operator : logicalProjOp.getChildren()) {
             level++;
@@ -125,11 +124,10 @@ public class LogicalOperatorVisitor {
         for (int i = 0; i < level; i++) {
             sb.append('-');
         }
-        sb.append("Sort[");
+        sb.append("Sort");
         if (logSortOp.getOrder() != null) {
             sb.append(logSortOp.getOrder().toString());
         }
-        sb.append(']');
         hierarchy.add(sb.toString());
         for (Operator operator : logSortOp.getChildren()) {
             level++;
