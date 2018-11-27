@@ -80,43 +80,31 @@ public class PhysicalPlanBuilder {
         PhysicalOperator rightChild = physOpChildren.pop();
         PhysicalOperator leftChild = physOpChildren.pop();
         PhysicalOperator physJoinOp;
-        switch (Catalog.getInstance().getJoinMethod()) {
-            case TNLJ:
-                physJoinOp = new PhysicalTupleJoinOperator(newLogicalJoinOp, leftChild, rightChild);
-                physOpChildren.push(physJoinOp);
-                break;
-            case BNLJ:
-                physJoinOp = new PhysicalBlockJoinOperator(newLogicalJoinOp, leftChild, rightChild,
-                        Catalog.getInstance().getJoinBlockSize());
-                physOpChildren.push(physJoinOp);
-                break;
-            case SMJ:
-                Expression joinCondition = newLogicalJoinOp.getJoinCondition();
-                // if there is no join condition, there will be no SMJ implements. 
-                // So does no order extracted from join condition
-                if (joinCondition != null) {
-                    SortJoinExpressionVisitor sj = new SortJoinExpressionVisitor(children.get(0).getSchema(), children.get(1).getSchema());
-                    joinCondition.accept(sj);
-                    List<List<OrderByElement>> orders = sj.getOrders();
-                    if (orders.get(0).size() != 0) {
-                        PhysicalSortOperator rightSort, leftSort;
-                        if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL) {
-                            rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
-                            leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
-                        } else {
-                            rightSort = new PhysicalMemorySortOperator(orders.get(0), rightChild);
-                            leftSort = new PhysicalMemorySortOperator(orders.get(1), leftChild);
-                        }
-                        physJoinOp = new PhysicalSortMergeJoinOperator(newLogicalJoinOp, leftSort, rightSort);
-                        physOpChildren.push(physJoinOp);
-                        break;
-                    }
+
+        Expression joinCondition = newLogicalJoinOp.getJoinCondition();
+        // if there is no join condition, there will be no SMJ implements.
+        // So does no order extracted from join condition
+        if (joinCondition != null) {
+            SortJoinExpressionVisitor sj = new SortJoinExpressionVisitor(children.get(0).getSchema(), children.get(1).getSchema());
+            joinCondition.accept(sj);
+            List<List<OrderByElement>> orders = sj.getOrders();
+            if (orders.get(0).size() != 0) {
+                PhysicalSortOperator rightSort, leftSort;
+                if (Catalog.getInstance().getSortMethod() == SortMethod.EXTERNAL) {
+                    rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
+                    leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
+                } else {
+                    rightSort = new PhysicalMemorySortOperator(orders.get(0), rightChild);
+                    leftSort = new PhysicalMemorySortOperator(orders.get(1), leftChild);
                 }
-            default:
-                physJoinOp = new PhysicalBlockJoinOperator(newLogicalJoinOp, leftChild, rightChild,
-                        Catalog.getInstance().getJoinBlockSize());
+                physJoinOp = new PhysicalSortMergeJoinOperator(newLogicalJoinOp, leftSort, rightSort);
                 physOpChildren.push(physJoinOp);
+                return;
+            }
         }
+        physJoinOp = new PhysicalBlockJoinOperator(newLogicalJoinOp, leftChild, rightChild,
+                Catalog.getInstance().getJoinBlockSize());
+        physOpChildren.push(physJoinOp);
 
     }
 
@@ -139,19 +127,9 @@ public class PhysicalPlanBuilder {
         children.get(0).accept(this);
         PhysicalOperator child = physOpChildren.pop();
         PhysicalSortOperator physSelectOp;
-        switch (Catalog.getInstance().getSortMethod()) {
-            case IN_MEMORY:
-                physSelectOp = new PhysicalMemorySortOperator(logSortOp, child);
-                physOpChildren.push(physSelectOp);
-                break;
-            case EXTERNAL:
-                physSelectOp = new PhysicalExternalSortOperator(logSortOp, child);
-                physOpChildren.push(physSelectOp);
-                break;
-            default:
-                physSelectOp = new PhysicalMemorySortOperator(logSortOp, child);
-                physOpChildren.push(physSelectOp);
-        }
+
+        physSelectOp = new PhysicalExternalSortOperator(logSortOp, child);
+        physOpChildren.push(physSelectOp);
     }
 
     /**

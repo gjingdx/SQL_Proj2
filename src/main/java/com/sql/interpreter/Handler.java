@@ -395,7 +395,5 @@ public class Handler {
         Catalog.getInstance().setIndexScan(true);
         Catalog.getInstance().setJoinBlockSize(5);
         Catalog.getInstance().setSortBlockSize(5);
-        Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
-        Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
     }
 }
