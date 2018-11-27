@@ -4,6 +4,12 @@ import util.Constants;
 
 import java.util.*;
 
+/**
+ * Union find class creating sets of Constraints and merge
+ * the constraints
+ *
+ * @author Yufu Mo ym445
+ */
 public class UnionFind {
     private Map<String, Constraints> elements;
     private Map<Constraints, Constraints> father;
@@ -16,6 +22,12 @@ public class UnionFind {
         father = new HashMap<>();
     }
 
+    /**
+     * union two constraints together
+     *
+     * @param p
+     * @param q
+     */
     private void union(Constraints p, Constraints q) {
         // precondition: p and q are not null
         if (p == null || q == null) {
@@ -40,7 +52,11 @@ public class UnionFind {
         union(find(attr1), find(attr2));
     }
 
-    // helper method for creating new element.
+    /**
+     * helper method for creating new element
+     *
+     * @param attr
+     */
     public void createElement(String attr) {
         Constraints ele = new Constraints(count);
         elements.put(attr, ele);
@@ -49,6 +65,13 @@ public class UnionFind {
         size++;
     }
 
+    /**
+     * find the corresponding father constraint of this attribute
+     * update the father map
+     *
+     * @param attr
+     * @return
+     */
     public Constraints find(String attr) {
         if (!elements.containsKey(attr)) {
             createElement(attr);

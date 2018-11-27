@@ -1,5 +1,9 @@
 package util.unionfind;
 
+/**
+ * Union find elements, Constraints including upper bound,
+ * lower bound and equality
+ */
 public class Constraints {
     private Integer upperBound;
     private Integer lowerBound;
@@ -10,6 +14,7 @@ public class Constraints {
         lowerBound = null;
         upperBound = null;
         equality = null;
+        this.id = id;
     }
 
     public int getId() {

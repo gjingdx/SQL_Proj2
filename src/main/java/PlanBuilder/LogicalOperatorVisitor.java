@@ -16,13 +16,20 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * visitor class to traverse the logical plan tree and print it out
+ *
+ * @author Yufu Mo ym445
+ */
 public class LogicalOperatorVisitor {
 
+    // keep track of the current depth for number of '-'
     private int level;
     private List<String> hierarchy = new ArrayList<>();
 
     /**
      * visit ScanOperator
+     * print out the line for scan operator
      *
      * @param logScanOp
      */
@@ -38,6 +45,8 @@ public class LogicalOperatorVisitor {
     }
 
     /**
+     * print out the line for select operator
+     *
      * @param logSelectOp
      */
     public void visit(SelectOperator logSelectOp) {
@@ -59,6 +68,9 @@ public class LogicalOperatorVisitor {
     }
 
     /**
+     * print out the line for join operator
+     * print out the constraints for each column to join
+     *
      * @param logicalJoinOp
      */
     public void visit(JoinOperator logicalJoinOp) {
@@ -81,6 +93,8 @@ public class LogicalOperatorVisitor {
     }
 
     /**
+     * print out the line for project operator
+     *
      * @param logicalProjOp
      */
     public void visit(ProjectOperator logicalProjOp) {
@@ -102,6 +116,8 @@ public class LogicalOperatorVisitor {
     }
 
     /**
+     * print out the line for sort operator
+     *
      * @param logSortOp
      */
     public void visit(SortOperator logSortOp) {
@@ -123,6 +139,8 @@ public class LogicalOperatorVisitor {
     }
 
     /**
+     * print out the line for duplicate elimination operator
+     *
      * @param logDupElimOp
      */
     public void visit(DuplicateEliminationOperator logDupElimOp) {
@@ -139,6 +157,9 @@ public class LogicalOperatorVisitor {
         }
     }
 
+    /**
+     * @return the hierarchy string list to print
+     */
     public List<String> getOutput() {
         return hierarchy;
     }
