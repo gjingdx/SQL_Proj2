@@ -33,6 +33,10 @@ The UnionFind class contains two important methods: ```find``` and ```union```. 
 ### Query Plan Print
 #### Logical Query Plan Print
 The logical query plan is printed by traversing all the logical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order. The union find information will be printed with the help of union find getOutput() method.
+Possible differences from expected output:
+1. No project operator if the query is "SELECT * From ....."
+2. For Join operator, conditions like S.A < R.E will not create new elements in union find.
+3. Order of leaves and union elements.
 
 #### Physical Query Plan Print
 The physical query plan is printed by traversing all the physical operators in the plan tree in preorder using visitor pattern implemented as PhysicalOperatorVisitor class. In each visit function in the PhysicalOperatorVisitor class, information of the input argument operator is first printed, then the children/child of the operator will accept this visitor in order.
