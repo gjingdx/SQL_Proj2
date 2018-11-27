@@ -9,8 +9,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import model.IndexConfig;
+
+import javax.swing.*;
 
 /**
  * Singleton class to track and record states. For the operators to get info like schemas, files etc.
@@ -101,12 +104,14 @@ public class Catalog {
                 if (table.split(" ").length > 1) {
                     String tableName = tableNames[0];
                     String alias = tableNames[tableNames.length-1];
-                    TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(tableName));
+                    //TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(tableName));
+                    Map<String, Integer> orderedSchema = sortByValues(schemas.get(tableName));
                     for (String str : orderedSchema.keySet()) {
                         attributeOrder.add(alias + "." + str.split("\\.")[1]);
                     }
                 } else {
-                    TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(table));
+                    //TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(table));
+                    Map<String, Integer> orderedSchema = sortByValues(schemas.get(table));
                     attributeOrder.addAll(orderedSchema.keySet());
                 }
             }
@@ -116,6 +121,26 @@ public class Catalog {
             }
         }
         //System.out.println("attributeOrder: " + attributeOrder.toString());
+    }
+
+    private static HashMap sortByValues(Map map) {
+        List list = new LinkedList(map.entrySet());
+        // Defined Custom Comparator here
+        Collections.sort(list, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Comparable) ((Map.Entry) (o1)).getValue())
+                        .compareTo(((Map.Entry) (o2)).getValue());
+            }
+        });
+
+        // Here I am copying the sorted list in HashMap
+        // using LinkedHashMap to preserve the insertion order
+        HashMap sortedHashMap = new LinkedHashMap();
+        for (Iterator it = list.iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            sortedHashMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedHashMap;
     }
 
 

@@ -24,10 +24,11 @@ public class AppTest {
         }
     }
     @Test
-    public void testBNLJ_Memory() throws Exception{
+    public void testBNLJ_External() throws Exception{
         Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
         Catalog.getInstance().setJoinBlockSize(2);
-        Catalog.getInstance().setSortMethod(SortMethod.IN_MEMORY);
+        Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
+        Catalog.getInstance().setSortBlockSize(3);
         Handler.parseSql();
         cmpResult();
     }
@@ -40,7 +41,7 @@ public class AppTest {
         Handler.parseSql();
         cmpResult();
     }
-
+    /*
     @Test
     public void testSMJ_MemorySort() throws Exception{
         Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
@@ -57,6 +58,7 @@ public class AppTest {
         Handler.parseSql();
         cmpResult();
     }
+    */
 
     private void cmpResult() throws Exception{
         for (int index = 1; index <= 12; ++index) {
