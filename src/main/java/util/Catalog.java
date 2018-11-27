@@ -97,20 +97,16 @@ public class Catalog {
                 for (Object join : plainSelect.getJoins())
                 tableList.add(join.toString());
             }
-            System.out.println(tableList);
-            System.out.println(schemas);
             for (String table : tableList) {
                 String[] tableNames = table.split(" ");
                 if (table.split(" ").length > 1) {
                     String tableName = tableNames[0];
                     String alias = tableNames[tableNames.length-1];
-                    //TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(tableName));
                     Map<String, Integer> orderedSchema = sortByValues(schemas.get(tableName));
                     for (String str : orderedSchema.keySet()) {
                         attributeOrder.add(alias + "." + str.split("\\.")[1]);
                     }
                 } else {
-                    //TreeMap<String, Integer> orderedSchema = new TreeMap<>(schemas.get(table));
                     Map<String, Integer> orderedSchema = sortByValues(schemas.get(table));
                     attributeOrder.addAll(orderedSchema.keySet());
                 }
@@ -120,7 +116,6 @@ public class Catalog {
                 attributeOrder.add(selectItem.toString());
             }
         }
-        //System.out.println("attributeOrder: " + attributeOrder.toString());
     }
 
     private static HashMap sortByValues(Map map) {
@@ -132,9 +127,6 @@ public class Catalog {
                         .compareTo(((Map.Entry) (o2)).getValue());
             }
         });
-
-        // Here I am copying the sorted list in HashMap
-        // using LinkedHashMap to preserve the insertion order
         HashMap sortedHashMap = new LinkedHashMap();
         for (Iterator it = list.iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry) it.next();
@@ -142,7 +134,6 @@ public class Catalog {
         }
         return sortedHashMap;
     }
-
 
     /**
      * @return attributeOrder which is the column order of the output tuple
