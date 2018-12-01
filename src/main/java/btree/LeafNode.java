@@ -25,6 +25,11 @@ class LeafNode extends TreeNode {
     }
 
     @Override
+    public List<Integer> getKeys(){
+        return null;
+    }
+
+    @Override
     public int getMinChildKey() {
         return dataEntries.get(0).getKey();
     }

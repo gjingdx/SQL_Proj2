@@ -1,5 +1,7 @@
 package btree;
 
+import java.util.List;
+
 abstract public class TreeNode {
     private int order;
 
@@ -11,5 +13,8 @@ abstract public class TreeNode {
 
     abstract public int getMinKey();
 
+    abstract public List<Integer> getKeys();
+
     abstract public int getMinChildKey();
+
 }
