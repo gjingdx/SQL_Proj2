@@ -35,4 +35,9 @@ class IndexNode extends TreeNode {
     public List<Integer> getKeys() {
         return keys;
     }
+
+    @Override
+    public int getMinChildKey() {
+        return children.get(0).getMinChildKey();
+    }
 }
