@@ -46,6 +46,7 @@ public class BPlusTree {
             indexLayer = generateIndexLayer(indexLayer);
         }
         serializer.serialize(indexLayer.get(0));
+        System.out.println("rootNode of B+Tree Key:" + indexLayer.get(0).getKeys());
         serializer.finish(order);
         try {
             binTupReader.close();
@@ -139,7 +140,8 @@ public class BPlusTree {
             childrenAddresses.add(address);
             count++;
             if (count > 1) {
-                keys.add(prevNode.getMinKey());
+                //keys.add(prevNode.getMinKey());
+                keys.add(prevNode.getMinChildKey());
             }
             if (count == (2 * order + 1)) {
                 IndexNode indexNode = new IndexNode(order, keys, children, childrenAddresses);
@@ -163,7 +165,8 @@ public class BPlusTree {
                 if (numKey + 1 < 2 * order) {
                     lastKeys = secondLastKeys.subList(numKey + 1, secondLastKeys.size());
                 }
-                lastKeys.add(children.get(0).getMinKey());
+                //lastKeys.add(children.get(0).getMinKey());
+                lastKeys.add(children.get(0).getMinChildKey());
                 lastKeys.addAll(keys);
 
                 List<TreeNode> secondLastChildren = secondLast.getChildren();
