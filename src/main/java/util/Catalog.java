@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import model.IndexConfig;
+import model.TableHistogram;
+import model.Histogram;
 
 import javax.swing.*;
 
@@ -118,7 +120,7 @@ public class Catalog {
         }
     }
 
-    private static HashMap sortByValues(Map map) {
+    public static HashMap sortByValues(Map map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
         Collections.sort(list, new Comparator() {
@@ -485,4 +487,12 @@ public class Catalog {
         }
         br.close();
     }
+
+    private Map<String, TableHistogram> originHistograms = new HashMap<>();
+
+    public void setOriginHistograms(String key, TableHistogram tableHistogram) {
+        originHistograms.put(key, tableHistogram);
+    }
+
+    //public double getDistribution (String tableName, int key)
 }
