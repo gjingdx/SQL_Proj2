@@ -10,6 +10,7 @@ import model.Tuple;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import util.Catalog;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -166,7 +167,7 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
 //                System.out.println("count " + finishCount);
                 // if queue is empty, wait
                 if (queue.isEmpty()) {
-                    queue.wait();
+                    queue.wait(200);
                 }
                 tuple = queue.poll();
                 if (queue.size() == 0) {
@@ -253,7 +254,7 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
                         // wait if the queue is full
                         synchronized (queue) {
                             while (queue.size() > QUEUE_MAX_SIZE) {
-                                queue.wait();
+                                queue.wait(200);
                             }
                             queue.offer(newTuple);
                             queue.notify();
@@ -267,7 +268,11 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
             }
             finally {
                 synchronized (lock) {
-                    System.out.println("" + index + " finished");
+//                    System.out.println("" + index + " finished");
+                    File file1 = new File(LEFT_BUCKETS_NAME + index);
+                    File file2 = new File(RIGHT_BUCKETS_NAME + index);
+                    file1.delete();
+                    file2.delete();
                     finishCount++;
                 }
             }
