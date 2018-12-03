@@ -90,11 +90,16 @@ public class PhysicalPlanBuilder {
             SortJoinExpressionVisitor sj = new SortJoinExpressionVisitor(children.get(0).getSchema(), children.get(1).getSchema());
             joinCondition.accept(sj);
             List<List<OrderByElement>> orders = sj.getOrders();
+//            if (orders.get(0).size() != 0) {
+//                PhysicalSortOperator rightSort, leftSort;
+//                rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
+//                leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
+//                physJoinOp = new PhysicalSortMergeJoinOperator(newLogicalJoinOp, leftSort, rightSort);
+//                physOpChildren.push(physJoinOp);
+//                return;
+//            }
             if (orders.get(0).size() != 0) {
-                PhysicalSortOperator rightSort, leftSort;
-                rightSort = new PhysicalExternalSortOperator(orders.get(0), rightChild);
-                leftSort = new PhysicalExternalSortOperator(orders.get(1), leftChild);
-                physJoinOp = new PhysicalSortMergeJoinOperator(newLogicalJoinOp, leftSort, rightSort);
+                physJoinOp = new PhysicalHashJoinOperator(newLogicalJoinOp, leftChild, rightChild, orders);
                 physOpChildren.push(physJoinOp);
                 return;
             }

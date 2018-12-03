@@ -113,6 +113,26 @@ public class PhysicalOperatorVisitor {
         }
     }
 
+
+    /**
+     * visit (print) PhysicalHashJoinOperator
+     * @param hashJoinOperator
+     * @param level
+     */
+    public void visit(PhysicalHashJoinOperator hashJoinOperator, int level) {
+        for (int i = 0; i< level; i++) {
+            phPBTree.append("-");
+        }
+        phPBTree.append("HSHJ[");
+        if (hashJoinOperator.getJoinCondition() != null) {
+            phPBTree.append(hashJoinOperator.getJoinCondition().toString());
+        }
+        phPBTree.append("]\n");
+        for (PhysicalOperator child : hashJoinOperator.getChildren()) {
+            child.accept(this, level + 1);
+        }
+    }
+
     /**
      * visit (print) PhysicalBlockJoinOperator
      * @param blockJoinOp
