@@ -3,10 +3,12 @@ package PlanBuilder;
 import logical.operator.Operator;
 import logical.operator.StatVisitor;
 import model.ColumnStat;
+import model.Histogram;
 import model.TableStat;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.PlainSelect;
+import util.Catalog;
 import util.JoinExpressionVisitor;
 import util.UnionFindExpressionVisitor;
 import util.unionfind.Constraints;
@@ -104,12 +106,62 @@ public class JoinOrder {
                 denominator *= decial;
             }
         }
-        if (set.size() == 5) {
-            int b = 2;
-        }
         storeProduce.put(new HashSet<>(set), (long)Math.ceil(numerator / denominator));
         return (long)Math.ceil(numerator / denominator);
         //return (t1.count * t2.count) / Math.max(getV(t1), getV(t2));
+    }
+
+    public long getProducedCountByHistogram (Set<Integer> set) {
+        double numerator = 1.0;
+        for (int i : set) {
+            numerator *= tableStats.get(i).getCount();
+        }
+
+        double probability = 1.0;
+        if (plainSelect.getWhere() == null) {
+            return (int)numerator;
+        }
+
+        UnionFind tempUnionFind = refineUnionFind(set);
+        for(Map.Entry<Constraints, List<String>> entry : tempUnionFind.getUnions().entrySet()) {
+            List<String> columnList = entry.getValue();
+            Constraints constraints = entry.getKey();
+            if (columnList.size() > 1) {
+                int tableId = columnToTableId.get(columnList.get(0));
+                int max = tableStats.get(tableId).getStat(columnList.get(0)).maxValue;
+                int min = tableStats.get(tableId).getStat(columnList.get(0)).minValue;
+                List<Histogram> histograms = new ArrayList<>();
+                for (String column : columnList) {
+                    String tableColumn = columnWithAliasToColumnWithTable(column);
+                    Histogram histogram = Catalog.getInstance().getHsitogram(tableColumn);
+                    histograms.add(histogram);
+                }
+                if (histograms.size() > 0) {
+                    for (int key = min; key<= max; key++) {
+                        double temp = 1.0;
+                        for (int i = 0; i < histograms.size(); i ++) {
+                            temp *= histograms.get(i).getProbability(key);
+                        }
+                        probability *= temp;
+                    }
+                }
+            }
+        }
+
+        long ret = (long)Math.ceil(numerator * probability);
+        storeProduce.put(new HashSet<>(set), ret);
+        //return (long)Math.ceil(numerator / denominator);
+        if (ret == 0) {
+            int a =1;
+        }
+        return ret;
+    }
+
+    private String columnWithAliasToColumnWithTable (String s) {
+        String []splits = s.split("\\.");
+        String alias = splits[0];
+        String column = splits[1];
+        return Catalog.getInstance().getTableNameFromAlias(alias) + "." + column;
     }
 
     /**
@@ -132,7 +184,7 @@ public class JoinOrder {
             // remove one of them as the last to join
             set.remove(content.get(i));
             OrderInfo temp = helper(set);
-            long producedCount = getProducedCount(set);
+            long producedCount = getProducedCountByHistogram(set);
             if (ret.cost > temp.cost + producedCount) {
                 ret.cost = temp.cost + producedCount;
                 ret.order = new ArrayList<>(temp.order);

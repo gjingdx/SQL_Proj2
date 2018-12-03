@@ -2,6 +2,7 @@ package model;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Histogram {
     Map <Integer, Integer> histogram;
@@ -33,5 +34,14 @@ public class Histogram {
             return 0;
         }
         return (double)histogram.get(key) / (double)count;
+    }
+
+    public long getCount(int key) {
+        if (!histogram.containsKey(key)) { return 0; }
+        return histogram.get(key);
+    }
+
+    public Set<Integer> getKeySet() {
+        return histogram.keySet();
     }
 } 

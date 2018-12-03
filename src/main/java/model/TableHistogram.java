@@ -20,4 +20,8 @@ public class TableHistogram {
         }
         return histograms.get(columnName).getProbability(key);
     }
+
+    public Histogram getHistogram (String columnName) {
+        return histograms.get(columnName);
+    }
 }

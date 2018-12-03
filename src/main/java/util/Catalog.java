@@ -494,5 +494,10 @@ public class Catalog {
         originHistograms.put(key, tableHistogram);
     }
 
-    //public double getDistribution (String tableName, int key)
+    public Histogram getHsitogram (String columnName) {
+        String [] splits = columnName.split("\\.");
+        String tableName = splits[0];
+        Histogram histogram = originHistograms.get(tableName).getHistogram(columnName);
+        return histogram;
+    }
 }
