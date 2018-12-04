@@ -19,7 +19,7 @@ public class PhysicalHashJoinOperatorTest {
         Handler.init(new String[0]);
         Catalog.getInstance().setSortBlockSize(50);
         Catalog.getInstance().setSortMethod(Constants.SortMethod.EXTERNAL);
-        Catalog.getInstance().setJoinMethod(Constants.JoinMethod.SMJ);
+        Catalog.getInstance().setJoinMethod(Constants.JoinMethod.HASH);
 
         String statement = "SELECT * FROM Reserves R, Sailors S WHERE R.G = S.A;";
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
@@ -30,7 +30,6 @@ public class PhysicalHashJoinOperatorTest {
         long last = Long.MIN_VALUE;
         while (tuple != null) {
             long cur = tuple.getDataAt(op.getSchema().get("R.G"));
-            assertEquals(true, last <= cur);
             assertEquals(tuple.getDataAt(op.getSchema().get("R.G")), tuple.getDataAt(op.getSchema().get("S.A")));
             last = cur;
             tuple = op.getNextTuple();
