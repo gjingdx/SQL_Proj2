@@ -22,10 +22,10 @@ import java.util.concurrent.Executors;
  */
 public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
 
-    private final static int THREAD_POOL_SIZE = 10;
+    private final static int THREAD_POOL_SIZE = 3;
 
     // first hash function bucket size
-    private final static int BUCKET_SIZE = 29;
+    private final static int BUCKET_SIZE = 5;
     // second hash function bucket size
     private final static int INNER_BUCKET_SIZE = 43;
 
@@ -112,7 +112,7 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
     }
 
     private void startThreads() {
-        ExecutorService threadPool = Executors.newCachedThreadPool();
+        ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         for (int i = 0; i < BUCKET_SIZE; i++) {
             threadPool.execute(new Task(i));
         }
@@ -167,7 +167,8 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
 //                System.out.println("count " + finishCount);
                 // if queue is empty, wait
                 if (queue.isEmpty()) {
-                    queue.wait(200);
+
+                    queue.wait();
                 }
                 tuple = queue.poll();
                 if (queue.size() == 0) {
@@ -219,7 +220,9 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
                     buckets.get(hashcodeLeft2(tuple)).add(tuple);
                     tuple = innerReader.readNextTuple();
                 }
+                innerReader.close();
             }
+
             catch (Exception e) {
                 e.printStackTrace();
             }
@@ -237,7 +240,6 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
                         boolean e = true;
 //                        System.out.println("task " + index + ": " + queue.size());
 
-
                         // check if two tuple satisfy join condition
                         for (int k = 0; k < leftOrder.size(); k++) {
                             if (leftTuple.getDataAt(leftOrder.get(k)) != rightTuple.getDataAt(rightOrder.get(k))) {
@@ -254,7 +256,7 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
                         // wait if the queue is full
                         synchronized (queue) {
                             while (queue.size() > QUEUE_MAX_SIZE) {
-                                queue.wait(200);
+                                queue.wait();
                             }
                             queue.offer(newTuple);
                             queue.notify();
@@ -262,18 +264,20 @@ public class PhysicalHashJoinOperator extends PhysicalJoinOperator {
                     }
                     rightTuple = outerReader.readNextTuple();
                 }
+                outerReader.close();
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
             finally {
-                synchronized (lock) {
+                synchronized (queue) {
 //                    System.out.println("" + index + " finished");
                     File file1 = new File(LEFT_BUCKETS_NAME + index);
                     File file2 = new File(RIGHT_BUCKETS_NAME + index);
                     file1.delete();
                     file2.delete();
                     finishCount++;
+                    queue.notify();
                 }
             }
         }
