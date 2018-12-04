@@ -108,6 +108,11 @@ public class Handler {
             String[] schema = new String[size];
             int[] maxArray = new int[size];
             int[] minArray = new int[size];
+            Histogram[] histograms = new Histogram[size];
+            for (int i = 0; i < size; ++i) {
+                histograms[i] = new Histogram("");
+            }
+
             Arrays.fill(maxArray, Integer.MIN_VALUE);
             Arrays.fill(minArray, Integer.MAX_VALUE);
             int count = 0;
@@ -121,9 +126,18 @@ public class Handler {
                     int data = tuple.getDataAt(i);
                     maxArray[i] = Math.max(maxArray[i], data);
                     minArray[i] = Math.min(minArray[i], data);
+
+                    histograms[i].add(data);
                 }
                 tuple = reader.readNextTuple();
             }
+            TableHistogram tableHistogram = new TableHistogram();
+            
+            for (Map.Entry<String, Integer> entry : schemas.get(table).entrySet()) {
+                tableHistogram.put(entry.getKey(), histograms[entry.getValue()]);
+            }
+            Catalog.getInstance().setOriginHistograms(table, tableHistogram);
+
             StringBuilder sb = new StringBuilder();
             sb.append(table);
             sb.append(' ');

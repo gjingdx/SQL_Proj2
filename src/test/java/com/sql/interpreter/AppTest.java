@@ -23,10 +23,10 @@ public class AppTest {
             Handler.buildIndexes();
         }
     }
+
     @Test
-    public void testBNLJ_External() throws Exception{
-        Catalog.getInstance().setJoinMethod(JoinMethod.BNLJ);
-        Catalog.getInstance().setJoinBlockSize(2);
+    public void testSMJ_External() throws Exception{
+        Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
         Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
         Catalog.getInstance().setSortBlockSize(3);
         Handler.parseSql();
@@ -34,8 +34,8 @@ public class AppTest {
     }
 
     @Test
-    public void testSMJ_External() throws Exception{
-        Catalog.getInstance().setJoinMethod(JoinMethod.SMJ);
+    public void testHash_External() throws Exception{
+        Catalog.getInstance().setJoinMethod(JoinMethod.HASH);
         Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
         Catalog.getInstance().setSortBlockSize(3);
         Handler.parseSql();
