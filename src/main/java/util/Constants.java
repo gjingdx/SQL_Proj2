@@ -17,7 +17,7 @@ public class Constants {
     public static final int INT_SIZE = 4;
 
     public enum JoinMethod {
-        TNLJ, BNLJ, SMJ;
+        TNLJ, BNLJ, SMJ, HASH;
     }
 
     public enum SortMethod {

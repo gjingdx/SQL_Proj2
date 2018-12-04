@@ -41,6 +41,15 @@ public class AppTest {
         Handler.parseSql();
         cmpResult();
     }
+
+    @Test
+    public void testHash_External() throws Exception{
+        Catalog.getInstance().setJoinMethod(JoinMethod.HASH);
+        Catalog.getInstance().setSortMethod(SortMethod.EXTERNAL);
+        Catalog.getInstance().setSortBlockSize(3);
+        Handler.parseSql();
+        cmpResult();
+    }
     /*
     @Test
     public void testSMJ_MemorySort() throws Exception{
