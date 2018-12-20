@@ -1,6 +1,7 @@
 package com.sql.interpreter;
 
 import util.Catalog;
+import util.Constants;
 
 /**
  * Read a local SQL file which contains several queries
@@ -22,11 +23,13 @@ public class App {
                 configs = Handler.parserInterpreterConfig(args[0]);
             } 
             Handler.init(configs);
+            Catalog.getInstance().setJoinMethod(Constants.JoinMethod.SMJ);
             if (Catalog.getInstance().isBuildIndex()) {
                 Handler.buildIndexes();
             }
             if (Catalog.getInstance().isEvaluateSQL()) {
                 Handler.parseSql();
+                System.exit(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
