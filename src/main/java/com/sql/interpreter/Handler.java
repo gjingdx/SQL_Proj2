@@ -40,7 +40,7 @@ public class Handler {
      */
     public static void init(String[] args) throws Exception {
         String outputPath = Constants.OUTPUT_PATH;
-        if (args != null && args.length >= 5) {
+        if (args != null && args.length >= 3) {
             if (args[0].charAt(args[0].length() - 1) == '/') {
                 args[0] = args[0].substring(0, args[0].length() - 1);
             }
@@ -61,8 +61,8 @@ public class Handler {
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
 
-            Catalog.getInstance().setBuildIndex(args[3]);
-            Catalog.getInstance().setEvaluateSQL(args[4]);
+            Catalog.getInstance().setBuildIndex("1");
+            Catalog.getInstance().setEvaluateSQL("1");
         }
         new File(outputPath).mkdirs();
         new File(Constants.TEMP_PATH).mkdirs();
