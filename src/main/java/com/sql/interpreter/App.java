@@ -23,7 +23,7 @@ public class App {
                 configs = Handler.parserInterpreterConfig(args[0]);
             } 
             Handler.init(configs);
-            Catalog.getInstance().setJoinMethod(Constants.JoinMethod.SMJ);
+            //Catalog.getInstance().setJoinMethod(Constants.JoinMethod.SMJ);
             if (Catalog.getInstance().isBuildIndex()) {
                 Handler.buildIndexes();
             }
