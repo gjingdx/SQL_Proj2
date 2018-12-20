@@ -155,7 +155,7 @@ public class BPlusTree {
             }
         }
 
-        if (children != null) {
+        if (children != null && !children.isEmpty()) {
             if (keys.size() < order && prevLayer.size() > 2 * order) {
                 IndexNode secondLast = (IndexNode) indexLayer.remove(indexLayer.size() - 1);
                 List<Integer> secondLastKeys = secondLast.getKeys();

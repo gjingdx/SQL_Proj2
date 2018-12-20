@@ -163,6 +163,6 @@ public class BinaryTupleReader implements TupleReader {
     @Override
     public void close() throws IOException {
         readerPointer.getChannel().close();
-        readerPointer.close();
+//        readerPointer.close();
     }
 }

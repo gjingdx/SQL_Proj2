@@ -85,6 +85,19 @@ public class PhysicalBlockJoinOperator extends PhysicalJoinOperator {
         }
     }
 
+    class Task implements Runnable {
+        Block block;
+
+        public Task(Block block) {
+            this.block = block;
+        }
+
+        @Override
+        public void run() {
+
+        }
+    }
+
     @Override
     public void accept(PhysicalOperatorVisitor phOpVisitor, int level) {
         phOpVisitor.visit(this, level);
