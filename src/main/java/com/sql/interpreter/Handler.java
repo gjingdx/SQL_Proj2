@@ -20,10 +20,7 @@ import util.Constants.JoinMethod;
 import util.Constants.SortMethod;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
 import btree.BPlusTree;
 
@@ -164,16 +161,25 @@ public class Handler {
      */
     public static void buildIndexes() {
         new File(Catalog.getInstance().getIndexPath()).mkdirs();
+        List<String> indexConfigsToDelete = new ArrayList<>();
         for (Map.Entry<String, IndexConfig> entry : Catalog.getInstance().getIndexConfigs().entrySet()) {
             IndexConfig indexConfig = entry.getValue();
             String tableName = indexConfig.tableName;
             int attr = Catalog.getInstance().getTableSchema(tableName).get(indexConfig.schemaName);
-            new BPlusTree(
-                Catalog.getInstance().getDataPath(tableName),
-                attr,
-                indexConfig.order,
-                indexConfig.indexFile
-            );
+            try {
+                new BPlusTree(
+                        Catalog.getInstance().getDataPath(tableName),
+                        attr,
+                        indexConfig.order,
+                        indexConfig.indexFile
+                );
+            } catch (Exception e) {
+                System.out.println(tableName + attr + " failed to build");
+                indexConfigsToDelete.add(entry.getKey());
+            }
+        }
+        for (String key : indexConfigsToDelete) {
+            Catalog.getInstance().getIndexConfigs().remove(key);
         }
     }
 
