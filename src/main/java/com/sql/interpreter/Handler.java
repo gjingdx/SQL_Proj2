@@ -61,8 +61,8 @@ public class Handler {
             System.out.println("Constants.inputPath init");
             System.out.println(Constants.inputPath);
 
-            Catalog.getInstance().setBuildIndex(args[3]);
-            Catalog.getInstance().setEvaluateSQL(args[4]);
+            Catalog.getInstance().setBuildIndex("1");
+            Catalog.getInstance().setEvaluateSQL("1");
         }
         new File(outputPath).mkdirs();
         new File(Constants.TEMP_PATH).mkdirs();
