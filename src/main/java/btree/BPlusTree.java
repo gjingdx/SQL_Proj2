@@ -46,7 +46,7 @@ public class BPlusTree {
             indexLayer = generateIndexLayer(indexLayer);
         }
         serializer.serialize(indexLayer.get(0));
-        System.out.println("rootNode of B+Tree Key:" + indexLayer.get(0).getKeys());
+        //System.out.println("rootNode of B+Tree Key:" + indexLayer.get(0).getKeys());
         serializer.finish(order);
         try {
             binTupReader.close();
